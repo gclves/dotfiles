@@ -1,0 +1,123 @@
+#!/bin/zsh
+
+# reload zshrc
+function src() {
+  autoload -U zrecompile
+  [[ -f ~/.zshrc ]] && zrecompile -p ~/.zshrc
+  for i in "$(find ~/.zsh/ -type f)"; do
+    [[ -f $i ]] && zrecompile -p $i
+    [[ -f $i.zwc.old ]] && rm -f $i.zwc.old
+  done
+  [[ -f ~/.zcompdump ]] && zrecompile -p ~/.zcompdump
+  [[ -f ~/.zcompdump ]] && zrecompile -p ~/.zcompdump
+  [[ -f ~/.zshrc.zwc.old ]] && rm -f ~/.zshrc.zwc.old
+  [[ -f ~/.zcompdump.zwc.old ]] && rm -f ~/.zcompdump.zwc.old
+  source ~/.zshrc
+}
+
+function add_alias() {
+  local name=$1 value="$2"
+  echo "alias $name='$value'" >> ~/.zsh/alias
+  eval "alias $name='$value'"
+  alias $name
+}
+
+# git functions
+function ga()  { git add $* }
+function gl()  { git log $* }
+function gs()  { git status -sb $* }
+function gp()  { git push $* }
+function gc()  { git commit -m "$*" }
+function gpl() { git pull $* }
+function gco() {
+  if [ -z "$1" ]; then
+    git checkout master
+  else
+    git checkout $1
+  fi
+}
+
+function mkmine() { sudo chown -R ${USER} ${1:-.}; }
+# Usage: sanitize <file>
+function sanitize() {
+  chmod -R u=rwX,go=rX "$@"
+  chown -R ${USER}.users "$@"
+}
+
+function roll() {
+  local FILE
+  FILE=$1
+  case $FILE in
+    *.tar.bz2)  shift && tar cjf $FILE $* ;;
+    *.tbz2)     shift && tar cjf $FILE $* ;;
+    *.tar.gz)   shift && tar czf $FILE $* ;;
+    *.tgz)      shift && tar czf $FILE $* ;;
+    *.zip)      shift && zip $FILE $*     ;;
+    *.rar)      shift && rar $FILE $*     ;;
+  esac
+}
+
+function extract_archive() {
+  local old_dirs current_dirs lower
+  lower=${(L)1}
+  old_dirs=( *(N/) )
+  case $lower in
+    *.tar.bz2)  tar xvjf $1   ;;
+    *.tar.gz)   tar xvzf $1   ;;
+    *.tar.xz)   tar xvJf $1   ;;
+    *.bz2)      bunzip2 $1    ;;
+    *.rar)      unrar x $1    ;;
+    *.gz)       gunzip $1     ;;
+    *.tar)      tar xvf $1    ;;
+    *.tbz2)     tar xvjf $1   ;;
+    *.tgz)      tar xvzf $1   ;;
+    *.zip)      unzip $1      ;;
+    *.Z)        uncompress $1 ;;
+    *.7z)       7z x $1       ;;
+    *.xz)       unxz $1       ;;
+    *.exe)      cabextract $1 ;;
+    *.lha)      lha e $1      ;;
+    *) echo "Unknown archive type: $1" || return 1 ;;
+  esac
+  # Change in to the newly created directory, and
+  # list the directory contents, if there is one.
+  current_dirs=( *(N/) )
+  for i in {1..${#current_dirs}}; do
+    if [[ $current_dirs[$i] != $old_dirs[$i] ]]; then
+      cd $current_dirs[$i]
+      break
+    fi
+  done
+}
+
+function cd() {
+  builtin cd "$@"
+  ll
+}
+
+# md2html Apptitle FOO.md
+function md2html() {
+  local title file
+  title=$1
+  file=$2
+  ronn --html README.md --style toc --organization=$title --manual=$title $file
+}
+
+# marks
+export MARKPATH=$HOME/.marks
+
+function jump() {
+  builtin cd -P $MARKPATH/$1 2>/dev/null || echo "No such mark: $1"
+}
+
+function mark() {
+  mkdir -p $MARKPATH; ln -s "$(pwd)" $MARKPATH/$1
+}
+
+function unmark() {
+  rm -i $MARKPATH/$1
+}
+
+function marks() {
+  ls -l $MARKPATH | sed 's/  / /g' | cut -d' ' -f9- | sed 's/@//g' && echo
+}
