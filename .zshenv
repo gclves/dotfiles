@@ -47,6 +47,8 @@ if [ "$TERM" = "linux" ]; then
   clear # back to default input colours
 fi
 
+[ -n $TMUX ] && export TERM=screen-256color
+
 bindkey "\e[1~" beginning-of-line
 bindkey "\e[7~" beginning-of-line
 bindkey "\e[8~" end-of-line
