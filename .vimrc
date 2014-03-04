@@ -3,9 +3,6 @@ filetype off
 filetype plugin indent on
 set encoding=utf-8
 
-" Vundle config
-source ~/.vimrc.bundle
-
 if has("gui_running")
     set guioptions=
     if has("win32")
@@ -16,18 +13,22 @@ if has("gui_running")
     endif
 else
     if $COLORTERM == "gnome-terminal"
+        set term=xterm-256color
         set t_Co=256
         set columns=80 lines=100
-    endif
-    if $TERM == "screen-256color"
+    elseif $TERM == "screen-256color"
         set t_Co=256
         set columns=80 lines=100
     endif
 endif
 
-set background=dark
+" Vundle config
+source ~/.vimrc.bundle
+
+set background=light
 colorscheme solarized
 
+syntax on
 let mapleader=","
 let g:airline_powerline_fonts=1
 
@@ -132,3 +133,4 @@ let g:syntastic_javascript_checkers=['jshint', 'jslint']
 let g:syntastic_html_checkers=['jshint']
 let g:syntastic_jshint_exec='jshint.cmd'
 let g:syntastic_javascript_jshint_conf='~/.jshintrc'
+
