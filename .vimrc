@@ -11,15 +11,12 @@ if has("gui_running")
         set lines=999 columns=999
         set guifont=Inconsolata 10
     endif
-else
-    if $COLORTERM == "gnome-terminal"
-        set term=xterm-256color
-        set t_Co=256
-        set columns=80 lines=100
-    elseif $TERM == "screen-256color"
-        set t_Co=256
-        set columns=80 lines=100
-    endif
+elseif $COLORTERM == "gnome-terminal"
+    set t_Co=256
+    set columns=80 lines=100
+elseif $TERM == "screen-256color"
+    set t_Co=256
+    set columns=80 lines=100
 endif
 
 " Vundle config
@@ -76,7 +73,7 @@ set matchtime=0		" don't blink
 set incsearch		" find as you type
 " Highlight search terms
 set hlsearch
-nnoremap <Esc> :nohl<CR>
+nnoremap <Esc> :nohlsearch<CR>
 
 " Wildmode
 set wildchar=<Tab> wildmenu wildmode=full
@@ -93,8 +90,8 @@ set spell		" spellchecking
 set hidden		" buffer switching without saving
 
 " Fix weird behavior on wrapped lines
-nnoremap j gj
-nnoremap k gk
+map j gj
+map k gk
 
 " Indent
 set autoindent
@@ -109,17 +106,12 @@ autocmd FileType javascript set dictionary+=~/.vim/bundle/vim-node/dict/node.dic
 " Javascript
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
 
-" Startify
-nnoremap <F8> :Startify<CR>
-
 " NERDtree
 nnoremap <C-e> :NERDTreeToggle<CR>
 
 " CtrlP options
-nnoremap ; :CtrlPMixed<CR>
-let g:ctrlp_custom_ignore = '\v\~$|\.(o|swp|pyc|wav|mp3|ogg|blend)$|(^|[/\\])\.(hg|git|bzr)($|[/\\])|__init__\.py'
+"map ; :CtrlPMixed<CR>
 
-unlet g:ctrlp_custom_ignore
 let g:ctrlp_custom_ignore = {
                             \ 'file': '\.(o|swp|pyc|wav|mp3|ogg|blend|exe|so)$',
                             \ 'dir' : '\.(hg|git|bzr)$'
