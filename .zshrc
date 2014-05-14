@@ -4,4 +4,7 @@
 . ~/.zsh/function
 . ~/.zsh/style
 . ~/.zsh/opts
-. ~/.zsh/prompt
+# . ~/.zsh/prompt
+autoload -U promptinit
+promptinit
+prompt off

@@ -9,7 +9,8 @@ if has("gui_running")
         au GUIEnter * simalt ~x
     else
         set lines=999 columns=999
-        set guifont=Inconsolata 10
+        set guifont=Monaco\ 9
+        "set guifont=Inconsolata 10
     endif
 elseif $COLORTERM == "gnome-terminal"
     set t_Co=256
@@ -22,7 +23,7 @@ endif
 " Vundle config
 source ~/.vimrc.bundle
 
-set background=light
+set background=dark
 colorscheme solarized
 
 syntax on
@@ -59,6 +60,9 @@ inoremap <C-j> <Down>
 inoremap <C-k> <Up>
 inoremap <C-l> <Right>
 
+" % is too far out to reach
+map <BS> %
+
 " Status line
 set laststatus=2
 set statusline=%<%f\				" filename
@@ -78,6 +82,7 @@ nnoremap <Esc> :nohlsearch<CR>
 " Wildmode
 set wildchar=<Tab> wildmenu wildmode=full
 
+set cursorline
 set winminheight=0	" windows can be 0-line high
 set ignorecase		" case-insensitive search...
 set smartcase		" ...unless it's uppercase
@@ -100,8 +105,16 @@ set tabstop=4
 set softtabstop=4
 set shiftwidth=4
 
+set tw=79
+" "hard" word wrap
+set formatoptions+=t
+" "soft" word wrap
+"set wrap linebreak nolist
+
+au BufRead,BufNewFile *.txt,*.tex,*.md,*.markdown set wrap linebreak nolist textwidth=0 wrapmargin=0
+
 " Node.js
-autocmd FileType javascript set dictionary+=~/.vim/bundle/vim-node/dict/node.dict
+autocmd FileType javascript set dictionary+=~/.vim/bundle/vim-node-dict/dict/node.dict
 
 " Javascript
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
@@ -126,3 +139,8 @@ let g:syntastic_html_checkers=['jshint']
 let g:syntastic_jshint_exec='jshint.cmd'
 let g:syntastic_javascript_jshint_conf='~/.jshintrc'
 
+" a better encryption algorithm
+set cryptmethod=blowfish
+
+" this is where the coding happens
+cd ~/www

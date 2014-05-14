@@ -1,0 +1,19 @@
+exec xsetroot -cursor_name left_ptr
+startup_message off
+
+escape C-z
+
+# virtual workspaces
+gnewbg one
+gnewbg two
+
+definekey top M-l exec ratpoison -c "select -" -c "gprev" -v "next"
+definekey top M-h exec ratpoison -c "select -" -c "gnext" -c "next"
+
+# switch between windows
+definekey top M-j next
+definekey top M-k prev
+
+# apps
+bind C exec urxvt
+bind f exec firefox

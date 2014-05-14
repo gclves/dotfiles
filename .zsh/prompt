@@ -1,40 +1,62 @@
 #!/bin/zsh
 
 case $TERM in
-  *xterm*|rxvt|rxvt-unicode|rxvt-256color|(dt|k|E)term)
-    precmd () { print -Pn "\e]0;%n %# %~\a" }
-    preexec () { print -Pn "\e]0;%n %# %~ ($1)\a" }
-  ;;
-  screen)
-    precmd () {
-      print -Pn "\e]83;title \"$1\"\a"
-      print -Pn "\e]0;$TERM - (%L) [%n]%# [%~]\a"
-    }
-    preexec () {
-      print -Pn "\e]83;title \"$1\"\a"
-      print -Pn "\e]0;$TERM - (%L) [%n]%# [%~] ($1)\a"
-    }
-  ;;
+    *xterm*|rxvt|rxvt-unicode|rxvt-256color|(dt|k|E)term)
+        precmd () { print -Pn "\e]0;$TERM - (%L) [%n@%M]%# [%~]\a" } 
+        preexec () { print -Pn "\e]0;$TERM - (%L) [%n@%M]%# [%~] ($1)\a" }
+    ;;
+    screen)
+        precmd () { 
+            print -Pn "\e]83;title \"$1\"\a" 
+            print -Pn "\e]0;$TERM - (%L) [%n@%M]%# [%~]\a" 
+        }
+        preexec () { 
+            print -Pn "\e]83;title \"$1\"\a" 
+            print -Pn "\e]0;$TERM - (%L) [%n@%M]%# [%~] ($1)\a" 
+        }
+    ;; 
 esac
 
-setprompt() {
-  autoload -U colors zsh/terminfo
-  colors
-  setopt prompt_subst
-  PR_NO_COLOR="%{$terminfo[sgr0]%}"
-  for color in BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE; do
-    eval PR_$color='%{$terminfo[bold]$fg[${(L)color}]%}'
-    eval PR_LIGHT_$color='%{$fg[${(L)color}]%}'
-  done
+setprompt () {
+    autoload -U colors zsh/terminfo
+    colors
+    setopt prompt_subst
 
-  #PROMPT=$'${PR_LIGHT_BLACK}[${PR_LIGHT_YELLOW}%n${PR_LIGHT_BLACK}][${PR_LIGHT_RED}%~${PR_LIGHT_BLACK}] %#${PR_NO_COLOR} '
-  #RPROMPT=$'${PR_LIGHT_GREEN}%~${PR_NO_COLOR}'
-  #PROMPT=$'${PR_LIGHT_YELLOW}%n${PR_LIGHT_CYAN}@${PR_LIGHT_GREEN}%m${PR_LIGHT_WHITE}:${PR_LIGHT_RED}%#${PR_LIGHT_CYAN}->${PR_LIGHT_YELLOW}%~${PR_LIGHT_WHITE} (${PR_LIGHT_GREEN}%?${PR_LIGHT_CYAN})
-#> ${PR_NO_COLOR}'
-  PROMPT=$'[${PR_LIGHT_GREEN}%n${PR_NO_COLOR}][${PR_LIGHT_CYAN}%~${PR_NO_COLOR}] '
-  #PROMPT=$'[%n ${PR_RED}%~${PR_NO_COLOR}]%# '
+    #for color in RED GREEN YELLOW BLUE MAGENTA CYAN WHITE; do
+    #    eval PR_$color='%{$terminfo[bold]$fg[${(L)color}]%}'
+    #    eval PR_LIGHT_$color='%{$fg[${(L)color}]%}'
+    #done
+    #PR_NO_COLOR="%{$terminfo[sgr0]%}"
+    #PR_GIT=$(git_info)
+    #PR_USER="%n"
+    #PR_HOST="%m"
+    #PR_ID="%#"
+    #PR_DATE="%T"
+    #PR_DIR="%~"
+    #PR_HIST="%!"
+
+    #PROMPT=$'${PR_DIR}${PR_MAGENTA}[${PR_HIST}]${PR_NO_COLOR}${PR_ID} '
+    #RPROMPT=$'${PR_BLUE}${PR_DATE}${PR_NO_COLOR}'
+    #PROMPT=$'${PR_BLUE}[${PR_NO_COLOR}${PR_USER}@${PR_HOST}${PR_BLUE}][${PR_NO_COLOR}${PR_DIR}${PR_BLUE}]${PR_NO_COLOR}${PR_ID} '
+    #PROMPT=$'${PR_BLUE}[${PR_NO_COLOR}${PR_DIR}${PR_BLUE}]${PR_NO_COLOR}${PR_ID} '
+    # set color prompt with clock
+    if [[ `whoami` == root ]]; then
+      # set color prompt for root
+      export PS1=$'[%{\e[1;31m%}%n%{\e[0m%}|%{\e[1;34m%}%m%{\e[0m%}][%{\e[1;37m%}%~%{\e[0m%}]%# '
+      export PS2=$'%{\e[1;31m%}>%{\e[0m%} '
+    else
+      # common user settings
+      export PS1=$'[%{\e[1;32m%}%n%{\e[0m%}][%{\e[1;37m%}%~%{\e[0m%}]%# '
+      export PS2=$'%{\e[1;32m%}>%{\e[0m%} '
+      # set proper encodings
+      if [[ `stty speed` == 115200 ]]; then
+        # pure console
+        export LC_ALL=en_US.ISO8859-1
+      else # 38400
+        # terminal emulator
+        export LC_ALL=en_US.UTF-8
+      fi
+    fi
 }
 
-if [ -n "$TERM" ]; then
-  setprompt
-fi
+setprompt
