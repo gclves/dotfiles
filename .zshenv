@@ -1,4 +1,3 @@
-#!/bin/zsh
 #
 # Dircolors...
 #eval `dircolors -b ~/.dircolors`
@@ -48,6 +47,7 @@ if [ "$TERM" = "linux" ]; then
   clear # back to default input colours
 fi
 
+bindkey -v
 bindkey "\e[1~" beginning-of-line
 bindkey "\e[7~" beginning-of-line
 bindkey "\e[8~" end-of-line
@@ -57,8 +57,15 @@ bindkey "\e[3~" delete-char
 bindkey "\e[5~" beginning-of-history
 bindkey "\e[6~" end-of-history
 
+bindkey '^R' history-incremental-search-backward
+
 # Automatically start X and log out after when logging into vc/1
 #if [[ -z "$DISPLAY" ]] && [[ $(tty) = /dev/tty1 ]]; then
 #  dbus-launch --exit-with-session ck-launch-session xinit >& .myXLog
 #  logout
 #fi
+
+# completion settings
+fpath=(~/.zsh/completion $fpath)
+autoload -U compinit
+compinit

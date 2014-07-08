@@ -9,7 +9,7 @@ if has("gui_running")
         au GUIEnter * simalt ~x
     else
         set lines=999 columns=999
-        set guifont=Monaco\ 9
+        set guifont=Monaco\ 8
         "set guifont=Inconsolata 10
     endif
 elseif $COLORTERM == "gnome-terminal"
@@ -17,7 +17,6 @@ elseif $COLORTERM == "gnome-terminal"
     set columns=80 lines=100
 elseif $TERM == "screen-256color"
     set t_Co=256
-    set columns=80 lines=100
 endif
 
 " Vundle config
@@ -28,17 +27,17 @@ colorscheme solarized
 
 syntax on
 let mapleader=","
-let g:airline_powerline_fonts=1
+"let g:airline_powerline_fonts=1
 
 " mixed numbering
 set relativenumber
 set number
 "we don't need relative numbers when we're out of focus
-autocmd FocusLost * :set norelativenumber
-autocmd FocusGained * :set relativenumber
+"autocmd FocusLost * :set norelativenumber
+"autocmd FocusGained * :set relativenumber
 " shows absolute numbers on insert mode
-autocmd InsertEnter * :set norelativenumber
-autocmd InsertLeave * :set relativenumber
+"autocmd InsertEnter * :set norelativenumber
+"autocmd InsertLeave * :set relativenumber
 
 "move around panes
 nnoremap <C-H> <C-w>h
@@ -47,18 +46,21 @@ nnoremap <C-K> <C-w>k
 nnoremap <C-L> <C-w>l
 
 " move around buffers
-nnoremap <F5> :buffers<CR>:buffer<Space>
-nnoremap <C-Tab> :b#<CR>
+nnoremap <C-Tab> :buffers<CR>:buffer<Space>
+"nnoremap <C-Tab> :b#<CR>
+
+" quickly get out of i-mode
+inoremap jk <Esc>
 
 " quick save
 nnoremap <C-s> :w<CR>
 inoremap <C-s> <Esc>:w<CR>a
 
 " move around in I-mode
-inoremap <C-h> <Left>
-inoremap <C-j> <Down>
-inoremap <C-k> <Up>
-inoremap <C-l> <Right>
+"inoremap <C-h> <Left>
+"inoremap <C-j> <Down>
+"inoremap <C-k> <Up>
+"inoremap <C-l> <Right>
 
 " % is too far out to reach
 map <BS> %
@@ -77,7 +79,7 @@ set matchtime=0		" don't blink
 set incsearch		" find as you type
 " Highlight search terms
 set hlsearch
-nnoremap <Esc> :nohlsearch<CR>
+nnoremap <Esc><Esc> :nohlsearch<CR>
 
 " Wildmode
 set wildchar=<Tab> wildmenu wildmode=full
@@ -130,6 +132,9 @@ let g:ctrlp_custom_ignore = {
                             \ 'dir' : '\.(hg|git|bzr)$'
                             \ }
 
+" Ag + CtrlSF
+nnoremap <C-O> :CtrlSF<Space>
+
 " Syntastic options
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_loc_list=1
@@ -139,8 +144,12 @@ let g:syntastic_html_checkers=['jshint']
 let g:syntastic_jshint_exec='jshint.cmd'
 let g:syntastic_javascript_jshint_conf='~/.jshintrc'
 
+" Tagbar
+nnoremap <silent> <Leader>b :TagbarToggle<CR>
+nnoremap <Leader>. :CtrlPTag<CR>
+
 " a better encryption algorithm
 set cryptmethod=blowfish
 
 " this is where the coding happens
-cd ~/www
+"cd ~/www
