@@ -19,6 +19,13 @@ elseif $TERM == "screen-256color"
     set t_Co=256
 endif
 
+" Work-around incomplete terminfo databases
+" Particulalry useful when under `screen`, which may or may not be attached to
+" a physical terminal capable of 256color mode
+if match($TERMCAP, 'Co#256:') == 0 || match($TERMCAP, ':Co#256:') > 0
+    set t_Co=256
+endif
+
 " Vundle config
 source ~/.vimrc.bundle
 
@@ -27,17 +34,12 @@ colorscheme solarized
 
 syntax on
 let mapleader=","
+"nnoremap ; :
 "let g:airline_powerline_fonts=1
 
 " mixed numbering
 set relativenumber
 set number
-"we don't need relative numbers when we're out of focus
-"autocmd FocusLost * :set norelativenumber
-"autocmd FocusGained * :set relativenumber
-" shows absolute numbers on insert mode
-"autocmd InsertEnter * :set norelativenumber
-"autocmd InsertLeave * :set relativenumber
 
 "move around panes
 nnoremap <C-H> <C-w>h
@@ -46,7 +48,7 @@ nnoremap <C-K> <C-w>k
 nnoremap <C-L> <C-w>l
 
 " move around buffers
-nnoremap <C-Tab> :buffers<CR>:buffer<Space>
+"nnoremap <C-Tab> :buffers<CR>:buffer<Space>
 "nnoremap <C-Tab> :b#<CR>
 
 " quickly get out of i-mode
@@ -57,13 +59,18 @@ nnoremap <C-s> :w<CR>
 inoremap <C-s> <Esc>:w<CR>a
 
 " move around in I-mode
-"inoremap <C-h> <Left>
-"inoremap <C-j> <Down>
-"inoremap <C-k> <Up>
-"inoremap <C-l> <Right>
+inoremap <C-h> <Left>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
 
-" % is too far out to reach
+" Use Backspace for matching brackets
 map <BS> %
+
+" sometimes I end up using tabs
+nnoremap <C-t> :tabnew<CR>
+nnoremap <C-Tab> :tabNext<CR>
+nnoremap <C-W>w :tabclose<CR>
 
 " Status line
 set laststatus=2
@@ -95,6 +102,7 @@ set history=100		" store more command history
 set undolevels=400	" store more undo history
 set spell		" spellchecking
 set hidden		" buffer switching without saving
+let &colorcolumn="80,".join(range(120,999),",")
 
 " Fix weird behavior on wrapped lines
 map j gj
@@ -121,35 +129,58 @@ autocmd FileType javascript set dictionary+=~/.vim/bundle/vim-node-dict/dict/nod
 " Javascript
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
 
+au BufRead, BufNewFile *.less set filetype=less
+
 " NERDtree
 nnoremap <C-e> :NERDTreeToggle<CR>
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | cd ~/www | NERDTree | endif
 
 " CtrlP options
 "map ; :CtrlPMixed<CR>
 
 let g:ctrlp_custom_ignore = {
                             \ 'file': '\.(o|swp|pyc|wav|mp3|ogg|blend|exe|so)$',
-                            \ 'dir' : '\.(hg|git|bzr)$'
+                            \ 'dir' : '\.(hg|git|bzr|data)$'
                             \ }
+let g:ctrlp_match_window_bottom = 0
+let g:ctrlp_match_window_reversed = 0
 
-" Ag + CtrlSF
-nnoremap <C-O> :CtrlSF<Space>
+" Ag
+map <Leader>f :CtrlSF --ignore data/<Space>
+map <Leader>d :CtrlSFOpen<CR>
 
 " Syntastic options
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_loc_list=1
 
-let g:syntastic_javascript_checkers=['jshint', 'jslint']
+let g:syntastic_javascript_checkers=['jshint']
 let g:syntastic_html_checkers=['jshint']
-let g:syntastic_jshint_exec='jshint.cmd'
-let g:syntastic_javascript_jshint_conf='~/.jshintrc'
+"let g:syntastic_php_checkers = ['phpcs', 'php', 'phpmd']
+"let g:syntastic_javascript_jshint_conf='~/.jshintrc'
 
 " Tagbar
 nnoremap <silent> <Leader>b :TagbarToggle<CR>
-nnoremap <Leader>. :CtrlPTag<CR>
+map <F7> :TagbarToggle<CR>
+"nnoremap <Leader>. :CtrlPTag<CR>
+
+" Easymotion
+map <Leader> <Plug>(easymotion-prefix)
+
+map  / <Plug>(easymotion-sn)
+omap / <Plug>(easymotion-tn)
+map  n <Plug>(easymotion-next)
+map  N <Plug>(easymotion-prev)
+
+map <M-l> <Plug>(easymotion-lineforward)
+map <M-j> <Plug>(easymotion-j)
+map <M-k> <Plug>(easymotion-k)
+map <M-h> <Plug>(easymotion-linebackward)
+
+let g:EasyMotion_startofline = 0 " keep cursor colum when JK motion
+
+" Emmet
+let g:user_emmet_leader_key='<Leader>.'
 
 " a better encryption algorithm
 set cryptmethod=blowfish
-
-" this is where the coding happens
-"cd ~/www
