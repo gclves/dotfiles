@@ -35,7 +35,7 @@ colorscheme solarized
 syntax on
 let mapleader=","
 "nnoremap ; :
-let g:airline_powerline_fonts=1
+"let g:airline_powerline_fonts=1
 
 " mixed numbering
 set relativenumber
@@ -51,7 +51,7 @@ nnoremap <C-L> <C-w>l
 "nnoremap <C-Tab> :buffers<CR>:buffer<Space>
 "nnoremap <C-Tab> :b#<CR>
 
-" quickly get out of i-mode with JK
+" quickly get out of i-mode
 inoremap jk <Esc>
 
 " quick save
@@ -102,7 +102,6 @@ set history=100		" store more command history
 set undolevels=400	" store more undo history
 set spell		" spellchecking
 set hidden		" buffer switching without saving
-let &colorcolumn="80,".join(range(120,999),",")
 
 " Fix weird behavior on wrapped lines
 map j gj
@@ -141,10 +140,10 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | cd ~/www | NERDTree |
 
 let g:ctrlp_custom_ignore = {
                             \ 'file': '\.(o|swp|pyc|wav|mp3|ogg|blend|exe|so)$',
-                            \ 'dir' : '\.(hg|git|bzr|svn|data)$'
+                            \ 'dir' : '\.(hg|git|bzr|data)$'
                             \ }
-"let g:ctrlp_match_window_bottom = 0
-"let g:ctrlp_match_window_reversed = 0
+let g:ctrlp_match_window_bottom = 0
+let g:ctrlp_match_window_reversed = 0
 
 " Ag
 map <Leader>f :CtrlSF --ignore data/<Space>
@@ -159,12 +158,6 @@ let g:syntastic_html_checkers=['jshint']
 "let g:syntastic_php_checkers = ['phpcs', 'php', 'phpmd']
 "let g:syntastic_javascript_jshint_conf='~/.jshintrc'
 
-" Vim Javascript
-let javascript_enable_domhtmlcss = 1
-let b:javascript_fold = 1
-let g:javascript_conceal = 1
-let g:used_javascript_libs = 'underscore,backbone,jquery'
-
 " Tagbar
 nnoremap <silent> <Leader>b :TagbarToggle<CR>
 map <F7> :TagbarToggle<CR>
@@ -173,13 +166,11 @@ map <F7> :TagbarToggle<CR>
 " Easymotion
 map <Leader> <Plug>(easymotion-prefix)
 
-" Dynamic search with easymotion
 map  / <Plug>(easymotion-sn)
 omap / <Plug>(easymotion-tn)
 map  n <Plug>(easymotion-next)
 map  N <Plug>(easymotion-prev)
 
-" Alt+<hjkl> to move around long distances
 map <M-l> <Plug>(easymotion-lineforward)
 map <M-j> <Plug>(easymotion-j)
 map <M-k> <Plug>(easymotion-k)

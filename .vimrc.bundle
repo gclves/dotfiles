@@ -53,11 +53,12 @@ Bundle 'hail2u/vim-css3-syntax'
 Bundle 'othree/html5.vim'
 Bundle 'digitaltoad/vim-jade'
 Bundle 'maksimr/vim-jsbeautify'
+Bundle 'othree/javascript-libraries-syntax.vim'
+
+" PHP
+Bundle 'StanAngeloff/php.vim'
 
 " colors
 Bundle 'altercation/vim-colors-solarized'
-Bundle 'jeetsukumaran/vim-nefertiti'
 Bundle 'tomasr/molokai'
-Bundle 'goatslacker/mango.vim'
-"Bundle 'spf13/vim-colors'
-"Bundle 'flazz/vim-colorschemes'
+Bundle 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
