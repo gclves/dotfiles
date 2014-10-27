@@ -51,12 +51,14 @@ nnoremap <C-L> <C-w>l
 "nnoremap <C-Tab> :buffers<CR>:buffer<Space>
 "nnoremap <C-Tab> :b#<CR>
 
-" quickly get out of i-mode with JK
+" quickly get out of i-mode with jk
 inoremap jk <Esc>
 
 " quick save
 nnoremap <C-s> :w<CR>
 inoremap <C-s> <Esc>:w<CR>a
+" Force save when I forget to sudo
+cnoremap w!! w !sudo tee % >/dev/null
 
 " move around in I-mode
 inoremap <C-h> <Left>
@@ -72,13 +74,17 @@ nnoremap <C-t> :tabnew<CR>
 nnoremap <C-Tab> :tabNext<CR>
 nnoremap <C-W>w :tabclose<CR>
 
+" No backups (file~) please
+set nobackup
+set nowritebackup
+
 " Status line
 set laststatus=2
-set statusline=%<%f\				" filename
-set statusline+=%w%h%m%r			" options
+set statusline=%<%f\				        " filename
+set statusline+=%w%h%m%r			        " options
 set statusline+=%{fugitive#statusline()}	" git
-set statusline+=\ [%{&ff}/%Y]			" filetype
-set statusline+=\ [%{getcwd()}]			" directory
+set statusline+=\ [%{&ff}/%Y]			    " filetype
+set statusline+=\ [%{getcwd()}]			    " directory
 set statusline+=%=%-14.(%l,%c%V%)\ %p%%		" file info
 
 set showmatch		" show matching brackets/parenthesis
@@ -91,17 +97,18 @@ nnoremap <Esc><Esc> :nohlsearch<CR>
 " Wildmode
 set wildchar=<Tab> wildmenu wildmode=full
 
-set cursorline
-set winminheight=0	" windows can be 0-line high
-set ignorecase		" case-insensitive search...
-set smartcase		" ...unless it's uppercase
+set cursorline          " highlight selected line
+set winminheight=0	    " windows can be 0-line high
+set ignorecase		    " case-insensitive search...
+set smartcase		    " ...unless it's uppercase
 set clipboard=unnamed	" use the OS clipboard
 " improve windows/unix compatibility
 set viewoptions=folds,options,cursor,unix,slash
-set history=100		" store more command history
-set undolevels=400	" store more undo history
-set spell		" spellchecking
-set hidden		" buffer switching without saving
+set history=100		    " store more command history
+set undolevels=400	    " store more undo history
+set spell		        " spellchecking
+set hidden		        " buffer switching without saving
+" highlight columns 80 and 120 so I know when to wrap
 let &colorcolumn="80,".join(range(120,999),",")
 
 " Fix weird behavior on wrapped lines
@@ -131,10 +138,13 @@ autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
 
 au BufRead, BufNewFile *.less set filetype=less
 
-" NERDtree
-nnoremap <C-e> :NERDTreeToggle<CR>
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | cd ~/www | NERDTree | endif
+" Native alternative to NERDtree
+let g:netrw_liststyle = 3
+nnoremap <C-e> :Explore<CR>
+
+" nnoremap <C-e> :NERDTreeToggle<CR>
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | cd ~/www | NERDTree | endif
 
 " CtrlP options
 "map ; :CtrlPMixed<CR>
@@ -189,6 +199,9 @@ let g:EasyMotion_startofline = 0 " keep cursor colum when JK motion
 
 " Emmet
 let g:user_emmet_leader_key='<Leader>.'
+
+" Go straight to ~/www if no directory has been specified
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | cd ~/www
 
 " a better encryption algorithm
 set cryptmethod=blowfish
