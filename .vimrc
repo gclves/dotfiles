@@ -136,7 +136,11 @@ autocmd FileType javascript set dictionary+=~/.vim/bundle/vim-node-dict/dict/nod
 " Javascript
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
 
-au BufRead, BufNewFile *.less set filetype=less
+au BufRead,BufNewFile *.less set filetype=less
+au BufRead,BufNewFile *.php set nocursorline | syntax sync minlines=100 | syntax sync maxlines=240 | set synmaxcol=800
+
+set foldmethod=indent
+set foldlevel=8
 
 " Native alternative to NERDtree
 let g:netrw_liststyle = 3
