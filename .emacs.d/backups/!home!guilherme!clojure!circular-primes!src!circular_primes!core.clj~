@@ -1,0 +1,29 @@
+(ns circular-primes.core)
+
+(defn divides? [a b]
+  (= (mod a b) 0))
+
+(defn prime? [n]
+  (= 0 (count (filter #(divides? n #) (range 2 n)))))
+
+(defn rotate [n]
+  (let [[a & b] (str n)]
+    (Integer/parseInt (str (apply str b) a))))
+
+(defn exists? [n v]
+  (or (some #(= n %) v) false))
+
+(defn circ [n v]
+  (if (exists? n v) v (circ (rotate n) (concat v [n]))))
+
+(defn circularize [n]
+  (circ n []))
+
+(defn circular-prime? [n]
+  (every? prime? (circularize n)))
+
+(defn all-circular-primes [n]
+  (filter (circular-prime? (range 2 n))))
+
+(defn count-circular-primes [n]
+  (count (all-circular-primes n)))

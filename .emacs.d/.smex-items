@@ -1,0 +1,20 @@
+
+;; ----- smex-history -----
+(
+ cider-jack-in
+ load-theme
+ package-install
+ rename-file
+ list-packages
+ cd
+ df
+)
+
+;; ----- smex-data -----
+(
+ (package-install . 7)
+ (list-packages . 1)
+ (rename-file . 2)
+ (load-theme . 2)
+ (cider-jack-in . 1)
+)

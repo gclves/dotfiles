@@ -1,0 +1,5 @@
+;; -*- coding: utf-8-unix -*-
+;; Automatically written history of CIDER REPL session
+;; Edit at your own risk
+
+("(range 2 100)" "(filter (circular-prime? (range 2 100)))" "(all-circular-primes 139)" "(circular-prime? 139)" "(circularize 123)" "(count-circular-primes 100)" "count-circular-primes" "(circularize 123)" "(divides? 10 2)" "(count-circular-primes 10)" "divides?" "'(1 2)" "()" "divides?")
