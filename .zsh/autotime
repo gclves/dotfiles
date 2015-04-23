@@ -42,5 +42,6 @@ _auto_time_precmd() {
   _auto_time_start_second=0
 }
 
+autoload -U add-zsh-hook
 add-zsh-hook precmd _auto_time_precmd
 add-zsh-hook preexec _auto_time_preexec

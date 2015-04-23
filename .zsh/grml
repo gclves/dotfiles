@@ -280,6 +280,4 @@ stty erase "^?"
 #vimpm ()      { vim `perldoc -l $1 | sed -e 's/pod$/pm/'` }
 #vimhelp ()    { vim -c "help $1" -c on -c "au! VimEnter *" }
 
-export EDITOR='emacsclient -a "" -t'
-export VISUAL='emacsclient -a ""'
 ## END OF FILE #################################################################

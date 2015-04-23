@@ -4,7 +4,6 @@
 . ~/.zsh/function
 . ~/.zsh/autotime
 . ~/.zsh/function
+. ~/.zsh/prompt.small
 
-~/.zsh/grml
-
-export PATH=$PATH:~/.composer/vendor/bin
+. ~/.zsh/grml

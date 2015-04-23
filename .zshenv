@@ -9,23 +9,16 @@ if tty -s ; then
 fi
 
 # Exports
-#export PATH=/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/Applications:/Users/gig/bin:/usr/local/Cellar/ruby/1.9.1-p378/bin
-export PATH=/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:$HOME/bin
+export PATH=/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:$HOME/bin:$HOME/.composer/vendor/bin
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LOCALE=en_US.UTF-8
 export BROWSER='open -a chromium-browser'
 export OOO_FORCE_DESKTOP='gnome'
-export EDITOR=vim
-export VISUAL=vim
+export EDITOR='emacsclient -a "" -t'
+export VISUAL='emacsclient -a ""'
 export HISTCONTROL=ignoredups
 export IGNOREEOF=3
-export CLICOLOR=1 # Needed in OSX somehow
-#export WMII_ADDRESS=/tmp/ns.gig.:0/wmii
-#export JAVA_HOME=/opt/java
-#export J2SDKDIR=/opt/java
-export RACK_ENV=development
-export RAILS_ENV=development
 
 if [ "$TERM" = "linux" ]; then
   echo -en "\e]P0000000" #black
@@ -58,12 +51,6 @@ bindkey "\e[5~" beginning-of-history
 bindkey "\e[6~" end-of-history
 
 bindkey '^R' history-incremental-search-backward
-
-# Automatically start X and log out after when logging into vc/1
-#if [[ -z "$DISPLAY" ]] && [[ $(tty) = /dev/tty1 ]]; then
-#  dbus-launch --exit-with-session ck-launch-session xinit >& .myXLog
-#  logout
-#fi
 
 # completion settings
 fpath=(~/.zsh/completion $fpath)
