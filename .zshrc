@@ -2,8 +2,6 @@
 
 . ~/.zsh/alias
 . ~/.zsh/function
-. ~/.zsh/autotime
+# . ~/.zsh/autotime
 . ~/.zsh/function
-. ~/.zsh/prompt.small
-
-. ~/.zsh/grml
+. ~/.zsh/prompt

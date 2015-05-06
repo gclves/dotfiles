@@ -12,6 +12,7 @@ alias c='clear'
 alias ll='ls -ahl | more; echo "\e[1;32m --[\e[1;34m Dirs:\e[1;36m `ls -al | egrep \"^drw\" | wc -l` \e[1;32m|\e[1;35m Files: \e[1;31m`ls -al | egrep -v \"^drw\" | grep -v total | wc -l` \e[1;32m]--"'
 alias cdc='cd; clear'
 alias ls='ls -GF'
+alias ccat='pygmentize -g'
 
 # auto open images
 alias -s {jpg,JPG,jpeg,JPEG,png,PNG,gif,GIF}='open -a Preview'
@@ -41,3 +42,14 @@ alias vgaoff='xrandr --output VGA1 --off'
 alias ctl='sudo systemctl'
 alias halt='sudo poweroff'
 alias reboot='sudo reboot'
+
+# Global aliases
+alias -g L='| pygmentize -g | less -r'
+alias -g BG='& exit'
+alias -g C='|wc -l'
+alias -g G='|grep'
+alias -g H='|head'
+alias -g Hl=' --help |& less -r'
+alias -g LL='|& less -r'
+alias -g N='&>/dev/null'
+alias -g V='| vim -'

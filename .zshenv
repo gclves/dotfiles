@@ -52,7 +52,6 @@ bindkey "\e[6~" end-of-history
 
 bindkey '^R' history-incremental-search-backward
 
-# completion settings
-fpath=(~/.zsh/completion $fpath)
+fpath=(~/.zfunctions ~/.zsh/completion $fpath)
 autoload -U compinit
 compinit
