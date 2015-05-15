@@ -25,7 +25,8 @@ bindkey -k k2 next
 bindkey "^[Od" prev
 bindkey "^[Oc" next
 
-caption always "%{= kb}[ %{kG}$USER%{kW} :: %{kG}%H %{b}][ %=%{kW}%?%-Lw%?%{b}(%{W}%n*%f %t%?(%u)%?%{b})%{w}%?%+Lw%?%= %{b}][ %{G}%Y-%m-%d %{W}%c%{b} ]"
+backtick 1 10 60 batstatus
+caption always "%{= kb}[ %{kG}$USER%{kW} :: %{kG}%H %{b}][ %=%{kW}%?%-Lw%?%{b}(%{W}%n*%f %t%?(%u)%?%{b})%{w}%?%+Lw%?%= %{b}][ %{W} %1` %{G}%Y-%m-%d %{W}%c %{b} ]"
 sorendition +b kG
 
 select 0
