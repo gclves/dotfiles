@@ -1,154 +1,123 @@
-;;;;
-;; Packages
-;;;;
-
-;; Define package repositories
-(require 'package)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives
-             '("tromey" . "http://tromey.com/elpa/") t)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
-
+;; packages
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
-
-
-;; Load and activate emacs packages. Do this first so that the
-;; packages are loaded before you start trying to modify them.
-;; This also sets the load path.
+                        ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")))
 (package-initialize)
 
-;; Download the ELPA archive description if needed.
-;; This informs Emacs about the latest versions of all packages, and
-;; makes them available for download.
-(when (not package-archive-contents)
-  (package-refresh-contents))
+(defun require-package (package)
+  (setq-default highlight-tabs t)
+  "Install given PACKAGE."
+  (unless (package-installed-p package)
+    (unless (assoc package package-archive-contents)
+      (package-refresh-contents))
+    (package-install package)))
 
-;; The packages you want installed. You can also install these
-;; manually with M-x package-install
-;; Add in your own as you wish:
-(defvar my-packages
-  '(;; makes handling lisp expressions much, much easier
-    ;; Cheatsheet: http://www.emacswiki.org/emacs/PareditCheatsheet
-    paredit
+;; org-mode
+(require 'org)
+(setq org-todo-keywords
+  '((sequence "TODO" "DOING" "WAITING" "DONE")))
+(add-hook 'org-mode-hook
+	  (lambda () (define-key global-map (kbd "C-c a") 'org-agenda)))
+(require 'htmlize)
+(setq org-src-fontify-natively t)
+;; org exports
+(setq org-html-doctype-alist "html5")
+(setq org-export-html-style
+      "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />")
 
-    ;; key bindings and code colorization for Clojure
-    ;; https://github.com/clojure-emacs/clojure-mode
-    clojure-mode
-
-    ;; extra syntax highlighting for clojure
-    clojure-mode-extra-font-locking
-
-    ;; integration with a Clojure REPL
-    ;; https://github.com/clojure-emacs/cider
-    cider
-
-    ;; allow ido usage in as many contexts as possible. see
-    ;; customizations/navigation.el line 23 for a description
-    ;; of ido
-    ido-ubiquitous
-
-    ;; Enhances M-x to allow easier execution of commands. Provides
-    ;; a filterable list of possible commands in the minibuffer
-    ;; http://www.emacswiki.org/emacs/Smex
-    smex
-
-    ;; project navigation
-    projectile
-
-    ;; colorful parenthesis matching
-    rainbow-delimiters
-
-    ;; edit html tags like sexps
-    tagedit
-
-    ;; git integration
-    magit
-
-    ;; vim-like bindings
-    evil
-    ))
-
+;; Evil
 (require 'evil)
-;; On OS X, an Emacs instance started from the graphical user
-;; interface will have a different environment than a shell in a
-;; terminal window, because OS X does not run a shell during the
-;; login. Obviously this will lead to unexpected results when
-;; calling external utilities like make from Emacs.
-;; This library works around this problem by copying important
-;; environment variables from the user's shell.
-;; https://github.com/purcell/exec-path-from-shell
-(if (eq system-type 'darwin)
-    (add-to-list 'my-packages 'exec-path-from-shell))
+(evil-mode)
+; Move around
+(define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+(define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+(define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+(define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
+(define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file)
 
-(dolist (p my-packages)
-  (when (not (package-installed-p p))
-    (package-install p)))
+(require 'key-chord)
+(setq key-chord-two-keys-delay 0.5)
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-mode 1)
 
+;; view settings
+(setq inhibit-splash-screen t)
+(load-theme 'solarized-dark t)
+(set-face-attribute 'default nil
+		    :family "Monaco"
+		    :height 80
+		    :weight 'normal
+		    :width 'normal)
 
-;; Place downloaded elisp files in ~/.emacs.d/vendor. You'll then be able
-;; to load them.
-;;
-;; For example, if you download yaml-mode.el to ~/.emacs.d/vendor,
-;; then you can add the following code to this file:
-;;
-;; (require 'yaml-mode)
-;; (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-;; 
-;; Adding this code will make Emacs enter yaml mode whenever you open
-;; a .yml file
-(add-to-list 'load-path "~/.emacs.d/vendor")
+(linum-mode)
+(when (window-system)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (menu-bar-mode -1))
 
+(setq redisplay-dont-pause t
+      scroll-margin 1
+      scroll-step 1
+      scroll-conservatively 10000
+      scroll-preserve-screen-position 1)
 
-;;;;
-;; Customization
-;;;;
+(require 'iso-transl)
+(transient-mark-mode 1)
 
-;; Add a directory to our load path so that when you `load` things
-;; below, Emacs knows where to look for the corresponding file.
-(add-to-list 'load-path "~/.emacs.d/customizations")
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'forward)
 
-;; Sets up exec-path-from-shell so that Emacs will use the correct
-;; environment variables
-(load "shell-integration.el")
+;; Web development
+(require 'php-mode)
+(require 'web-mode)
 
-;; These customizations make it easier for you to navigate files,
-;; switch buffers, and choose options from the minibuffer.
-(load "navigation.el")
+;; Markdown
+(autoload 'markdown-mode "markdown-mode"
+  "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
-;; These customizations change the way emacs looks and disable/enable
-;; some user interface elements
-(load "ui.el")
+(setq-default indent-tabs-mode nil)
+(setq tab-width 4)
+(defvaralias 'c-basic-offset 'tab-width)
 
-;; These customizations make editing a bit nicer.
-(load "editing.el")
+;; SQL mode
+(setq sql-postgres-login-params
+      '((user :default "guilherme")
+	(database :default "cap")
+	(server :default "localhost")
+	(port :default 5433)))
+(add-hook 'sql-interactive-mode-hook
+	  (lambda ()
+	    (sqlup-mode)
+	    (toggle-truncate-lines t)))
+(add-hook 'sql-mode-hook 'sqlup-mode)
 
-;; Hard-to-categorize customizations
-(load "misc.el")
+;; Helm
+(helm-mode +1)
+(setq helm-quick-update t)
+(setq helm-M-x-fuzzy-match t)
+(setq helm-buffers-fuzzy-matching t)
+(helm-autoresize-mode 1)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-x C-b") 'helm-mini)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
 
-;; For editing lisps
-(load "elisp-editing.el")
+(projectile-global-mode)
+(setq projectile-enable-caching t)
+(global-set-key (kbd "C-x f") 'fiplr-find-file)
 
-;; Evil Mode
-(load "evil-mode.el")
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
 
-;; Language-specific
-(load "setup-clojure.el")
-(load "setup-js.el")
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(coffee-tab-width 2)
- '(custom-safe-themes (quote ("9e54a6ac0051987b4296e9276eecc5dfb67fdcd620191ee553f40a9b6d943e78" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" default))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; A saner backup policy
+(setq
+ backup-by-copying t
+ backup-directory-alist
+ '(("." . "~/.emacs.d/backup"))
+ delete-old-versions t
+ kept-new-versions 6
+ kept-old-versions 2
+ version-control t)
