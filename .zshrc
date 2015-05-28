@@ -4,4 +4,4 @@
 . ~/.zsh/function
 # . ~/.zsh/autotime
 . ~/.zsh/function
-. ~/.zsh/prompt
+PURE_PROMPT_SYMBOL="➜" . ~/.zsh/prompt

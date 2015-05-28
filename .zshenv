@@ -13,12 +13,15 @@ export PATH=/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:$HOME/bin:$HOME/.compos
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LOCALE=en_US.UTF-8
-export BROWSER='open -a chromium-browser'
+export BROWSER='firefox'
 export OOO_FORCE_DESKTOP='gnome'
 export EDITOR='emacsclient -a "" -t'
 export VISUAL='emacsclient -a ""'
 export HISTCONTROL=ignoredups
 export IGNOREEOF=3
+export EMAIL="guilhermeaugustosg@gmail.com"
+export NAME="Guilherme Gonçalves"
+export SMTPSERVER="smtp.gmail.com"
 
 if [ "$TERM" = "linux" ]; then
   echo -en "\e]P0000000" #black
