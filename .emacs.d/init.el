@@ -1,9 +1,42 @@
 ;; packages
+(require 'package)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")
-                        ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")))
+                         ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")))
 (package-initialize)
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+(defvar my-packages
+  '(
+    paredit
+    clojure-mode
+    clojure-mode-extra-font-locking
+    cider
+    rainbow-delimiters
+    haskell-mode
+    magit
+    evil
+    htmlize
+    org
+    web-mode
+    key-chord
+    fiplr
+    projectile
+    helm
+    helm-projectile
+    markdown-mode
+    powerline
+    solarized-theme
+    leuven-theme
+    sqlup-mode
+    sql-indent
+    ))
+ 
+(dolist (p my-packages)
+  (when (not (package-installed-p p))
+    (package-install p)))
 
 (defun require-package (package)
   (setq-default highlight-tabs t)
@@ -13,6 +46,8 @@
       (package-refresh-contents))
     (package-install package)))
 
+(setq magit-auto-revert-mode nil)
+(setq magit-last-seen-setup-instructions "1.4.0")
 ;; org-mode
 (require 'org)
 (setq org-todo-keywords
@@ -29,12 +64,25 @@
 ;; Evil
 (require 'evil)
 (evil-mode)
+(define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
 ; Move around
 (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
 (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
 (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
 (define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file)
+;; Remap org-mode meta keys for convenience
+(mapcar (lambda (state)
+          (evil-declare-key state org-mode-map
+            (kbd "M-l") 'org-metaright
+            (kbd "M-h") 'org-metaleft
+            (kbd "M-k") 'org-metaup
+            (kbd "M-j") 'org-metadown
+            (kbd "M-L") 'org-shiftmetaright
+            (kbd "M-H") 'org-shiftmetaleft
+            (kbd "M-K") 'org-shiftmetaup
+            (kbd "M-J") 'org-shiftmetadown))
+        '(normal insert))
 
 (require 'key-chord)
 (setq key-chord-two-keys-delay 0.5)
@@ -43,24 +91,30 @@
 
 ;; view settings
 (setq inhibit-splash-screen t)
-(load-theme 'solarized-dark t)
-(set-face-attribute 'default nil
-		    :family "Monaco"
-		    :height 80
-		    :weight 'normal
-		    :width 'normal)
 
-(linum-mode)
-(when (window-system)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (menu-bar-mode -1))
+(if (window-system)
+    (progn
+      (load-theme 'leuven t)
+      (set-face-attribute 'default nil
+                          :family "Monaco"
+                          :height 80
+                          :weight 'normal
+                          :width 'normal)
+      (tool-bar-mode -1)
+      (scroll-bar-mode -1)
+      (menu-bar-mode -1))
+  (load-theme 'solarized-light t))
 
+(visual-line-mode)
 (setq redisplay-dont-pause t
       scroll-margin 1
       scroll-step 1
       scroll-conservatively 10000
       scroll-preserve-screen-position 1)
+
+(require 'powerline)
+(display-battery-mode)
+(powerline-default-theme)
 
 (require 'iso-transl)
 (transient-mark-mode 1)
@@ -69,9 +123,10 @@
 (setq uniquify-buffer-name-style 'forward)
 
 ;; Web development
-(require 'php-mode)
 (require 'web-mode)
 
+(require 'haskell-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 ;; Markdown
 (autoload 'markdown-mode "markdown-mode"
   "Major mode for editing Markdown files" t)
@@ -82,6 +137,7 @@
 (setq-default indent-tabs-mode nil)
 (setq tab-width 4)
 (defvaralias 'c-basic-offset 'tab-width)
+(define-key global-map (kbd "RET") 'newline-and-indent)
 
 ;; SQL mode
 (setq sql-postgres-login-params
@@ -108,6 +164,13 @@
 (projectile-global-mode)
 (setq projectile-enable-caching t)
 (global-set-key (kbd "C-x f") 'fiplr-find-file)
+
+;; C-; to comment one line
+(defun toggle-comment-on-line ()
+  "Comment or uncomment current line"
+  (interactive)
+  (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
+(global-set-key (kbd "C-;") 'toggle-comment-on-line)
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
