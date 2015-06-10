@@ -60,17 +60,27 @@
 (setq org-html-doctype-alist "html5")
 (setq org-export-html-style
       "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />")
+;; capture mode
+(setq org-default-notes-file "~/org/everything.org")
+(define-key global-map (kbd "C-c c") 'org-capture)
+
+;; GO TO in web browser
+(define-key global-map (kbd "C-M-g") 'eww)
 
 ;; Evil
 (require 'evil)
-(evil-mode)
+;; Enable evil, but only for prog or text buffers
+;; (add-hook 'prog-mode-hook 'evil-local-mode)
+(mapcar (lambda (hook)
+          (add-hook hook 'evil-local-mode))
+        '(prog-mode-hook text-mode-hook))
+
 (define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
 ; Move around
 (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
 (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
 (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-(define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file)
 ;; Remap org-mode meta keys for convenience
 (mapcar (lambda (state)
           (evil-declare-key state org-mode-map
@@ -83,6 +93,7 @@
             (kbd "M-K") 'org-shiftmetaup
             (kbd "M-J") 'org-shiftmetadown))
         '(normal insert))
+(define-key evil-normal-state-map (kbd ":") 'helm-M-x)
 
 (require 'key-chord)
 (setq key-chord-two-keys-delay 0.5)
