@@ -116,7 +116,7 @@
       (menu-bar-mode -1))
   (load-theme 'solarized-light t))
 
-(visual-line-mode)
+(add-hook 'text-mode-hook 'visual-line-mode)
 (setq redisplay-dont-pause t
       scroll-margin 1
       scroll-step 1
@@ -126,6 +126,9 @@
 (require 'powerline)
 (display-battery-mode)
 (powerline-default-theme)
+
+;; DocView
+(setq doc-view-continuous t)
 
 (require 'iso-transl)
 (transient-mark-mode 1)
