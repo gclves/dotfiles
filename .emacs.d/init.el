@@ -105,10 +105,10 @@
 
 (if (window-system)
     (progn
-      (load-theme 'leuven t)
+      (load-theme 'solarized-dark t)
       (set-face-attribute 'default nil
-                          :family "Monaco"
-                          :height 80
+                          :family "Inconsolata"
+                          :height 90
                           :weight 'normal
                           :width 'normal)
       (tool-bar-mode -1)
@@ -185,6 +185,9 @@
   (interactive)
   (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
 (global-set-key (kbd "C-;") 'toggle-comment-on-line)
+
+;; Use bash as my shell
+(setq explicit-shell-file-name "/bin/bash")
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
