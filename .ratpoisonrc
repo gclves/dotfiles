@@ -1,7 +1,13 @@
+# For the benefit of emacs users: -*- shell-script -*-
 exec xrdb -merge ~/.Xresources
 exec xsetroot -cursor_name left_ptr
+exec wmname LG3D
 
 escape C-z
+
+set border 0
+
+bind a exec ratpoison -d :0.0 -c "echo `date +'%r - %A %n    %D - %B'`  `cal | tail -n +2 | sed -e 's/^Su/\n\n Su/' -e 's/.*/ & /' -e \"s/\ $(date +%e)\ /\/\"`"
 
 # virtual workspaces
 gnewbg one
@@ -17,4 +23,12 @@ definekey top M-k prev
 # apps
 bind c exec urxvt
 bind f exec firefox
-bind e exec emacs
+bind e exec emacsclient -a "" -nc
+
+# xfce4-panel on top
+# unmanage xfce4-panel
+# set padding 0 20 0 0
+
+# spawn some apps
+exec urxvt
+exec emacsclient -nc -a ""

@@ -32,6 +32,7 @@
     leuven-theme
     sqlup-mode
     sql-indent
+    jabber
     ))
  
 (dolist (p my-packages)
@@ -50,10 +51,10 @@
 (setq magit-last-seen-setup-instructions "1.4.0")
 ;; org-mode
 (require 'org)
+(setq org-agenda-include-diary t)
 (setq org-todo-keywords
   '((sequence "TODO" "DOING" "WAITING" "DONE")))
-(add-hook 'org-mode-hook
-	  (lambda () (define-key global-map (kbd "C-c a") 'org-agenda)))
+(define-key global-map (kbd "C-c a") 'org-agenda)
 (require 'htmlize)
 (setq org-src-fontify-natively t)
 ;; org exports
@@ -63,6 +64,11 @@
 ;; capture mode
 (setq org-default-notes-file "~/org/everything.org")
 (define-key global-map (kbd "C-c c") 'org-capture)
+;; org-caldav (for Google Calendar sync)
+(setq org-caldav-url "https://www.google.com/calendar/dav")
+(setq org-caldav-calendar-id "guilhermeaugustosg@gmail.com")
+(setq org-caldav-inbox "~/org/inbox.org")
+(setq org-icalendar-timezone "America/Sao_Paulo")
 
 ;; GO TO in web browser
 (define-key global-map (kbd "C-M-g") 'eww)
@@ -103,19 +109,15 @@
 ;; view settings
 (setq inhibit-splash-screen t)
 
-(if (window-system)
-    (progn
-      (load-theme 'solarized-dark t)
-      (set-face-attribute 'default nil
-                          :family "Inconsolata"
-                          :height 90
-                          :weight 'normal
-                          :width 'normal)
-      (tool-bar-mode -1)
-      (scroll-bar-mode -1)
-      (menu-bar-mode -1))
-  (load-theme 'solarized-light t))
-
+(set-face-attribute 'default nil
+                    :family "Inconsolata"
+                    :height 90
+                    :weight 'normal
+                    :width 'normal)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(menu-bar-mode -1)
+(load-theme 'leuven t)
 (add-hook 'text-mode-hook 'visual-line-mode)
 (setq redisplay-dont-pause t
       scroll-margin 1
@@ -186,11 +188,14 @@
   (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
 (global-set-key (kbd "C-;") 'toggle-comment-on-line)
 
+;; SHELL MODE
 ;; Use bash as my shell
+(global-set-key [f1] 'shell)
 (setq explicit-shell-file-name "/bin/bash")
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
+(load "~/.emacs.d/jabber.el")
 
 ;; A saner backup policy
 (setq
