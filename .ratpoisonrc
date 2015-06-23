@@ -13,12 +13,12 @@ bind a exec ratpoison -d :0.0 -c "echo `date +'%r - %A %n    %D - %B'`  `cal | t
 gnewbg one
 gnewbg two
 
-definekey top M-l exec ratpoison -c "select -" -c "gprev" -c "next"
-definekey top M-h exec ratpoison -c "select -" -c "gnext" -c "next"
+definekey top s-l exec ratpoison -c "select -" -c "gprev" -c "next"
+definekey top s-h exec ratpoison -c "select -" -c "gnext" -c "next"
 
 # switch between windows
-definekey top M-j next
-definekey top M-k prev
+definekey top s-j next
+definekey top s-k prev
 
 # apps
 bind c exec urxvt

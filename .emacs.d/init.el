@@ -32,6 +32,7 @@
     leuven-theme
     sqlup-mode
     sql-indent
+    hackernews
     jabber
     ))
  
@@ -55,12 +56,26 @@
 (setq org-todo-keywords
   '((sequence "TODO" "DOING" "WAITING" "DONE")))
 (define-key global-map (kbd "C-c a") 'org-agenda)
+ (defun org-toggle-todo-and-fold ()
+  (interactive)
+  (save-excursion
+    (org-back-to-heading t)
+    (cond ((looking-at "\*+ TODO")
+           (org-todo "DONE")
+           (hide-subtree))
+          (t (org-todo "TODO")
+           (hide-subtree)))))
+(define-key org-mode-map (kbd "C-SPC") 'org-toggle-todo-and-fold)
+(define-key org-mode-map (kbd "C-c s") 'org-sort)
+
 (require 'htmlize)
 (setq org-src-fontify-natively t)
 ;; org exports
 (setq org-html-doctype-alist "html5")
 (setq org-export-html-style
       "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />")
+(setq org-html-head
+      "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/stylesheet.css\" />")
 ;; capture mode
 (setq org-default-notes-file "~/org/everything.org")
 (define-key global-map (kbd "C-c c") 'org-capture)
@@ -99,7 +114,6 @@
             (kbd "M-K") 'org-shiftmetaup
             (kbd "M-J") 'org-shiftmetadown))
         '(normal insert))
-(define-key evil-normal-state-map (kbd ":") 'helm-M-x)
 
 (require 'key-chord)
 (setq key-chord-two-keys-delay 0.5)
@@ -126,7 +140,6 @@
       scroll-preserve-screen-position 1)
 
 (require 'powerline)
-(display-battery-mode)
 (powerline-default-theme)
 
 ;; DocView
