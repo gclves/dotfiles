@@ -30,11 +30,13 @@
     powerline
     solarized-theme
     leuven-theme
-    sqlup-mode
     sql-indent
+    sqlup-mode
+    ;; my own time sinks
     jabber
+    hackernews
     ))
- 
+
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)))
@@ -64,11 +66,10 @@
 ;; capture mode
 (setq org-default-notes-file "~/org/everything.org")
 (define-key global-map (kbd "C-c c") 'org-capture)
-;; org-caldav (for Google Calendar sync)
-(setq org-caldav-url "https://www.google.com/calendar/dav")
-(setq org-caldav-calendar-id "guilhermeaugustosg@gmail.com")
-(setq org-caldav-inbox "~/org/inbox.org")
-(setq org-icalendar-timezone "America/Sao_Paulo")
+;; org-redmine
+(require 'org-redmine)
+(setq org-redmine-uri "http://redmine.runweb.com.br")
+(setq org-redmine-auth-api-key "7c21e9193a428945be837cd589a5b8d617a53955")
 
 ;; GO TO in web browser
 (define-key global-map (kbd "C-M-g") 'eww)
@@ -109,15 +110,11 @@
 ;; view settings
 (setq inhibit-splash-screen t)
 
-(set-face-attribute 'default nil
-                    :family "Inconsolata"
-                    :height 90
-                    :weight 'normal
-                    :width 'normal)
+(set-default-font "SourceCodePro-9")
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
-(load-theme 'leuven t)
+(load-theme 'solarized-dark t)
 (add-hook 'text-mode-hook 'visual-line-mode)
 (setq redisplay-dont-pause t
       scroll-margin 1
@@ -126,7 +123,6 @@
       scroll-preserve-screen-position 1)
 
 (require 'powerline)
-(display-battery-mode)
 (powerline-default-theme)
 
 ;; DocView
@@ -190,9 +186,32 @@
 
 ;; SHELL MODE
 ;; Use bash as my shell
-(global-set-key [f1] 'shell)
 (setq explicit-shell-file-name "/bin/bash")
+(defun eshell-here ()
+  "Opens up a new shell in the directory associated with the
+current buffer's file. The eshell is renamed to match that
+directory to make multiple eshell windows easier."
+  (interactive)
+  (let* ((parent (if (buffer-file-name)
+                     (file-name-directory (buffer-file-name))
+                   default-directory))
+         (height (/ (window-total-height) 3))
+         (name   (car (last (split-string parent "/" t)))))
+    (split-window-vertically (- height))
+    (other-window 1)
+    (eshell "new")
+    (rename-buffer (concat "*eshell: " name "*"))
 
+    (insert (concat "ls"))
+    (eshell-send-input)))
+(defun eshell/x ()
+  (insert "exit")
+  (eshell-send-input)
+  (delete-window))
+(global-set-key (kbd "C-!") 'eshell-here)
+(global-set-key [f1] 'eshell)
+
+(setq browse-url-text-browser "w3m")
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 (load "~/.emacs.d/jabber.el")
