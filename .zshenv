@@ -9,11 +9,11 @@ if tty -s ; then
 fi
 
 # Exports
-export PATH=/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:$HOME/bin:$HOME/.composer/vendor/bin
+export PATH=/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:$HOME/bin:$HOME/.composer/vendor/bin:/opt/anaconda/bin
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LOCALE=en_US.UTF-8
-export BROWSER='firefox'
+export BROWSER='tabbed surf -e'
 export OOO_FORCE_DESKTOP='gnome'
 export EDITOR='emacsclient -a "" -t'
 export VISUAL='emacsclient -a ""'
@@ -43,7 +43,7 @@ if [ "$TERM" = "linux" ]; then
   clear # back to default input colours
 fi
 
-bindkey -v
+bindkey -e
 bindkey "\e[1~" beginning-of-line
 bindkey "\e[7~" beginning-of-line
 bindkey "\e[8~" end-of-line
@@ -58,3 +58,4 @@ bindkey '^R' history-incremental-search-backward
 fpath=(~/.zfunctions ~/.zsh/completion $fpath)
 autoload -U compinit
 compinit
+

@@ -53,3 +53,6 @@ alias -g Hl=' --help |& less -r'
 alias -g LL='|& less -r'
 alias -g N='&>/dev/null'
 alias -g V='| vim -'
+
+TF_ALIAS=fuck alias fuck='eval $(thefuck $(fc -ln -1 | tail -n 1)); fc -R'
+
