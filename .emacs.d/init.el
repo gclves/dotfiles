@@ -243,6 +243,12 @@
   (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
 (global-set-key (kbd "C-;") 'toggle-comment-on-line)
 
+(add-hook 'window-setup-hook
+          (lambda ()
+            (split-window-right)
+            (other-window)
+            (eshell)))
+
 ;; SHELL MODE
 ;; Use bash as my shell
 (setq explicit-shell-file-name "/bin/bash")
