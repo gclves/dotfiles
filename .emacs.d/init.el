@@ -107,7 +107,8 @@
 ;; Enable evil, but only for prog or text buffers
 ;; (add-hook 'prog-mode-hook 'evil-local-mode)
 (mapcar (lambda (hook)
-          (add-hook hook 'evil-local-mode))
+          (add-hook hook 'evil-local-mode)
+          (add-hook hook 'linum-mode))
         '(prog-mode-hook text-mode-hook))
 
 (define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
