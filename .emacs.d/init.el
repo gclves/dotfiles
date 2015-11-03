@@ -3,7 +3,7 @@
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")
                          ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+                         ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
 (when (not package-archive-contents)
   (package-refresh-contents))
@@ -33,6 +33,7 @@
     leuven-theme
     sql-indent
     sqlup-mode
+    darkroom
     slime
     emmet-mode
     load-theme-buffer-local
@@ -143,8 +144,11 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
-(load-theme 'solarized-light t)
-(add-hook 'text-mode-hook 'visual-line-mode)
+(load-theme 'zenburn t)
+(add-hook 'text-mode-hook
+          (lambda ()
+            (darkroom-tentative-mode)
+            (visual-line-mode)))
 (setq redisplay-dont-pause t
       scroll-margin 1
       scroll-step 1
@@ -185,6 +189,7 @@
 (setq tab-width 4)
 (defvaralias 'c-basic-offset 'tab-width)
 (define-key global-map (kbd "RET") 'newline-and-indent)
+(global-hl-line-mode)
 
 ;; SQL mode
 (setq sql-postgres-login-params
@@ -193,9 +198,9 @@
 	(server :default "localhost")
 	(port :default 5433)))
 (add-hook 'sql-interactive-mode-hook
-	  (lambda ()
-	    (sqlup-mode)
-	    (toggle-truncate-lines t)))
+          (lambda ()
+            (sqlup-mode)
+            (toggle-truncate-lines t)))
 (add-hook 'sql-mode-hook 'sqlup-mode)
 
 (electric-pair-mode 1)
