@@ -113,11 +113,22 @@
         '(prog-mode-hook text-mode-hook))
 
 (define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
+(define-key evil-insert-state-map (kbd "C-k") 'kill-line)
+(define-key evil-insert-state-map (kbd "C-d") 'delete-char)
+(define-key evil-insert-state-map (kbd "C-n") 'next-line)
+(define-key evil-insert-state-map (kbd "C-p") 'previous-line)
 ; Move around
 (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
 (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
 (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
+
+(defun back-to-indentation-or-beginning ()
+  (interactive)
+  (if (= (point) (progn (back-to-indentation) (point)))
+      (beginning-of-line)))
+(global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
+
 ;; Remap org-mode meta keys for convenience
 (mapcar (lambda (state)
           (evil-declare-key state org-mode-map
@@ -171,6 +182,8 @@
 (require 'web-mode)
 (require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(setq js2-global-externs '("$" "_" "d3" "angular"))
+
 (add-hook 'sgml-mode-hook 'emmet-mode)
 (add-hook 'css-mode-hook 'emmet-mode)
 (add-hook 'handlebars-mode-hook 'emmet-mode)
@@ -192,11 +205,6 @@
 (global-hl-line-mode)
 
 ;; SQL mode
-(setq sql-postgres-login-params
-      '((user :default "guilherme")
-	(database :default "cap")
-	(server :default "localhost")
-	(port :default 5433)))
 (add-hook 'sql-interactive-mode-hook
           (lambda ()
             (sqlup-mode)
