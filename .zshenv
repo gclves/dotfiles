@@ -9,11 +9,11 @@ if tty -s ; then
 fi
 
 # Exports
-export PATH=/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:$HOME/bin:$HOME/.composer/vendor/bin:/opt/anaconda/bin
+export PATH=/bin:/sbin:/usr/local/bin:/usr/bin:/usr/sbin:$HOME/bin/opt/anaconda/bin
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LOCALE=en_US.UTF-8
-export BROWSER='tabbed surf -e'
+export BROWSER='chromium'
 export OOO_FORCE_DESKTOP='gnome'
 export EDITOR='emacsclient -a "" -t'
 export VISUAL='emacsclient -a ""'
