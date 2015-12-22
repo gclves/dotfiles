@@ -14,6 +14,7 @@
     clojure-mode-extra-font-locking
     cider
     js2-mode
+    js-comint
     rainbow-delimiters
     rainbow-mode
     haskell-mode
@@ -33,7 +34,6 @@
     leuven-theme
     sql-indent
     sqlup-mode
-    darkroom
     slime
     emmet-mode
     load-theme-buffer-local
@@ -103,6 +103,13 @@
 ;; GO TO in web browser
 (define-key global-map (kbd "C-M-g") 'eww)
 
+(defun back-to-indentation-or-beginning ()
+  "Move point to beginning of line, or to first non-space character"
+  (interactive)
+  (if (= (point) (progn (back-to-indentation) (point)))
+      (beginning-of-line)))
+(global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
+
 ;; Evil
 (require 'evil)
 ;; Enable evil, but only for prog or text buffers
@@ -122,12 +129,6 @@
 (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
 (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
 (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-
-(defun back-to-indentation-or-beginning ()
-  (interactive)
-  (if (= (point) (progn (back-to-indentation) (point)))
-      (beginning-of-line)))
-(global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
 
 ;; Remap org-mode meta keys for convenience
 (mapcar (lambda (state)
@@ -149,16 +150,13 @@
 
 ;; view settings
 (setq inhibit-splash-screen t)
-(linum-mode)
 
-(set-default-font "SourceCodePro-9")
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
-(load-theme 'zenburn t)
+(load-theme 'solarized-light t)
 (add-hook 'text-mode-hook
           (lambda ()
-            (darkroom-tentative-mode)
             (visual-line-mode)))
 (setq redisplay-dont-pause t
       scroll-margin 1
@@ -166,8 +164,12 @@
       scroll-conservatively 10000
       scroll-preserve-screen-position 1)
 
+(require 'whitespace)
+(setq whitespace-style '(face empty tabs lines-tail trailing))
+(global-whitespace-mode t)
+
 (require 'powerline)
-(powerline-default-theme)
+(powerline-center-theme)
 
 ;; DocView
 (setq doc-view-continuous t)
@@ -182,11 +184,30 @@
 (require 'web-mode)
 (require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . js2-mode))
 (setq js2-global-externs '("$" "_" "d3" "angular"))
 
-(add-hook 'sgml-mode-hook 'emmet-mode)
-(add-hook 'css-mode-hook 'emmet-mode)
-(add-hook 'handlebars-mode-hook 'emmet-mode)
+;; Node REPL
+(setq inferior-js-program-command "/usr/bin/node")
+(setenv "NODE_NO_READLINE" "1")
+
+(mapcar (lambda (pair)
+          (define-key js2-mode-map (kbd (car pair)) (cdr pair)))
+        '(("C-x C-e" . js-send-last-sexp)
+          ("C-c C-c" . js-send-last-sexp-and-go)
+          ("C-c b" . js-send-buffer)
+          ("C-c C-b" . js-send-buffer-and-go)
+          ("C-c l" . js-load-file-and-go)))
+
+(defun my-web-mode-hook ()
+  (linum-mode)
+  (emmet-mode)
+  (evil-local-mode))
+
+(add-hook 'html-mode-hook 'my-web-mode-hook)
+(add-hook 'sgml-mode-hook 'my-web-mode-hook)
+(add-hook 'css-mode-hook 'my-web-mode-hook)
+(add-hook 'handlebars-mode-hook 'my-web-mode-hook)
 (setq emmet-move-cursor-between-quotes t)
 
 (require 'haskell-mode)
@@ -257,12 +278,6 @@
   (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
 (global-set-key (kbd "C-;") 'toggle-comment-on-line)
 
-(add-hook 'window-setup-hook
-          (lambda ()
-            (split-window-right)
-            (other-window)
-            (eshell)))
-
 ;; SHELL MODE
 ;; Use bash as my shell
 (setq explicit-shell-file-name "/bin/bash")
@@ -294,6 +309,29 @@ directory to make multiple eshell windows easier."
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 (load "~/.emacs.d/jabber.el")
+
+;; Ugly, but necessary: filter ANSI escape sequences for a nicer npm experience
+(defvar my-ansi-escape-re
+  (rx (or ?\233 (and ?\e ?\[))
+      (zero-or-more (char (?0 . ?\?)))
+      (zero-or-more (char ?\s ?- ?\/))
+      (char (?@ . ?~))))
+
+(defun my-nuke-ansi-escapes (beg end)
+  (save-excursion
+    (goto-char beg)
+    (while (re-search-forward my-ansi-escape-re end t)
+      (replace-match ""))))
+
+(defun my-eshell-nuke-ansi-escapes ()
+  (my-nuke-ansi-escapes eshell-last-output-start eshell-last-output-end))
+
+(add-hook 'eshell-output-filter-functions 'my-eshell-nuke-ansi-escapes t)
+
+;; Mail
+(require 'gnus)
+(setq mm-verify-option 'always)
+
 
 ;; A saner backup policy
 (setq
