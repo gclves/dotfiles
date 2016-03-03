@@ -37,7 +37,6 @@
     slime
     emmet-mode
     load-theme-buffer-local
-    jabber
     hackernews))
 
 (dolist (p my-packages)
@@ -260,8 +259,8 @@
 (define-key lisp-mode-map (kbd "C-S-r") 'slime)
 
 ;; SLIME stuff
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
-(setq inferior-lisp-program "sbcl –dynamic-space-size 2560")
+; (load (expand-file-name "~/quicklisp/slime-helper.el"))
+; (setq inferior-lisp-program "sbcl –dynamic-space-size 2560")
 
 ;; cc-mode
 (setq-default c-default-style "k&r"
@@ -308,7 +307,6 @@ directory to make multiple eshell windows easier."
 (setq browse-url-text-browser "w3m")
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
-(load "~/.emacs.d/jabber.el")
 
 ;; Ugly, but necessary: filter ANSI escape sequences for a nicer npm experience
 (defvar my-ansi-escape-re

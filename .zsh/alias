@@ -14,18 +14,6 @@ alias cdc='cd; clear'
 alias ls='ls -GF'
 alias ccat='pygmentize -g'
 
-# auto open images
-alias -s {jpg,JPG,jpeg,JPEG,png,PNG,gif,GIF}='open -a Preview'
-# auto open movies
-alias -s {mpg,mpeg,avi,ogm,wmv,m4v,mp4,mov}='open -a MPlayer\ OSX\ Extended'
-# auto open audio
-alias -s {mp3,ogg,wav,flac}='open -a Winamp'
-# auto open web addresses
-alias -s {html,php,com,net,org,gov}='open -a Chromium'
-# auto open regular files
-alias -s txt='vim'
-alias -s pdf='open -a Preview'
-
 alias mplayer='mplayer -idx'
 alias wcat='wget -q -O -'
 alias cmake='cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONFDIR=/etc'
@@ -56,3 +44,5 @@ alias -g V='| vim -'
 
 TF_ALIAS=fuck alias fuck='eval $(thefuck $(fc -ln -1 | tail -n 1)); fc -R'
 
+alias wurun='docker run -it --rm -v "$(pwd)":/app:Z website-user'
+alias wumount='sshfs -o IdentityFile=~/.ssh/id_rsa,auto_cache,reconnect root@manager:/var/www/website_user ~/lastline/manager-website-user'

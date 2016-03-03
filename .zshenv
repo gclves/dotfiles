@@ -17,11 +17,21 @@ export BROWSER='chromium'
 export OOO_FORCE_DESKTOP='gnome'
 export EDITOR='emacsclient -a "" -t'
 export VISUAL='emacsclient -a ""'
-export HISTCONTROL=ignoredups
+export HISTFILE='~/.zsh/history'
+export SAVEHIST=1000
+export HISTSIZE=1000
 export IGNOREEOF=3
 export EMAIL="guilhermeaugustosg@gmail.com"
 export NAME="Guilherme Gonçalves"
 export SMTPSERVER="smtp.gmail.com"
+
+# History
+setopt SHARE_HISTORY
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_REDUCE_BLANKS
 
 if [ "$TERM" = "linux" ]; then
   echo -en "\e]P0000000" #black
@@ -59,3 +69,29 @@ fpath=(~/.zfunctions ~/.zsh/completion $fpath)
 autoload -U compinit
 compinit
 
+#
+# setup ssh-agent
+#
+
+
+# set environment variables if user's agent already exists
+[ -z "$SSH_AUTH_SOCK" ] && SSH_AUTH_SOCK=$(ls -l /tmp/ssh-*/agent.* 2> /dev/null | grep $(whoami) | awk '{print $9}')
+[ -z "$SSH_AGENT_PID" -a -z `echo $SSH_AUTH_SOCK | cut -d. -f2` ] && SSH_AGENT_PID=$((`echo $SSH_AUTH_SOCK | cut -d. -f2` + 1))
+[ -n "$SSH_AUTH_SOCK" ] && export SSH_AUTH_SOCK
+[ -n "$SSH_AGENT_PID" ] && export SSH_AGENT_PID
+
+# start agent if necessary
+if [ -z $SSH_AGENT_PID ] && [ -z $SSH_TTY ]; then  # if no agent & not in ssh
+  eval `ssh-agent -s` > /dev/null
+fi
+
+# setup addition of keys when needed
+if [ -z "$SSH_TTY" ] ; then                     # if not using ssh
+  ssh-add -l > /dev/null                        # check for keys
+  if [ $? -ne 0 ] ; then
+    alias ssh='ssh-add -l > /dev/null || ssh-add && unalias ssh ; ssh'
+    if [ -f "/usr/lib/ssh/x11-ssh-askpass" ] ; then
+      SSH_ASKPASS="/usr/lib/ssh/x11-ssh-askpass" ; export SSH_ASKPASS
+    fi
+  fi
+fi
