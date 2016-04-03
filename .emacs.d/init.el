@@ -14,7 +14,9 @@
     clojure-mode-extra-font-locking
     cider
     js2-mode
+    ac-js2
     js-comint
+    auto-complete
     rainbow-delimiters
     rainbow-mode
     haskell-mode
@@ -24,7 +26,7 @@
     org
     web-mode
     key-chord
-    fiplr
+    ag
     projectile
     helm
     helm-projectile
@@ -37,6 +39,8 @@
     slime
     emmet-mode
     load-theme-buffer-local
+    idle-highlight-mode
+    multiple-cursors
     hackernews))
 
 (dolist (p my-packages)
@@ -109,6 +113,7 @@
       (beginning-of-line)))
 (global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
 
+
 ;; Evil
 (require 'evil)
 ;; Enable evil, but only for prog or text buffers
@@ -118,12 +123,14 @@
           (add-hook hook 'linum-mode))
         '(prog-mode-hook text-mode-hook))
 
+(define-key evil-insert-state-map (kbd "C-a") 'back-to-indentation-or-beginning)
 (define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
 (define-key evil-insert-state-map (kbd "C-k") 'kill-line)
 (define-key evil-insert-state-map (kbd "C-d") 'delete-char)
 (define-key evil-insert-state-map (kbd "C-n") 'next-line)
 (define-key evil-insert-state-map (kbd "C-p") 'previous-line)
 ; Move around
+(define-key evil-normal-state-map (kbd "0") 'back-to-indentation-or-beginning)
 (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
 (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
@@ -147,13 +154,20 @@
 (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 (key-chord-mode 1)
 
+;; Programming mode-specific
+(require 'idle-highlight-mode)
+(require 'auto-complete)
+(add-hook 'prog-mode-hook (lambda ()
+                            (auto-complete-mode t)
+                            (idle-highlight-mode t)))
+
 ;; view settings
 (setq inhibit-splash-screen t)
 
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
-(load-theme 'solarized-light t)
+(load-theme 'plan9 t)
 (add-hook 'text-mode-hook
           (lambda ()
             (visual-line-mode)))
@@ -162,6 +176,14 @@
       scroll-step 1
       scroll-conservatively 10000
       scroll-preserve-screen-position 1)
+
+(require 'multiple-cursors)
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this-word)
+(global-set-key (kbd "C-<") 'mc/mark-previous-word-like-this)
+
+(global-unset-key (kbd "C-<down-mouse-1>"))
+(global-set-key (kbd "C-<mouse-1>") 'mc/add-cursor-on-click)
 
 (require 'whitespace)
 (setq whitespace-style '(face empty tabs lines-tail trailing))
@@ -184,7 +206,13 @@
 (require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx\\'" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
 (setq js2-global-externs '("$" "_" "d3" "angular"))
+(setq web-mode-extra-snippets
+      '(("php" . (("dowhile" . ("<?php do { ?>\n\n<?php } while (|); ?>"))
+                  ("debug" . ("<?php error_log(__LINE__); ?>"))
+                  ("translate" . "<?= _('|'); ?>")))))
 
 ;; Node REPL
 (setq inferior-js-program-command "/usr/bin/node")
@@ -197,6 +225,28 @@
           ("C-c b" . js-send-buffer)
           ("C-c C-b" . js-send-buffer-and-go)
           ("C-c l" . js-load-file-and-go)))
+
+(defun my-web-mode-hook ()
+  (linum-mode)
+  (emmet-mode)
+  (evil-local-mode)
+  (idle-highlight-mode -1)
+  ;; Config
+  (setq web-mode-enable-css-colorization t)
+  (setq web-mode-enable-current-element-highlight t)
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2))
+
+(add-hook 'web-mode-hook 'my-web-mode-hook)
+(setq emmet-move-cursor-between-quotes t)
+
+;; Auto-completion
+(require 'ac-js2)
+(add-hook 'js2-mode-hook 'ac-js2-mode)
+;; See if this gets too slow
+(setq ac-js2-evaluate-calls t)
+(setq js2-basic-offset 2)
 
 (defun my-web-mode-hook ()
   (linum-mode)
@@ -243,6 +293,7 @@
 (helm-autoresize-mode 1)
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x b") 'helm-mini)
+(global-set-key (kbd "<C-tab>") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 
 ;; Lisps
@@ -268,7 +319,6 @@
 
 (projectile-global-mode)
 (setq projectile-enable-caching t)
-(global-set-key (kbd "C-x f") 'fiplr-find-file)
 
 ;; C-; to comment one line
 (defun toggle-comment-on-line ()
