@@ -3,13 +3,13 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-(toggle-frame-fullscreen)
+; (toggle-frame-fullscreen)
 
 ;; No splash screen please ... jeez
 (setq inhibit-startup-message t)
 (set-face-attribute 'default (selected-frame) :height 103) ; I finally found the perfect font!
 
-(setq custom-file "~/.emacs.d/custom.el")
+; (setq custom-file "~/.emacs.d/custom.el")
 
 (global-hl-line-mode t)
 
@@ -28,6 +28,9 @@
     cider
     yasnippet
     js2-mode
+    tern
+    tern-auto-complete
+    undo-tree
     ac-js2
     js-comint
     auto-complete
@@ -53,6 +56,7 @@
     ace-window
     key-chord
     which-key
+    ws-butler
     hackernews))
 
 (dolist (p my-packages)
@@ -383,4 +387,4 @@ Including indent-buffer, which should not be called automatically on save."
     (start-process "grunt" "grunt" grunt-watch-cmd)))
 
 ;; (load custom-file)
-(load-theme 'gruvbox t)
+; (load-theme 'gruvbox t)
