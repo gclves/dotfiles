@@ -6,3 +6,9 @@
 /.emacs.d/.org-id-locations
 
 /.emacs.d/eshell/
+.emacs.d/.*
+/.emacs.d/*.dat
+/.emacs.d/backups
+/.emacs.d/projectile*
+/.emacs.d/recentf
+/.emacs.d/tramp

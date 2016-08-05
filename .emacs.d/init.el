@@ -3,15 +3,17 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-; (toggle-frame-fullscreen)
+(toggle-frame-fullscreen)
 
 ;; No splash screen please ... jeez
 (setq inhibit-startup-message t)
-(set-face-attribute 'default (selected-frame) :height 103) ; I finally found the perfect font!
+(set-face-attribute 'default (selected-frame) :height 102) ; I finally found the perfect font!
 
-; (setq custom-file "~/.emacs.d/custom.el")
+(setq custom-file "~/.emacs.d/custom.el")
 
 (global-hl-line-mode t)
+(blink-cursor-mode -1)
+(setq initial-scratch-message "")
 
 ;; packages
 (require 'package)
@@ -45,6 +47,7 @@
     projectile
     helm
     helm-projectile
+    helm-ag
     powerline
     solarized-theme
     leuven-theme
@@ -346,11 +349,17 @@ Including indent-buffer, which should not be called automatically on save."
 ;; Magit
 (global-set-key (kbd "C-x g") 'magit-status)
 
-(defalias 'yes-or-no-p 'y-or-n-p)
+(global-git-gutter-mode t)
+;; Pretty cool to move through changed hunks
+(global-set-key (kbd "C-x C-p") 'git-gutter:previous-hunk)
+(global-set-key (kbd "C-x C-n") 'git-gutter:next-hunk)
+(setq git-gutter:update-interval 2)     ; This may not be working?
+
+(defalias 'yes-or-no-p 'y-or-n-p)       ; Ain't nobody got time for yes/no
 (setq x-selection-timeout 300)          ; Make Emacs freeze LESS when
                                         ; pasting from X
 ;; Use gpg2 instead of gpg
-(setq epg-gpg-program "/usr/bin/gpg2")
+(setq epg-gpg-program "/usr/bin/gpg2")  ; Use gpg2 instead of (default) gpg
 
 ;; Save point position between sessions
 (require 'saveplace)
@@ -373,18 +382,4 @@ Including indent-buffer, which should not be called automatically on save."
 (global-set-key (kbd "<f1>") 'eshell)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
-
-(defun watch-for-changes ()
-  "Asynchronously run watch.sh in the project root directory"
-  (projectile-with-default-dir (projectile-project-root)
-    (async-shell-command "./watch.sh")))
-
-(setq-default grunt-watch-cmd
-              "/usr/bin/docker run -it --rm -v /etc/localtime:/etc/localtime:ro -v $(pwd):/app:Z lastline")
-(defun project-grunt-watch ()
-  "Run `grunt watch` in the project root"
-  (projectile-with-default-dir (projectile-project-root)
-    (start-process "grunt" "grunt" grunt-watch-cmd)))
-
-;; (load custom-file)
-; (load-theme 'gruvbox t)
+(load custom-file)
