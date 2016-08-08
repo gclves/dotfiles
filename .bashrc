@@ -102,10 +102,11 @@ if ${use_color} ; then
     alias grep='grep --colour=auto'
     alias egrep='egrep --colour=auto'
     alias fgrep='fgrep --colour=auto'
-    . ~/.bash_prompt
-else
-    export PS1='% '
+    #    . ~/.bash_prompt
 fi
+# The Emacs shell seems to have gotten smart enough to not need
+# special treatment here -- edit this if problems arise
+export PS1='\[\e[31m\]\[\e[00;32m\]\u\[\e[00m\]@\[\e[00;31m\]\h\[\e[00m\]:\[\e[00;36m\]\w\[\e[00m\]$ '
 
 for sh in /etc/bash/bashrc.d/* ; do
     [[ -r ${sh} ]] && source "${sh}"
@@ -133,4 +134,5 @@ alias pp="ps axuf | pager"
 alias sum="xargs | tr ' ' '+' | bc" ## Usage: echo 1 2 3 | sum
 function mcd() { mkdir $1 && cd $1; }
 
+# Important security announcements
 dig +short txt istheinternetonfire.com

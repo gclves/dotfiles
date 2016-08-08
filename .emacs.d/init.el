@@ -39,6 +39,7 @@
     rainbow-delimiters
     rainbow-mode
     magit
+    git-gutter
     htmlize
     org
     capture
@@ -60,7 +61,7 @@
     key-chord
     which-key
     ws-butler
-    hackernews))
+    moe-theme))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
@@ -349,8 +350,11 @@ Including indent-buffer, which should not be called automatically on save."
 ;; Magit
 (global-set-key (kbd "C-x g") 'magit-status)
 
-(global-git-gutter-mode t)
-;; Pretty cool to move through changed hunks
+(global-git-gutter-mode t)              ; Highlight changes in the gutter
+(set-face-background 'git-gutter:added "#8bc34a")
+(set-face-background 'git-gutter:modified "#b39ddb")
+(set-face-background 'git-gutter:deleted "#f36c60")
+
 (global-set-key (kbd "C-x C-p") 'git-gutter:previous-hunk)
 (global-set-key (kbd "C-x C-n") 'git-gutter:next-hunk)
 (setq git-gutter:update-interval 2)     ; This may not be working?
@@ -380,6 +384,6 @@ Including indent-buffer, which should not be called automatically on save."
 (setq vc-make-backup-files t)
 
 (global-set-key (kbd "<f1>") 'eshell)
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+;; (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 (load custom-file)
