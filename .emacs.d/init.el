@@ -60,8 +60,7 @@
     ace-window
     key-chord
     which-key
-    ws-butler
-    moe-theme))
+    ws-butler))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
@@ -351,9 +350,12 @@ Including indent-buffer, which should not be called automatically on save."
 (global-set-key (kbd "C-x g") 'magit-status)
 
 (global-git-gutter-mode t)              ; Highlight changes in the gutter
-(set-face-background 'git-gutter:added "#8bc34a")
-(set-face-background 'git-gutter:modified "#b39ddb")
-(set-face-background 'git-gutter:deleted "#f36c60")
+(mapc (lambda (pair)
+        (set-face-background (car pair) (cdr pair))
+        (set-face-foreground (car pair) (cdr pair)))
+      '((git-gutter:added . "#8bc34a")
+        (git-gutter:modified . "#b39ddb")
+        (git-gutter:deleted . "#f36c60")))
 
 (global-set-key (kbd "C-x C-p") 'git-gutter:previous-hunk)
 (global-set-key (kbd "C-x C-n") 'git-gutter:next-hunk)
