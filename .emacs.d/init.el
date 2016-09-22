@@ -89,6 +89,7 @@ might be bad."
   "Perform a bunch of operations on the whitespace content of a buffer.
 Including indent-buffer, which should not be called automatically on save."
   (interactive)
+  (whitespace-cleanup)
   (cleanup-buffer-safe)
   (indent-region (point-min) (point-max)))
 
@@ -158,6 +159,18 @@ Including indent-buffer, which should not be called automatically on save."
 (global-set-key (kbd "<C-S-return>") 'open-line-above)
 (global-set-key (kbd "M-j") (lambda () (interactive) (join-line -1)))
 (electric-pair-mode t)
+
+(setq ac-auto-start 4)                  ; show ac candidates when I type 4 chars instead of 2
+
+;; So I don't have to open Slack
+(defun shrug ()
+  "Insert ¯\\_(ツ)_/¯ at point"
+  (interactive)
+  (insert "¯\\_(ツ)_/¯"))
+(defun lenny ()
+  "Insert ( ͡° ͜ʖ ͡°) at point"
+  (interactive)
+  (insert "( ͡° ͜ʖ ͡°)"))
 
 (defun back-to-indentation-or-beginning ()
   "Move point to beginning of line, or to first non-space character"
@@ -256,6 +269,7 @@ Including indent-buffer, which should not be called automatically on save."
 (define-key js2-mode-map (kbd "M-j") nil)
 (define-key js2-mode-map (kbd "C-c C-c") 'js-send-region)
 (add-hook 'js2-mode-hook 'tern-mode)
+
 (require 'tern)
 (eval-after-load 'tern
   '(progn
@@ -312,6 +326,8 @@ Including indent-buffer, which should not be called automatically on save."
 (setq org-default-notes-file "~/org/everything.org")
 (define-key global-map (kbd "C-c c") 'org-capture)
 
+(setq org-src-fontify-natively t)       ; Syntax highlighting in code blocks
+
 (defun org-dblock-write:rangereport (params)
   "Display day-by-day time reports."
   (let* ((ts (plist-get params :tstart))
@@ -364,8 +380,14 @@ Including indent-buffer, which should not be called automatically on save."
 (defalias 'yes-or-no-p 'y-or-n-p)       ; Ain't nobody got time for yes/no
 (setq x-selection-timeout 300)          ; Make Emacs freeze LESS when
                                         ; pasting from X
-;; Use gpg2 instead of gpg
+
+;; Override some defaults
 (setq epg-gpg-program "/usr/bin/gpg2")  ; Use gpg2 instead of (default) gpg
+;; Search regexes by default
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+(global-set-key (kbd "C-M-s") 'isearch-forward)
+(global-set-key (kbd "C-M-r") 'isearch-backward)
 
 ;; Save point position between sessions
 (require 'saveplace)
@@ -376,6 +398,10 @@ Including indent-buffer, which should not be called automatically on save."
 (tooltip-mode -1)
 (setq tooltip-use-echo-area t)
 (setq redisplay-dont-pause t)           ; smoother drawing (maybe remove this?)
+
+;; specify font for all unicode characters
+(when (member "Symbola" (font-family-list))
+  (set-fontset-font t 'unicode "Symbola" nil 'prepend))
 
 ;; Write backup files to own directory
 (setq backup-directory-alist
