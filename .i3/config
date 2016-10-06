@@ -1,3 +1,7 @@
+# First off, properly set up the monitor order
+exec xrandr --output HDMI-1 --noprimary --left-of eDP-1
+setxkbmap -option ctrl:swapcaps -layout us,us -variant ,alt-intl -option grp:sclk_toggle
+
 set $mod Mod4
 
 font pango:DejaVu Sans Mono 8
@@ -73,7 +77,10 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
 
-## Audio controls
+## Media keys
+# Screen brightness
+bindsym XF86MonBrightnessUp exec xbacklight -inc 20
+bindsym XF86MonBrightnessDown exec xbacklight -dec 20
 # PulseAudio
 bindsym XF86AudioLowerVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '-5%'
 bindsym XF86AudioRaiseVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '+5%'
@@ -124,6 +131,6 @@ bar {
 
 workspace_layout tabbed
 
-exec setxkbmap -option ctrl:swapcaps
+exec nitrogen --restore
 exec deluge-gtk
 exec nm-applet

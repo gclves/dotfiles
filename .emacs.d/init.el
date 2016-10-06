@@ -162,6 +162,8 @@ Including indent-buffer, which should not be called automatically on save."
 
 (setq ac-auto-start 4)                  ; show ac candidates when I type 4 chars instead of 2
 
+(add-hook 'prog-mode-hook 'subword-mode) ; properly navigate through camelCase
+
 ;; So I don't have to open Slack
 (defun shrug ()
   "Insert ¯\\_(ツ)_/¯ at point"
@@ -259,6 +261,51 @@ Including indent-buffer, which should not be called automatically on save."
     (linum-mode -1)))
 (global-set-key [remap goto-line] 'goto-line-with-feedback)
 
+(defun xah-cut-line-or-region ()
+  "Cut current line, or text selection.
+When `universal-argument' is called first, cut whole buffer (respects `narrow-to-region')."
+  (interactive)
+  (if current-prefix-arg
+      (progn ; not using kill-region because we don't want to include previous kill
+        (kill-new (buffer-string))
+        (delete-region (point-min) (point-max)))
+    (progn (if (use-region-p)
+               (kill-region (region-beginning) (region-end) t)
+             (kill-region (line-beginning-position) (line-beginning-position 2))))))
+
+(defun xah-copy-line-or-region ()
+  "Copy current line, or text selection.
+When called repeatedly, append copy subsequent lines.
+When `universal-argument' is called first, copy whole buffer (respects `narrow-to-region')."
+  (interactive)
+  (let (-p1 -p2)
+    (if current-prefix-arg
+        (setq -p1 (point-min) -p2 (point-max))
+      (if (use-region-p)
+          (setq -p1 (region-beginning) -p2 (region-end))
+        (setq -p1 (line-beginning-position) -p2 (line-end-position))))
+    (if (eq last-command this-command)
+        (progn
+          (progn ; hack. exit if there's no more next line
+            (end-of-line)
+            (forward-char)
+            (backward-char))
+          ;; (push-mark (point) "NOMSG" "ACTIVATE")
+          (kill-append "\n" nil)
+          (kill-append (buffer-substring-no-properties (line-beginning-position) (line-end-position)) nil)
+          (message "Line copy appended"))
+      (progn
+        (kill-ring-save -p1 -p2)
+        (if current-prefix-arg
+            (message "Buffer text copied")
+          (message "Text copied"))))
+    (end-of-line)
+    (forward-char)))
+
+(global-set-key (kbd "C-w") 'xah-cut-line-or-region)
+(global-set-key (kbd "M-w") 'xah-copy-line-or-region)
+
+
 ;;; Specific modes
 ;; JS2 Mode
 (require 'js2-mode)
@@ -269,6 +316,9 @@ Including indent-buffer, which should not be called automatically on save."
 (define-key js2-mode-map (kbd "M-j") nil)
 (define-key js2-mode-map (kbd "C-c C-c") 'js-send-region)
 (add-hook 'js2-mode-hook 'tern-mode)
+
+(require 'electric-case)
+(add-hook 'js2-mode-hook 'electric-case-mode)
 
 (require 'tern)
 (eval-after-load 'tern
@@ -410,6 +460,9 @@ Including indent-buffer, which should not be called automatically on save."
 
 ;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
+
+;; Save/restore opened files
+(desktop-save-mode 1)
 
 (global-set-key (kbd "<f1>") 'eshell)
 ;; (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
