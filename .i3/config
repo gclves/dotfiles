@@ -8,7 +8,7 @@ font pango:DejaVu Sans Mono 8
 
 floating_modifier $mod
 
-bindsym $mod+Return exec urxvt256c
+bindsym $mod+Return exec gnome-terminal
 
 bindsym $mod+Shift+c kill
 
@@ -134,3 +134,6 @@ workspace_layout tabbed
 exec nitrogen --restore
 exec deluge-gtk
 exec nm-applet
+exec solaar
+
+exec emacs
