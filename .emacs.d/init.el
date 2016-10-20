@@ -69,6 +69,8 @@
 (projectile-global-mode)
 (setq projectile-enable-caching t)
 
+(load-theme 'solarized-dark t)
+
 (global-set-key (kbd "RET") 'newline-and-indent)
 (global-undo-tree-mode)
 
@@ -124,6 +126,15 @@ Including indent-buffer, which should not be called automatically on save."
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (define-key projectile-mode-map (kbd "C-c p s s") 'helm-projectile-ag)
 (define-key projectile-mode-map (kbd "C-c p p") 'helm-projectile-switch-project)
+(define-key projectile-mode-map (kbd "C-\\") 'helm-projectile)
+(define-key projectile-mode-map (kbd "C-c p h") nil) ; force myself to use the previous def
+
+;; Quickly reach the scratch buffer
+(defun jump-to-scratch ()
+  "Quickly jump to the *scratch* buffer"
+  (interactive)
+  (switch-to-buffer "*scratch*" nil 'force-same-window))
+(global-set-key (kbd "M-`") 'jump-to-scratch)
 
 (key-chord-mode t)
 
@@ -203,12 +214,7 @@ Including indent-buffer, which should not be called automatically on save."
   (if (and arg (not (= 1 arg))) (message "%d lines copied" arg)))
 (global-set-key (kbd "C-c C-y") 'copy-line)
 
-;; C-; to comment one line
-(defun toggle-comment-on-line ()
-  "Comment or uncomment current line"
-  (interactive)
-  (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
-(global-set-key (kbd "C-;") 'toggle-comment-on-line)
+(global-set-key (kbd "C-;") 'comment-line)
 
 (global-set-key (kbd "M-9") 'kill-whole-line)
 (pending-delete-mode t)
@@ -344,12 +350,30 @@ When `universal-argument' is called first, copy whole buffer (respects `narrow-t
       web-mode-enable-auto-opening t
       web-mode-enable-auto-pairing t
       web-mode-enable-auto-quoting t)
-(define-key web-mode-map (kbd "C-c <C-dead-tilde>") 'web-mode-element-parent)
+
+(define-key web-mode-map (kbd "C-M-u") 'web-mode-element-parent)
+(define-key web-mode-map (kbd "C-M-d") 'web-mode-element-child)
+(define-key web-mode-map (kbd "C-M-n") 'web-mode-element-next)
+(define-key web-mode-map (kbd "C-M-p") 'web-mode-element-previous)
+
 (add-hook 'web-mode-hook 'emmet-mode)
 
 ; We already bound C-return to something else and can expand with C-j
 (eval-after-load 'emmet-mode
   '(progn (define-key emmet-mode-keymap (kbd "<C-return>") nil)))
+
+(defun php-tpl-localize (p1 p2)
+  "Wrap region in a PHP call to xgettext"
+  (interactive "r")
+  (save-mark-and-excursion
+   (goto-char p1)
+   (insert "<?= _('")
+   (setq begin (point))
+   (forward-char (- p2 p1))
+   (setq end (point))
+   (insert "') ?>")
+   (replace-string "'" "\\'" nil begin end)
+   (message "Localized region")))
 
 ;; Org-mode
 (setq org-agenda-include-diary t)
@@ -413,7 +437,7 @@ When `universal-argument' is called first, copy whole buffer (respects `narrow-t
 (add-hook 'prog-mode-hook 'yas/minor-mode)
 
 ;; Magit
-(global-set-key (kbd "C-x g") 'magit-status)
+(global-set-key (kbd "<f8>") 'magit-status)
 
 (global-git-gutter-mode t)              ; Highlight changes in the gutter
 (mapc (lambda (pair)
