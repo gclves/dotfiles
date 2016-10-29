@@ -60,7 +60,8 @@
     ace-window
     key-chord
     which-key
-    ws-butler))
+    ws-butler
+    discover))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
@@ -69,7 +70,7 @@
 (projectile-global-mode)
 (setq projectile-enable-caching t)
 
-(load-theme 'solarized-dark t)
+;; (load-theme 'solarized-dark t)
 
 (global-set-key (kbd "RET") 'newline-and-indent)
 (global-undo-tree-mode)
@@ -120,20 +121,22 @@ Including indent-buffer, which should not be called automatically on save."
 (setq helm-M-x-fuzzy-match t)
 (setq helm-buffers-fuzzy-matching t)
 (helm-autoresize-mode 1)
+
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "<C-tab>") 'helm-mini)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
-(define-key projectile-mode-map (kbd "C-c p s s") 'helm-projectile-ag)
+
+(define-key projectile-mode-map (kbd "C-x C-S-f") 'projectile-ag)
+(define-key projectile-mode-map (kbd "C-S-f") 'helm-projectile-ag)
 (define-key projectile-mode-map (kbd "C-c p p") 'helm-projectile-switch-project)
 (define-key projectile-mode-map (kbd "C-\\") 'helm-projectile)
-(define-key projectile-mode-map (kbd "C-c p h") nil) ; force myself to use the previous def
 
 ;; Quickly reach the scratch buffer
 (defun jump-to-scratch ()
   "Quickly jump to the *scratch* buffer"
   (interactive)
-  (switch-to-buffer "*scratch*" nil 'force-same-window))
+  (switch-to-buffer-other-window "*scratch*"))
 (global-set-key (kbd "M-`") 'jump-to-scratch)
 
 (key-chord-mode t)
@@ -144,6 +147,7 @@ Including indent-buffer, which should not be called automatically on save."
 (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?ç)
       aw-scope 'frame)
 (global-set-key (kbd "M-o") 'ace-window)
+(global-set-key (kbd "M-K") (lambda () (interactive) (kill-buffer nil)))
 
 (setq fill-column 80)
 (setq-default indent-tabs-mode nil)     ; no tabs please
@@ -151,6 +155,9 @@ Including indent-buffer, which should not be called automatically on save."
 (require 'which-key)
 (which-key-mode)
 (setq which-key-idle-delay 0.5)
+
+(require 'discover)
+(global-discover-mode t)
 
 ;;; Editing goodies
 (defun open-line-below ()
@@ -484,9 +491,6 @@ When `universal-argument' is called first, copy whole buffer (respects `narrow-t
 
 ;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
-
-;; Save/restore opened files
-(desktop-save-mode 1)
 
 (global-set-key (kbd "<f1>") 'eshell)
 ;; (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
