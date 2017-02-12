@@ -1,0 +1,102 @@
+;;;; -*- mode: common-lisp -*-
+
+;; Cool stuff to do:
+;; - integrate with pass
+;; - terminal velocity command
+;; - manage docker containers
+;; - manage NetworkManager connections
+
+(in-package :stumpwm)
+
+(setf *mouse-focus-policy* :sloppy)     ; focus follows mouse
+(setf *startup-message* "Hack the planet")
+(setf *timeout-wait* 10)
+
+;(setf *message-window-gravity* :center)
+;(setf *input-window-gravity* :center)
+
+(defparameter *TERMINAL* (cons "urxvt" "URxvt"))
+
+(bind "w" "windowlist")
+(bind "C-w" "windows")
+
+(defcommand chromium () ()
+  (run-or-raise "chromium-browser" '(:class "Chromium"))
+  (message "Chromium"))
+(bind "z" "chromium")
+(bind "C-z" "exec chromium-browser")
+
+(bind "[" "exec chromium-browser --app-id=paccflbfblppaoidibhflahkogodngie")
+(defcommand slack () () (run-or-raise "slack" '(:class "slack")))
+(bind "]" "slack")
+
+(defun define-on-top (key command)
+  (define-key *top-map* (kbd key) command))
+
+(define-on-top "F3" "fother")
+(define-on-top "S-F3" "fnext")
+(define-on-top "F4" "pull-hidden-other")
+(define-on-top "F5" "pull-hidden-next")
+(define-on-top "F6" "delete")
+
+(defcommand firefox () ()
+  (run-or-raise "firefox" '(:class "Firefox"))
+  (message "Firefox"))
+(define-on-top "F9" "firefox")
+
+(define-on-top "F10" "emacs")
+
+(defcommand terminal () ()
+  (run-or-raise (car *TERMINAL*) (list :class (cdr *TERMINAL*))))
+(define-on-top "F11" "terminal")
+(define-on-top "F12" "exec")
+
+(define-key *top-map* (kbd "XF86AudioLowerVolume") "exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '-5%'")
+(define-key *top-map* (kbd "XF86AudioRaiseVolume") "exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '+5%'")
+(define-key *top-map* (kbd "XF86AudioMute") "exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle")
+
+(define-key *top-map* (kbd "XF86AudioPlay") "exec playerctl play-pause")
+(define-key *top-map* (kbd "XF86AudioNext") "exec playerctl next")
+(define-key *top-map* (kbd "XF86AudioPrev") "exec playerctl previous")
+
+(define-key *top-map* (kbd "XF86MonBrightnessUp") "exec xbacklight -inc 20")
+(define-key *top-map* (kbd "XF86MonBrightnessDown") "exec xbacklight -dec 20")
+
+(defcommand keyboard () ()
+            (run-shell-command "setxkbmap -layout us,us -variant ,alt-intl -option grp:alt_shift_toggle"))
+
+;; Misc interactive commands
+(defcommand randr (hdmip) ((:y-or-n "Is the HDMI cable on? "))
+  (let ((base-cmd "xrandr --output eDP-1-1 --auto --output HDMI-1-1 ")
+        (hdmi-cmd (if (car hdmip) "--auto --left-of eDP-1-1" "--off")))
+    (run-shell-command (concat base-cmd hdmi-cmd)))
+  (run-commands "refresh-heads"))
+
+;; TODO: show a menu with all the available sinks
+(defparameter *headphone-sink* "bluez_sink.04_52_C7_5E_7D_59")
+(defcommand audio-src (headphones-p) ((:y-or-n "Are the bluetooth headphones on? "))
+  (let ((sink (if (car headphones-p) *headphone-sink* "0")))
+    (run-shell-command (concat "pactl set-default-sink " sink))))
+
+;; TODO: show a menu with all the available VPNs
+(defparameter *vpn-name* "Lastline")
+(defcommand vpn (up?) ((:y-or-n "Do you want to turn the VPN on? "))
+            (run-shell-command
+             (concat "nmcli connection " (if (car up?) "up " "down ") *vpn-name*)))
+
+(defcommand suspend (confirm) ((:y-or-n "Are you sure you want to suspend?"))
+            (when (car confirm) (run-shell-command "systemctl suspend")))
+
+(defcommand poweroff (confirm) ((:y-or-n "Are you sure you want to poweroff?"))
+            (when (car confirm) (run-shell-command "systemctl poweroff")))
+
+(defcommand run-in-terminal (command) ((:string "Run in terminal: "))
+            (run-shell-command (concat (car *TERMINAL*) " -e " command)))
+(define-on-top "S-F12" "run-in-terminal")
+
+(when *initializing*
+  (run-commands "randr y"
+                "exec xscreensaver -no-splash"
+                "exec xinput set-button-map 11 3 2 1")) ; left-handed trackball
+
+(load "~/bin/stump/menu")

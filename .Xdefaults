@@ -15,16 +15,16 @@ Xcursor.theme: neutral
 !
 !URxvt*font:             -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
 
-! URxvt*font:             -*-terminus-medium-r-*-*-12-120-*-*-*-*-*-*
-! URxvt*boldFont:         -*-terminus-medium-r-*-*-12-120-*-*-*-*-*-*
-! URxvt*italicFont:       -*-terminus-medium-r-*-*-12-120-*-*-*-*-*-*
-! URxvt*boldItalicFont:   -*-terminus-medium-r-*-*-12-120-*-*-*-*-*-*
+URxvt*font:             -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
+URxvt*boldFont:         -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
+URxvt*italicFont:       -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
+URxvt*boldItalicFont:   -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
 
-URxvt*font:             xft:Bitstream Vera Sans Mono:size=10
-URxvt*boldFont:         xft:Bitstream Vera Sans Mono:bold:size=10
+!URxvt*font:             xft:Bitstream Vera Sans Mono:size=10
+!URxvt*boldFont:         xft:Bitstream Vera Sans Mono:bold:size=10
 
-!URxvt*font:              xft:Ubuntu Mono:size=10
-!URxvt*boldFont:          xft:Ubuntu Mono:bold:size=10
+! URxvt*font:              xft:Ubuntu Mono:size=10
+! URxvt*boldFont:          xft:Ubuntu Mono:bold:size=10
 
 URxvt*saveLines:        32767
 URxvt*scrollBar:        false
