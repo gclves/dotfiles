@@ -10,4 +10,4 @@ fi
 PATH=$PATH:$HOME/.local/bin:$HOME/bin
 
 export PATH
-# _byobu_sourced=1 . /usr/bin/byobu-launch 2>/dev/null || true
+_byobu_sourced=1 . /usr/bin/byobu-launch 2>/dev/null || true

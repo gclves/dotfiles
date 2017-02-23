@@ -1,3 +1,11 @@
+;; Hackery needed to get lexical binding
+(require 'cl)
+(defmacro lexical-defun (name args &rest body)
+  `(defun ,name ,args
+     (lexical-let ,(mapcar (lambda (arg) (list arg arg))
+                           (remove-if (lambda (a) (equal a '&rest)) args))
+       ,@body)))
+
 ;; Turn off mouse interface early in startup to avoid momentary display
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -61,6 +69,8 @@
     key-chord
     which-key
     ws-butler
+    exec-path-from-shell
+    zoom-window
     discover))
 
 (dolist (p my-packages)
@@ -70,7 +80,9 @@
 (projectile-global-mode)
 (setq projectile-enable-caching t)
 
-;; (load-theme 'solarized-dark t)
+;; Inherit SSH agent so Magit doesn't keep prompting us
+(exec-path-from-shell-copy-env "SSH_AGENT_PID")
+(exec-path-from-shell-copy-env "SSH_AUTH_SOCK")
 
 (global-set-key (kbd "RET") 'newline-and-indent)
 (global-undo-tree-mode)
@@ -139,9 +151,17 @@ Including indent-buffer, which should not be called automatically on save."
 (setq helm-buffers-fuzzy-matching t)
 (helm-autoresize-mode 1)
 
+(lexical-defun disabled-keybinding (old-keybinding new-keybinding)
+  "Notify that a keybinding is disabled and lets me know the new binding. Used to adapt my muscle memory."
+  (lambda ()
+    (interactive)
+    (message (format "Command %s is disabled. Use %s instead." old-keybinding new-keybinding))))
+
 (global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "C-x b") 'helm-mini)
-(global-set-key (kbd "<C-tab>") 'helm-mini)
+(global-set-key (kbd "C-b") 'helm-mini)
+(global-set-key (kbd "C-x b") (disabled-keybinding "C-x b" "C-b"))
+(global-set-key (kbd "<C-tab>") (disabled-keybinding "<C-Tab>" "<C-b>"))
+(global-set-key (kbd "C-S-w") (lambda () (interactive) (kill-buffer nil)))
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 
 (define-key projectile-mode-map (kbd "C-x C-S-f") 'projectile-ag)
@@ -161,10 +181,12 @@ Including indent-buffer, which should not be called automatically on save."
 (setq whitespace-style '(empty tabs trailing face))
 (global-whitespace-mode)
 
-(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l ?ç)
+(setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)
       aw-scope 'frame)
 (global-set-key (kbd "M-o") 'ace-window)
-(global-set-key (kbd "M-K") (lambda () (interactive) (kill-buffer nil)))
+
+(require 'zoom-window)
+(global-set-key (kbd "C-x C-z") 'zoom-window-zoom)
 
 (setq fill-column 80)
 (setq-default indent-tabs-mode nil)     ; no tabs please
@@ -194,6 +216,7 @@ Including indent-buffer, which should not be called automatically on save."
 (global-set-key (kbd "<C-S-return>") 'open-line-above)
 (global-set-key (kbd "M-j") (lambda () (interactive) (join-line -1)))
 (electric-pair-mode t)
+(global-set-key [f7] 'call-last-kbd-macro)
 
 (setq ac-auto-start 4)                  ; show ac candidates when I type 4 chars instead of 2
 
@@ -347,9 +370,6 @@ When `universal-argument' is called first, copy whole buffer (respects `narrow-t
 (define-key js2-mode-map (kbd "C-c C-c") 'js-send-region)
 (add-hook 'js2-mode-hook 'tern-mode)
 
-(require 'electric-case)
-(add-hook 'js2-mode-hook 'electric-case-mode)
-
 (require 'tern)
 (eval-after-load 'tern
   '(progn
@@ -382,7 +402,7 @@ When `universal-argument' is called first, copy whole buffer (respects `narrow-t
 
 (add-hook 'web-mode-hook 'emmet-mode)
 
-; We already bound C-return to something else and can expand with C-j
+;; We already bound C-return to something else and can expand with C-j
 (eval-after-load 'emmet-mode
   '(progn (define-key emmet-mode-keymap (kbd "<C-return>") nil)))
 
@@ -459,6 +479,32 @@ When `universal-argument' is called first, copy whole buffer (respects `narrow-t
 (require 'yasnippet)
 (yas/reload-all)
 (add-hook 'prog-mode-hook 'yas/minor-mode)
+
+;; Eshell
+(defun eshell/x ()
+  (insert "exit")
+  (eshell-send-input)
+  (delete-window))
+
+(defun eshell-here ()
+  "Opens up a new shell in the directory associated with the
+current buffer's file. The eshell is renamed to match that
+directory to make multiple eshell windows easier."
+  (interactive)
+  (let* ((parent (if (buffer-file-name)
+                     (file-name-directory (buffer-file-name))
+                   default-directory))
+         (height (/ (window-total-height) 3))
+         (name   (car (last (split-string parent "/" t)))))
+    (split-window-vertically (- height))
+    (other-window 1)
+    (eshell "new")
+    (rename-buffer (concat "*eshell: " name "*"))
+
+    (insert (concat "ls"))
+    (eshell-send-input)))
+
+(global-set-key (kbd "C-!") 'eshell-here)
 
 ;; Magit
 (global-set-key (kbd "<f8>") 'magit-status)

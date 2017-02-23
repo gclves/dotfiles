@@ -28,12 +28,13 @@
 (bind "z" "chromium")
 (bind "C-z" "exec chromium-browser")
 
+;; Google Chrome is required by Deezer because of proprietary plugins and other crap
 (defcommand chromium-app (app-id) ((:string "What's the app's id? "))
             (run-or-raise
-             (concat "chromium-browser --app-id=" app-id) `(:instance ,(concat "crx_" app-id))))
+             (concat "google-chrome --app-id=" app-id) `(:instance ,(concat "crx_" app-id))))
 
 (bind "[" "chromium-app paccflbfblppaoidibhflahkogodngie") ; deezer
-(bind "]" "chromium-app jeogkiiogjbmhklcnbgkdcjoioegiknm") ; slack
+;; (bind "]" "chromium-app jeogkiiogjbmhklcnbgkdcjoioegiknm") ; slack
 
 (defun define-on-top (key command)
   (define-key *top-map* (kbd key) command))
@@ -53,6 +54,7 @@
 
 (defcommand terminal () ()
             (run-or-raise (car *TERMINAL*) (list :class (cdr *TERMINAL*))))
+(bind "c" (concat "exec " (car *TERMINAL*)))
 (define-on-top "F11" "terminal")
 (define-on-top "F12" "exec")
 
@@ -68,12 +70,12 @@
 (define-key *top-map* (kbd "XF86MonBrightnessDown") "exec xbacklight -dec 20")
 
 (defcommand keyboard () ()
-            (run-shell-command "setxkbmap -layout us,us -variant ,alt-intl -option grp:scrlk_toggle"))
+            (run-shell-command "setxkbmap -layout us,us -variant ,alt-intl -option grp:ctrls_toggle"))
 
 ;; Misc interactive commands
 (defcommand randr (hdmi?) ((:y-or-n "Is the HDMI cable on? "))
   (let ((base-cmd "xrandr --output eDP-1 --auto --output HDMI-1 ")
-        (hdmi-cmd (if hdmi? "--auto --left-of eDP-1" "--off")))
+        (hdmi-cmd (if hdmi? "--auto --right-of eDP-1" "--off")))
     (run-shell-command (concat base-cmd hdmi-cmd)))
   (run-commands "refresh-heads"))
 
@@ -102,6 +104,6 @@
 (when *initializing*
   (run-commands "randr y"
                 "exec xscreensaver -no-splash"
-                "exec xinput set-button-map 13 3 2 1 4 5 6 7 8 9")) ; left-handed trackball
+                "exec xinput set-button-map 12 3 2 1 4 5 6 7 8 9")) ; left-handed trackball
 
 (load "~/bin/stump/menu")

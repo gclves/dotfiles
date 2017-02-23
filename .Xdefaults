@@ -20,8 +20,8 @@ URxvt*boldFont:         -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
 URxvt*italicFont:       -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
 URxvt*boldItalicFont:   -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
 
-!URxvt*font:             xft:Bitstream Vera Sans Mono:size=10
-!URxvt*boldFont:         xft:Bitstream Vera Sans Mono:bold:size=10
+! URxvt*font:             xft:DejaVu Sans Mono:size=10
+! URxvt*boldFont:         xft:DejaVu Sans Mono:bold:size=10
 
 ! URxvt*font:              xft:Ubuntu Mono:size=10
 ! URxvt*boldFont:          xft:Ubuntu Mono:bold:size=10
@@ -33,9 +33,9 @@ URxvt*loginShell:       true
 URxvt*shading:          30
 URxvt*termName:         rxvt-unicode
 URxvt*secondaryScroll:  true
-URxvt*perl-lib:         /usr/lib/urxvt/perl/
+URxvt*perl-lib:         /usr/lib64/urxvt/perl/
 URxvt*perl-ext-common:  default,matcher,searchable-scrollback
-URxvt*urlLauncher:      firefox
+URxvt*url-launcher:     xdg-open
 URxvt*matcher.button:   1
 ! URxvt*cutchars:         `"()'*<>[]{|}
 URxvt*visualBell:       true
