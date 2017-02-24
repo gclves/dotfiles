@@ -1,0 +1,148 @@
+Xft.dpi: 96
+Xft.lcdfilter: lcddefault
+Xft.antialias: true
+Xft.autohint: true
+Xft.hinting: true
+Xft.hintstyle: hintslight
+Xft.rgba: rgb
+Xcursor.theme: neutral
+
+!-------------------------------------------------------------------------------
+!
+!
+!      U R X V T
+!
+!
+URxvt*font:             -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
+URxvt*boldFont:         -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
+URxvt*italicFont:       -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
+URxvt*boldItalicFont:   -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
+
+! URxvt*font:             xft:DejaVu Sans Mono:size=10
+! URxvt*boldFont:         xft:DejaVu Sans Mono:bold:size=10
+
+! URxvt*font:              xft:Ubuntu Mono:size=10
+! URxvt*boldFont:          xft:Ubuntu Mono:bold:size=10
+
+URxvt*saveLines:        32767
+URxvt*scrollBar:        false
+URxvt*scrollBar_right:  true
+URxvt*loginShell:       true
+URxvt*shading:          30
+URxvt*termName:         rxvt-unicode
+URxvt*secondaryScroll:  true
+URxvt*perl-lib:         /usr/lib64/urxvt/perl/
+URxvt*perl-ext-common:  default,matcher,searchable-scrollback
+URxvt*url-launcher:     xdg-open
+URxvt*matcher.button:   1
+URxvt*visualBell:       true
+URxvt*keysym.C-u:       perl:matcher
+URxvt*urgentOnBell:     true
+
+!-------------------------------------------------------------------------------
+!
+!
+!      X T E R M
+!
+!
+XTerm*internalBorder:        0
+XTerm*loginShell:         true
+XTerm*scrollBar:         false
+XTerm*cursorBlink:       false
+!XTerm*geometry:         80x26
+XTerm*saveLines:         65535
+XTerm*dynamicColors:        on
+XTerm*highlightSelection: true
+! Catch URLs?
+XTerm*charClass:     33:48,35-38:48,39:43,42-47:48,58-59:48,61:48,63-64:48,126:48
+! Appearance
+XTerm*utf8:          2
+XTerm*eightBitInput: true
+XTerm*faceName:      terminus:pixelsize=12
+
+!! Solarized
+! Common
+
+#define S_yellow        #b58900
+#define S_orange        #cb4b16
+#define S_red           #dc322f
+#define S_magenta       #d33682
+#define S_violet        #6c71c4
+#define S_blue          #268bd2
+#define S_cyan          #2aa198
+#define S_green         #859900
+
+
+! Dark
+
+! #define S_base03        #002b36
+! #define S_base02        #073642
+! #define S_base01        #586e75
+! #define S_base00        #657b83
+! #define S_base0         #839496
+! #define S_base1         #93a1a1
+! #define S_base2         #eee8d5
+! #define S_base3         #fdf6e3
+
+
+! Light
+
+#define S_base03        #fdf6e3
+#define S_base02        #eee8d5
+#define S_base01        #93a1a1
+#define S_base00        #839496
+#define S_base0         #657b83
+#define S_base1         #586e75
+#define S_base2         #073642
+#define S_base3         #002b36
+
+URxvt*background:              S_base03
+URxvt*foreground:              S_base0
+URxvt*fading:                  40
+URxvt*fadeColor:               S_base03
+URxvt*cursorColor:             S_base1
+URxvt*pointerColorBackground:  S_base01
+URxvt*pointerColorForeground:  S_base1
+
+URxvt*color0:                  S_base02
+URxvt*color1:                  S_red
+URxvt*color2:                  S_green
+URxvt*color3:                  S_yellow
+URxvt*color4:                  S_blue
+URxvt*color5:                  S_magenta
+URxvt*color6:                  S_cyan
+URxvt*color7:                  S_base2
+URxvt*color9:                  S_orange
+URxvt*color8:                  S_base03
+URxvt*color10:                 S_base01
+URxvt*color11:                 S_base00
+URxvt*color12:                 S_base0
+URxvt*color13:                 S_violet
+URxvt*color14:                 S_base1
+URxvt*color15:                 S_base3
+
+
+XTerm*background:              S_base03
+XTerm*foreground:              S_base0
+XTerm*fading:                  40
+XTerm*fadeColor:               S_base03
+XTerm*cursorColor:             S_base1
+XTerm*pointerColorBackground:  S_base01
+XTerm*pointerColorForeground:  S_base1
+
+XTerm*color0:                  S_base02
+XTerm*color1:                  S_red
+XTerm*color2:                  S_green
+XTerm*color3:                  S_yellow
+XTerm*color4:                  S_blue
+XTerm*color5:                  S_magenta
+XTerm*color6:                  S_cyan
+XTerm*color7:                  S_base2
+XTerm*color9:                  S_orange
+XTerm*color8:                  S_base03
+XTerm*color10:                 S_base01
+XTerm*color11:                 S_base00
+XTerm*color12:                 S_base0
+XTerm*color13:                 S_violet
+XTerm*color14:                 S_base1
+XTerm*color15:                 S_base3
