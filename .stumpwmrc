@@ -16,6 +16,7 @@
 ;(setf *input-window-gravity* :center)
 
 (defparameter *TERMINAL* (cons "urxvt" "URxvt"))
+(defparameter *BROWSER* (cons "vivaldi" "Vivaldi-stable"))
 
 (bind "w" "windowlist")
 (bind "C-w" "windows")
@@ -45,15 +46,17 @@
 (define-on-top "F5" "pull-hidden-next")
 (define-on-top "F6" "delete")
 
-(defcommand firefox () ()
-            (run-or-raise "firefox" '(:class "Firefox"))
-            (message "Firefox"))
-(define-on-top "F9" "firefox")
+(defcommand web-browser () ()
+            (destructuring-bind (browser-cmd . browser-class) *BROWSER*
+              (run-or-raise browser-cmd `(:class ,browser-class))
+              (message "Web browser")))
+(define-on-top "F9" "web-browser")
 
 (define-on-top "F10" "emacs")
 
 (defcommand terminal () ()
-            (run-or-raise (car *TERMINAL*) (list :class (cdr *TERMINAL*))))
+            (destructuring-bind (terminal-cmd . terminal-class) *TERMINAL*
+              (run-or-raise terminal-cmd `(:class ,terminal-class))))
 (bind "c" (concat "exec " (car *TERMINAL*)))
 (define-on-top "F11" "terminal")
 (define-on-top "F12" "exec")
@@ -103,7 +106,6 @@
 
 (when *initializing*
   (run-commands "randr y"
-                "exec xscreensaver -no-splash"
-                "exec xinput set-button-map 12 3 2 1 4 5 6 7 8 9")) ; left-handed trackball
+                "exec xscreensaver -no-splash"))
 
 (load "~/bin/stump/menu")

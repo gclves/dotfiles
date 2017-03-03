@@ -1,0 +1,4 @@
+# -*- mode: conf -*-
+[DEFAULT]
+editor = emacsclient
+extension = .md

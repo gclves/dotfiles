@@ -12,3 +12,5 @@
 /.emacs.d/projectile*
 /.emacs.d/recentf
 /.emacs.d/tramp
+/.emacs.d/%backup%~
+*~
