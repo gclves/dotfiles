@@ -4,9 +4,10 @@
 ;; - integrate with pass
 ;; - terminal velocity command
 ;; - manage docker containers
-;; - manage NetworkManager connections
 
 (in-package :stumpwm)
+
+(ql:quickload 'cl-ppcre)
 
 (setf *mouse-focus-policy* :sloppy)     ; focus follows mouse
 (setf *startup-message* "Hack the planet")
@@ -35,7 +36,11 @@
              (concat "google-chrome --app-id=" app-id) `(:instance ,(concat "crx_" app-id))))
 
 (bind "[" "chromium-app paccflbfblppaoidibhflahkogodngie") ; deezer
-;; (bind "]" "chromium-app jeogkiiogjbmhklcnbgkdcjoioegiknm") ; slack
+(bind "]" "chromium-app jeogkiiogjbmhklcnbgkdcjoioegiknm") ; slack
+
+(defcommand emacs () ()
+            "Like the native Emacs command, but using emacsclient instead"
+            (run-or-raise "emacsclient -nc -a \"\"" '(:class "Emacs")))
 
 (defun define-on-top (key command)
   (define-key *top-map* (kbd key) command))
@@ -94,6 +99,16 @@
             (run-shell-command
              (concat "nmcli connection " (if up? "up " "down ") *vpn-name*)))
 
+;; TODO: show status, toggle status
+(defcommand
+    network () ()
+    "Show a menu to manage network connections (WiFi/VPN)"
+    (let* ((connections (run-shell-command "nmcli conn | egrep '(vpn|wireless)' | awk -F '  ' '{print $1}'" t))
+           (net (select-from-menu (current-screen) (cl-ppcre:split "\\n" connections) "Connection"))
+           (command (select-from-menu (current-screen) '("up" "down") "Command")))
+      (run-shell-command (format nil "nmcli connection ~a ~s" command net))))
+(bind "," "network")
+
 (defcommand suspend (confirm) ((:y-or-n "Are you sure you want to suspend?"))
             (when confirm (run-shell-command "systemctl suspend")))
 
@@ -106,6 +121,7 @@
 
 (when *initializing*
   (run-commands "randr y"
-                "exec xscreensaver -no-splash"))
+                "exec xscreensaver -no-splash"
+                "emacs"))
 
 (load "~/bin/stump/menu")
