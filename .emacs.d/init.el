@@ -17,7 +17,6 @@
 
 ;; No splash screen please ... jeez
 (setq inhibit-startup-message t)
-(set-face-attribute 'default (selected-frame) :height 102) ; I finally found the perfect font!
 
 (setq custom-file "~/.emacs.d/custom.el")
 
@@ -73,6 +72,7 @@
     exec-path-from-shell
     zoom-window
     cycbuf
+    git-timemachine
     discover))
 
 (dolist (p my-packages)
@@ -113,6 +113,9 @@ Including indent-buffer, which should not be called automatically on save."
 (global-set-key (kbd "C-c n") 'cleanup-buffer)
 
 (add-hook 'prog-mode-hook 'auto-complete-mode)
+;; Prevent ac from completing on arrow keys
+(define-key ac-completing-map [down] nil)
+(define-key ac-completing-map [up] nil)
 
 (defun delete-current-buffer-file ()
   "Removes file connected to current buffer and kills buffer."
@@ -188,8 +191,8 @@ Including indent-buffer, which should not be called automatically on save."
 
 (setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)
       aw-scope 'frame)
-(global-set-key (kbd "M-o") 'other-window)
-(global-set-key (kbd "M-O") 'ace-window)
+(global-set-key (kbd "C-o") 'other-window)
+(global-set-key (kbd "M-o") 'ace-window)
 
 (require 'zoom-window)
 (global-set-key (kbd "C-x C-z") 'zoom-window-zoom)
@@ -415,6 +418,27 @@ Version 2016-01-08"
 (define-key undo-tree-map (kbd "C-/") (disabled-keybinding "C-/" "C-z"))
 (define-key undo-tree-map (kbd "M-_") (disabled-keybinding "M-_" "C-S-Z"))
 
+;; Scroll wheel moves through time instead of space (https://xkcd.com/1806/)
+(global-set-key (kbd "<S-mouse-4>") 'undo-tree-undo)
+(global-set-key (kbd "<S-mouse-5>") 'undo-tree-redo)
+
+(with-eval-after-load 'git-timemachine
+  (global-set-key (kbd "<M-mouse-4>") (lambda ()
+                                        (interactive)
+                                        (unless (bound-and-true-p git-timemachine-mode)
+                                          (progn
+                                            (message "Enabling time machine mode")
+                                            (git-timemachine)))
+                                        (git-timemachine-show-previous-revision)))
+  (global-set-key (kbd "<M-mouse-5>") (lambda ()
+                                        (interactive)
+                                        (unless (bound-and-true-p git-timemachine-mode)
+                                          (progn
+                                            (message "Enabling time machine mode")
+                                            (git-timemachine)))
+                                        (git-timemachine-show-next-revision)))
+  (define-key git-timemachine-mode-map (kbd "<M-mouse-5>") 'git-timemachine-show-next-revision)
+  (define-key git-timemachine-mode-map (kbd "<M-mouse-4>") 'git-timemachine-show-previous-revision))
 
 ;;; Specific modes
 ;; JS2 Mode
@@ -578,7 +602,7 @@ directory to make multiple eshell windows easier."
 (setq vc-make-backup-files t)
 
 (global-set-key (kbd "<f1>") 'eshell)
-;; (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 (load custom-file)
 
@@ -606,7 +630,6 @@ directory to make multiple eshell windows easier."
             ("\\(\\\\\\\\\\)"              #Xe106)
             ("\\(\\\\\\\\\\\\\\)"          #Xe107)
             ("\\({-\\)"                    #Xe108)
-            ("\\(\\[\\]\\)"                #Xe109)
             ("\\(::\\)"                    #Xe10a)
             ("\\(:::\\)"                   #Xe10b)
             ("[^=]\\(:=\\)"                #Xe10c)
@@ -723,22 +746,22 @@ directory to make multiple eshell windows easier."
  (lambda ()
    (mapc (lambda (pair) (push pair prettify-symbols-alist))
          '(;; Syntax
-           ("def" .      #x2131)
+           ("def" .      #x1d453)
            ("not" .      #x2757)
            ("in" .       #x2208)
            ("not in" .   #x2209)
-           ("return" .   #x27fc)
-           ("yield" .    #x27fb)
            ("for" .      #x2200)
+           ;; Logical
+           ("and" . #x2227)
+           ("or" . #x2228)
+           ("True" . #x22a4)
+           ("False" . #x22a5)
            ;; Base Types
            ("int" .      #x2124)
            ("float" .    #x211d)
            ("str" .      #x1d54a)
-           ("True" .     #x1d54b)
-           ("False" .    #x1d53d)
            ;; Mypy
            ("Dict" .     #x1d507)
-           ("List" .     #x2112)
            ("Tuple" .    #x2a02)
            ("Set" .      #x2126)
            ("Iterable" . #x1d50a)
@@ -750,12 +773,15 @@ directory to make multiple eshell windows easier."
  (lambda ()
    (mapc (lambda (pair) (push pair prettify-symbols-alist))
          '(;; Syntax
-           ("!" .      #x2757)
            ("in" .       #x2208)
-           ("for" .      #x2200)
            ("=>" . #x27fc)
+           ("function" . #x1d453)
+           ;; Logical
+           ("!" .      #x2757)
            ("&&" . #x2227)
            ("||" . #x2228)
+           ("true" . #x22a4)
+           ("false" . #x22a5)
            ;; Base Types
            ("Number" .    #x211d)
            ("String" .      #x1d54a)
