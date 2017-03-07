@@ -124,6 +124,7 @@ export VAGRANT_DEFAULT_PROVIDER=virtualbox
 alias wurun='docker run -it --rm -v /etc/localtime:/etc/localtime:ro -v $(pwd):/app:Z lastline'
 alias vim=$EDITOR
 alias gvim=$VISUAL
+alias e=$VISUAL
 alias n='terminal_velocity'     # quick notes
 alias npm='yarn'
 
