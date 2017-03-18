@@ -102,7 +102,8 @@ if ${use_color} ; then
     alias grep='grep --colour=auto'
     alias egrep='egrep --colour=auto'
     alias fgrep='fgrep --colour=auto'
-    . ~/.bash_prompt
+    # . ~/.bash_prompt
+    [[ -f $HOME/dotfiles/liquidprompt/liquidprompt ]] && . $HOME/dotfiles/liquidprompt/liquidprompt
 else
     export PS1='\[\e[31m\]\[\e[00;32m\]\u\[\e[00m\]@\[\e[00;31m\]\h\[\e[00m\]:\[\e[00;36m\]\w\[\e[00m\]$ '
 fi
@@ -114,8 +115,7 @@ done
 # Try to keep environment pollution down, EPA loves us.
 unset use_color sh
 
-PATH=$PATH:$HOME/.local/bin:$HOME/bin:node_modules/.bin
-export PATH
+export PATH=$PATH:$HOME/.local/bin:$HOME/bin:node_modules/.bin
 export VISUAL='emacsclient -a ""'
 export EDITOR="$VISUAL -t"
 export VAGRANT_DEFAULT_PROVIDER=virtualbox
@@ -135,8 +135,6 @@ function remove_lines_from() { grep -F -x -v -f $2 $1; }
 alias pp="ps axuf | pager"
 alias sum="xargs | tr ' ' '+' | bc" ## Usage: echo 1 2 3 | sum
 function mcd() { mkdir $1 && cd $1; }
-
-eval `keychain --quiet --eval id_rsa`
 
 # Important security announcements
 dig +short txt istheinternetonfire.com

@@ -1,4 +1,6 @@
 # -*- mode: conf -*-
 [DEFAULT]
 editor = emacsclient
-extension = .md
+extension = .org
+extensions = .txt, .md, .org
+notes_dir = ~/Notes

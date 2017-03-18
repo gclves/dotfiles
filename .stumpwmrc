@@ -13,11 +13,9 @@
 (setf *startup-message* "Hack the planet")
 (setf *timeout-wait* 10)
 
-;(setf *message-window-gravity* :center)
-;(setf *input-window-gravity* :center)
-
 (defparameter *TERMINAL* (cons "urxvt" "URxvt"))
-(defparameter *BROWSER* (cons "vivaldi" "Vivaldi-stable"))
+(defparameter *BROWSER* (cons "~/bin/firefox-dev" "Firefox"))
+(defparameter *mouse-name* "Kensington      Kensington Expert Mouse")
 
 (bind "w" "windowlist")
 (bind "C-w" "windows")
@@ -80,10 +78,12 @@
 (defcommand keyboard () ()
             (run-shell-command "setxkbmap -layout us,us -variant ,alt-intl -option grp:ctrls_toggle"))
 
+(bind "C-x" "exec ~/bin/passmenu")
+
 ;; Misc interactive commands
 (defcommand randr (hdmi?) ((:y-or-n "Is the HDMI cable on? "))
   (let ((base-cmd "xrandr --output eDP-1 --auto --output HDMI-1 ")
-        (hdmi-cmd (if hdmi? "--auto --right-of eDP-1" "--off")))
+        (hdmi-cmd (if hdmi? "--auto --left-of eDP-1" "--off")))
     (run-shell-command (concat base-cmd hdmi-cmd)))
   (run-commands "refresh-heads"))
 
@@ -93,7 +93,6 @@
   (let ((sink (if headphones? *headphone-sink* "0")))
     (run-shell-command (concat "pactl set-default-sink " sink))))
 
-;; TODO: show a menu with all the available connections (`nmcli connection show`)
 (defparameter *vpn-name* "Lastline")
 (defcommand vpn (up?) ((:y-or-n "Do you want to turn the VPN on? "))
             (run-shell-command
@@ -122,6 +121,8 @@
 (when *initializing*
   (run-commands "randr y"
                 "exec xscreensaver -no-splash"
+                ;; left-handed trackball
+                ;; (format nil "exec xinput set-button-map ~s 3 2 1" *mouse-name*)
                 "emacs"))
 
 (load "~/bin/stump/menu")

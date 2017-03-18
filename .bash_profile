@@ -1,13 +1,6 @@
 # .bash_profile
+eval `keychain --quiet --eval id_rsa`
 
-# Get the aliases and functions
-if [ -f ~/.bashrc ]; then
-    . ~/.bashrc
+if [[ -f $HOME/.bashrc ]]; then
+    . $HOME/.bashrc
 fi
-
-# User specific environment and startup programs
-
-PATH=$PATH:$HOME/.local/bin:$HOME/bin
-
-export PATH
-_byobu_sourced=1 . /usr/bin/byobu-launch 2>/dev/null || true
