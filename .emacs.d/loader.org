@@ -1,0 +1,759 @@
+#+TITLE: GNU Emacs configuration
+#+STARTUP: indent
+#+LAYOUT: post
+#+OPTIONS: H:5 num:nil tags:nil toc:nil timestamps:t
+#+DESCRIPTION: Loading Emacs configuration using org-babel
+#+TAGS: emacs
+
+* First things first
+Set up the credentials. To be honest, I don't know where I'm using these yet.
+#+BEGIN_SRC emacs-lisp
+  (setq user-full-name "Guilherme Goncalves"
+        user-email-address "gsg@ggoncalves.me")
+#+END_SRC
+
+
+* Window appearance
+I like to set the appearance as early as possible to avoid glitches in
+the loading process. This makes for a cleaner Emacs window.
+
+#+BEGIN_SRC emacs-lisp
+(toggle-frame-fullscreen)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(setq inhibit-startup-message t)
+(global-hl-line-mode t)
+(blink-cursor-mode -1)
+(tooltip-mode -1)
+(setq initial-scratch-message "")
+#+END_SRC
+
+
+* Custom file
+The custom file holds all auto-generated Emacs configs, which I use
+for Org-mode quite a lot. This is so my =init.el= doesn't get littered
+by auto-generated stuff.
+#+BEGIN_SRC emacs-lisp
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file :noerror)
+#+END_SRC
+
+
+* Security
+Based on the article [[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][Your Text Editor Is Malware]].
+#+BEGIN_SRC sh :exports none
+python -m pip install --user certifi
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (require 'cl)
+  (setq tls-checktrust t)
+
+  (setq python (executable-find "python"))
+
+  (let ((trustfile
+         (replace-regexp-in-string
+          "\\\\" "/"
+          (replace-regexp-in-string
+           "\n" ""
+           (shell-command-to-string (concat python " -m certifi"))))))
+    (setq tls-program
+          (list
+           (format "gnutls-cli%s --x509cafile %s -p %%p %%h"
+                   (if (eq window-system 'w32) ".exe" "") trustfile)))
+    (setq gnutls-verify-error t)
+    (setq gnutls-trustfiles (list trustfile)))
+
+  ;; Test the settings by using the following code snippet:
+  ;; (let ((bad-hosts
+  ;;        (loop for bad
+  ;;              in `("https://wrong.host.badssl.com/"
+  ;;                   "https://self-signed.badssl.com/")
+  ;;              if (condition-case e
+  ;;                     (url-retrieve
+  ;;                      bad (lambda (retrieved) t))
+  ;;                   (error nil))
+  ;;              collect bad)))
+  ;;   (if bad-hosts
+  ;;       (error (format "tls misconfigured; retrieved %s ok" bad-hosts))
+  ;;     (url-retrieve "https://badssl.com"
+  ;;                   (lambda (retrieved) t))))
+#+END_SRC
+
+While we're at it, set the appropriate path for gpg.
+#+BEGIN_SRC emacs-lisp
+(setq epg-gpg-program "/usr/bin/gpg2")  ; Use gpg2 instead of (default) gpg
+#+END_SRC
+
+
+* Package setup
+#+BEGIN_SRC emacs-lisp
+    (require 'package)
+    (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                             ;; disabled for lack of HTTPS support
+                             ;; ("org" . "http://orgmode.org/elpa/")
+                             ("marmalade" . "https://marmalade-repo.org/packages/")
+                             ("melpa" . "https://melpa.org/packages/")))
+  (package-initialize)
+
+  (unless package-archive-contents
+    (package-refresh-contents))
+
+  (defun packages-install (&rest packages)
+    (message "Installing missing packages")
+    (mapc (lambda (package-name)
+            (unless (package-installed-p package-name)
+              (package-initialize)
+              (package-install package-name)))
+          packages)
+    (package-initialize))
+#+END_SRC
+
+I'm now experimenting with =use-package=, which seems to eliminate the
+need for huge lists being passed to =packages-install=. It should now
+be the only one in the list, and the whole block above is overkill (heh).
+#+BEGIN_SRC emacs-lisp
+(defun init--install-packages ()
+  (packages-install 'use-package))
+
+(condition-case nil
+    (init--install-packages)
+  (error
+   (package-refresh-contents)
+   (init--install-packages)))
+#+END_SRC
+
+
+* Editing goodies
+** Ain't nobody got time for typing "yes"/"no".
+#+BEGIN_SRC emacs-lisp
+(defalias 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+** Experimenting with ivy instead of Helm + Projectile
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel
+               :ensure t
+               :bind
+               (("M-x" . counsel-M-x)
+                ("M-y" . counsel-yank-pop)
+                :map ivy-minibuffer-map
+                ("M-y" . ivy-next-line)))
+
+  (use-package swiper
+               :diminish ivy-mode
+               :ensure t
+               :bind*
+               (("C-s" . swiper)
+                ("C-c C-r" . ivy-resume)
+                ("C-x C-f" . counsel-find-file)
+                ("C-c h f" . counsel-describe-function)
+                ("C-c h v" . counsel-describe-variable)
+                ("C-c i u" . counsel-unicode-char)
+                ("M-i" . counsel-imenu)
+                ("C-c g" . counsel-git)
+                ("C-c j" . counsel-git-grep)
+                ("C-c k" . counsel-ag)
+                ("C-c l" . scounsel-locate))
+               :config
+               (ivy-mode 1)
+               (setq ivy-use-virtual-buffers t)
+               (define-key read-expression-map (kbd "C-r") #'counsel-expression-history)
+               (ivy-set-actions
+                'counsel-find-file
+                '(("d" (lambda (x) (delete-file (expand-file-name x)))
+                   "delete"
+                   )))
+               (ivy-set-actions
+                'ivy-switch-buffer
+                '(("k"
+                   (lambda (x)
+                     (kill-buffer x)
+                     (ivy--reset-state ivy-last))
+                   "kill")
+                  ("j"
+                   ivy--switch-buffer-other-window-action
+                   "other window"))))
+
+  (use-package counsel-projectile
+               :ensure t
+               :config
+               (counsel-projectile-on))
+
+  (use-package ivy-hydra :ensure t)
+#+END_SRC
+
+** Moving around
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-S-w") (lambda () (interactive) (kill-buffer nil)))
+  (global-set-key (kbd "C-b") 'ivy-switch-buffer)
+  (global-set-key (kbd "C-o") 'other-window)
+
+  (use-package ace-window
+    :ensure t
+    :bind
+    (("M-o" . ace-window))
+    :config
+    (setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)
+          aw-scope 'frame))
+
+  (use-package undo-tree
+    :ensure t
+    :bind
+    (("C-z" . undo-tree-undo)
+     ("C-S-z" . undo-tree-redo)
+     ("<S-mouse-4>" . undo-tree-undo)
+     ("<S-mouse-5>" . undo-tree-redo)
+     :config
+     (global-undo-tree-mode +1)))
+
+  (use-package zoom-window
+    :ensure t
+    :bind
+    (("C-x C-z" . zoom-window-zoom)))
+
+  (defun jump-to-scratch ()
+    (interactive)
+    (switch-to-buffer "*scratch*"))
+  (global-set-key (kbd "M-0") 'jump-to-scratch)
+
+  (defun back-to-indentation-or-beginning ()
+    "Move point to beginning of line, or to first non-space character"
+    (interactive)
+    (if (= (point) (progn (back-to-indentation) (point)))
+        (beginning-of-line)))
+  (global-set-key (kbd "<home>") 'back-to-indentation-or-beginning)
+
+  (defun goto-line-with-feedback ()
+    "Show line numbers temporarily, while prompting for the line number input"
+    (interactive)
+    (unwind-protect
+        (progn
+          (linum-mode 1)
+          (goto-line (read-number "Goto line: ")))
+      (linum-mode -1)))
+  (global-set-key [remap goto-line] 'goto-line-with-feedback)
+
+
+#+END_SRC
+
+** Get rid of useless whitespace
+#+BEGIN_SRC emacs-lisp
+  (use-package ws-butler
+    :ensure t
+    :config
+    (ws-butler-global-mode))
+
+  (defun cleanup-buffer-safe ()
+    "Perform a bunch of safe operations on the whitespace content of a buffer.
+  Does not indent buffer, because it is used for a before-save-hook, and that
+  might be bad."
+    (interactive)
+    (untabify (point-min) (point-max))
+    (set-buffer-file-coding-system 'utf-8))
+
+  ;; Various superfluous white-space. Just say no.
+  ;; (add-hook 'before-save-hook 'cleanup-buffer-safe)
+  (ws-butler-global-mode)
+
+  (defun cleanup-buffer ()
+    "Perform a bunch of operations on the whitespace content of a buffer.
+  Including indent-buffer, which should not be called automatically on save."
+    (interactive)
+    (whitespace-cleanup)
+    (cleanup-buffer-safe)
+    (indent-region (point-min) (point-max)))
+  (global-set-key (kbd "C-c n") 'cleanup-buffer)
+
+  (global-set-key (kbd "RET") 'newline-and-indent)
+
+  (setq fill-column 80)
+  (setq-default indent-tabs-mode nil)
+
+  ;; Render all whitespace: useful, but crowded
+  ;; (setq whitespace-style '(face trailing tabs newline tab-mark space-mark))
+  (setq whitespace-style '(face trailing tabs newline))
+  (setq whitespace-display-mappings
+        '((tab-mark 9 [8594 9])
+          (space-mark 32 [183] [46])
+          (space-mark 160 [164])
+          (newline-mark 10 [8617 10])))
+  (global-whitespace-mode)
+  ;; (global-whitespace-newline-mode)
+#+END_SRC
+
+** Copy-paste goodness stolen from Xah Lee
+#+BEGIN_SRC emacs-lisp
+  (defun xah-cut-line-or-region ()
+    "Cut current line, or text selection.
+  When `universal-argument' is called first, cut whole buffer (respects `narrow-to-region')."
+    (interactive)
+    (if current-prefix-arg
+        (progn ; not using kill-region because we don't want to include previous kill
+          (kill-new (buffer-string))
+          (delete-region (point-min) (point-max)))
+      (progn (if (use-region-p)
+                 (kill-region (region-beginning) (region-end) t)
+               (kill-whole-line)))))
+
+  (defun xah-copy-line-or-region ()
+    "Copy current line, or text selection.
+  When called repeatedly, append copy subsequent lines.
+  When `universal-argument' is called first, copy whole buffer (respects `narrow-to-region')."
+    (interactive)
+    (let (-p1 -p2)
+      (if current-prefix-arg
+          (setq -p1 (point-min) -p2 (point-max))
+        (if (use-region-p)
+            (setq -p1 (region-beginning) -p2 (region-end))
+          (setq -p1 (line-beginning-position) -p2 (line-end-position))))
+      (if (eq last-command this-command)
+          (progn
+            (progn ; hack. exit if there's no more next line
+              (end-of-line)
+              (forward-char)
+              (backward-char))
+            (push-mark (point) "NOMSG" "ACTIVATE")
+            (kill-append "\n" nil)
+            (kill-append (buffer-substring-no-properties (line-beginning-position) (line-end-position)) nil)
+            (message "Line copy appended"))
+        (progn
+          (kill-ring-save -p1 -p2)
+          (if current-prefix-arg
+              (message "Buffer text copied")
+            (message "Text copied"))))
+      (end-of-line)
+      (forward-char)))
+
+  (global-set-key (kbd "C-w") 'xah-cut-line-or-region)
+  (global-set-key (kbd "M-w") 'xah-copy-line-or-region)
+#+END_SRC
+
+** Manipulate a file directly from its buffer
+#+BEGIN_SRC emacs-lisp
+  (defun delete-current-buffer-file ()
+    "Removes file connected to current buffer and kills buffer."
+    (interactive)
+    (let ((filename (buffer-file-name))
+          (buffer (current-buffer))
+          (name (buffer-name)))
+      (if (not (and filename (file-exists-p filename)))
+          (ido-kill-buffer)
+        (when (yes-or-no-p "Are you sure you want to remove this file? ")
+          (delete-file filename)
+          (kill-buffer buffer)
+          (message "File '%s' successfully removed" filename)))))
+  (global-set-key (kbd "C-x C-k") 'delete-current-buffer-file)
+
+  (defun rename-current-buffer-file ()
+    "Renames current buffer and file it is visiting."
+    (interactive)
+    (let ((name (buffer-name))
+          (filename (buffer-file-name)))
+      (if (not (and filename (file-exists-p filename)))
+          (error "Buffer '%s' is not visiting a file!" name)
+        (let ((new-name (read-file-name "New name: " filename)))
+          (if (get-buffer new-name)
+              (error "A buffer named '%s' already exists!" new-name)
+            (rename-file filename new-name 1)
+            (rename-buffer new-name)
+            (set-visited-file-name new-name)
+            (set-buffer-modified-p nil)
+            (message "File '%s' successfully renamed to '%s'"
+                     name (file-name-nondirectory new-name)))))))
+  (global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
+
+#+END_SRC
+
+** Help Emacs help me
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :ensure t
+    :diminish which-key-mode
+    :config
+    (setq which-key-idle-delay 0.5)
+    (which-key-mode))
+
+  (use-package discover
+    :diminish discover-mode
+    :config (global-discover-mode))
+#+END_SRC
+
+** Open line
+#+BEGIN_SRC emacs-lisp
+  (defun open-line-below ()
+    (interactive)
+    (end-of-line)
+    (newline)
+    (indent-for-tab-command))
+
+  (defun open-line-above ()
+    (interactive)
+    (beginning-of-line)
+    (newline)
+    (forward-line -1)
+    (indent-for-tab-command))
+
+  (global-set-key (kbd "<C-return>") 'open-line-below)
+  (global-set-key (kbd "<C-S-return>") 'open-line-above)
+  (global-set-key (kbd "M-j") (lambda () (interactive) (join-line -1)))
+  (global-set-key [f7] 'call-last-kbd-macro)
+#+END_SRC
+** Paredit
+#+BEGIN_SRC emacs-lisp
+  (use-package paredit
+    :ensure t
+    :diminish paredit-mode
+    :config
+    (loop for hook in '(emacs-lisp-mode-hook
+                        eval-expression-minibuffer-setup-hook
+                        ielm-mode-hook lisp-mode-hook
+                        lisp-interaction-mode-hook
+                        scheme-mode-hook)
+          do (add-hook hook #'enable-paredit-mode)))
+
+#+END_SRC
+
+** Misc editing facilities
+I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C--") 'bury-buffer)
+  (global-set-key (kbd "C-;") 'comment-line)
+
+  (use-package expand-region
+    :ensure t
+    :config (pending-delete-mode t)
+    :bind
+    (("C-=" . er/expand-region)))
+
+  (use-package multiple-cursors
+    :ensure t
+    :bind
+    (("C-S-l" . mc/edit-lines)
+     ("C->" . mc/mark-next-like-this)
+     ("C-<" . mc/mark-previous-like-this)))
+
+  (defun move-line-down ()
+    (interactive)
+    (let ((col (current-column)))
+      (save-excursion
+        (forward-line)
+        (transpose-lines 1))
+      (forward-line)
+      (move-to-column col)))
+
+  (defun move-line-up ()
+    (interactive)
+    (let ((col (current-column)))
+      (save-excursion
+        (forward-line)
+        (transpose-lines -1))
+      (forward-line -2)
+      (move-to-column col)))
+
+  (global-set-key (kbd "<M-up>") 'move-line-up)
+  (global-set-key (kbd "<M-down>") 'move-line-down)
+
+  ;; Replace upcase/downcase word with their dwim counterparts
+  (global-set-key (kbd "M-u") 'upcase-dwim)
+  (global-set-key (kbd "M-l") 'downcase-dwim)
+  (global-set-key (kbd "C-x C-u") 'upcase-initials-region)
+  (global-set-key (kbd "C-x C-l") nil)
+
+
+  (defun xah-toggle-letter-case ()
+    "Toggle the letter case of current word or text selection.
+  Always cycle in this order: Init Caps, ALL CAPS, all lower.
+
+  URL `http://ergoemacs.org/emacs/modernization_upcase-word.html'
+  Version 2016-01-08"
+    (interactive)
+    (let ((deactivate-mark nil)
+          -p1 -p2)
+      (if (use-region-p)
+          (setq -p1 (region-beginning)
+                -p2 (region-end))
+        (save-excursion
+          (skip-chars-backward "[:alnum:]")
+          (setq -p1 (point))
+          (skip-chars-forward "[:alnum:]")
+          (setq -p2 (point))))
+      (when (not (eq last-command this-command))
+        (put this-command 'state 0))
+      (cond
+       ((equal 0 (get this-command 'state))
+        (upcase-initials-region -p1 -p2)
+        (put this-command 'state 1))
+       ((equal 1  (get this-command 'state))
+        (upcase-region -p1 -p2)
+        (put this-command 'state 2))
+       ((equal 2 (get this-command 'state))
+        (downcase-region -p1 -p2)
+        (put this-command 'state 0)))))
+  (global-set-key (kbd "M-c") 'xah-toggle-letter-case)
+
+  (defun quote-previous-word ()
+    "Wrap the previous word in quotes"
+    (interactive)
+    (let ((deactivate-mark nil)
+          -p1 -p2)
+      (if (use-region-p)
+          (progn
+            (setq -p1 (region-beginning)
+                  -p2 (region-end))
+            (message "Not implemented :("))
+        (progn
+          (save-excursion
+            (skip-chars-backward "[:alnum:]")
+            (insert "'")
+            (skip-chars-forward "[:alnum:]")
+            (insert "'"))
+          (forward-char)))))
+  (global-set-key (kbd "M-'") 'quote-previous-word)
+#+END_SRC
+
+*** Silliness
+#+BEGIN_SRC emacs-lisp
+  ;;; Super important!!
+  (defun shrug ()
+    "Insert ¯\\_(ツ)_/¯ at point"
+    (interactive)
+    (insert "¯\\_(ツ)_/¯"))
+  (defun lenny ()
+    "Insert ( ͡° ͜ʖ ͡°) at point"
+    (interactive)
+    (insert "( ͡° ͜ʖ ͡°)"))
+#+END_SRC
+
+
+* Backup
+#+BEGIN_SRC emacs-lisp
+  ;; Backup settings
+  (defvar --backup-directory (concat user-emacs-directory "backups"))
+
+  (if (not (file-exists-p --backup-directory))
+      (make-directory --backup-directory t))
+
+  (setq backup-directory-alist `(("." . ,--backup-directory)))
+  (setq make-backup-files t               ; backup of a file the first time it is saved.
+        backup-by-copying t               ; don't clobber symlinks
+        version-control t                 ; version numbers for backup files
+        delete-old-versions t             ; delete excess backup files silently
+        delete-by-moving-to-trash t
+        kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+        kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+        auto-save-default t               ; auto-save every buffer that visits a file
+        auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+        auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+        )
+    (setq delete-by-moving-to-trash t
+          trash-directory "~/.Trash/emacs")
+
+    (setq backup-directory-alist `(("." . ,(expand-file-name
+                                            (concat user-emacs-directory "backups")))))
+#+END_SRC
+
+
+* Git
+Magit is so awesome, it barely needs any setup at all.
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :bind ([f8] . magit-status))
+#+END_SRC
+
+Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.]])
+#+BEGIN_SRC emacs-lisp
+  (defmacro enable-time-machine-and-call (&rest body)
+    `(lambda ()
+      (interactive)
+      (unless (bound-and-true-p git-timemachine-mode)
+        (progn
+          (message "Enabling git-timemachine mode")
+          (git-timemachine)))
+      ,@body))
+
+  (use-package git-timemachine
+    :config
+    (progn
+      (global-set-key (kbd "<M-mouse-5>") (enable-time-machine-and-call (git-timemachine-show-next-revision)))
+      (global-set-key (kbd "<M-mouse-4>") (enable-time-machine-and-call (git-timemachine-show-previous-revision)))))
+#+END_SRC
+
+
+* Programming
+** Web
+#+BEGIN_SRC emacs-lisp
+    (use-package emmet-mode
+      :ensure t
+      :bind
+      (("<C-return>" . nil) :map emmet-mode-keymap)
+      :config
+      (add-hook 'web-mode-hook 'emmet-mode))
+
+    (use-package web-mode
+      :ensure t
+      :mode ("\\.php\\'" "\\.css\\'")
+      :bind
+      (("C-M-u" . web-mode-element-parent) :map web-mode-map
+       ("C-M-d" . web-mode-element-child) :map web-mode-map
+       ("C-M-n" . web-mode-element-next) :map web-mode-map
+       ("C-M-p" . web-mode-element-previous) :map web-mode-map)
+      :config
+      (setq web-mode-enable-css-colorization t
+            web-mode-enable-current-element-highlight t
+            web-mode-markup-indent-offset 2
+            web-mode-css-indent-offset 2
+            web-mode-code-indent-offset 2
+            css-indent-offset 2
+            emmet-indentation 2
+            js-indent-level 2
+            web-mode-auto-close-style 1
+            web-mode-code-indent-offset 4
+            web-mode-enable-auto-indentation t
+            web-mode-enable-auto-opening t
+            web-mode-enable-auto-pairing t
+            web-mode-enable-auto-quoting t))
+
+    (defun php-tpl-localize (p1 p2)
+      "Wrap region in a PHP call to xgettext"
+      (interactive "r")
+      (save-mark-and-excursion
+       (goto-char p1)
+       (insert "<?= _('")
+       (setq begin (point))
+       (forward-char (- p2 p1))
+       (setq end (point))
+       (insert "') ?>")
+       (replace-string "'" "\\'" nil begin end)
+       (message "Localized region")))
+#+END_SRC
+** JavaScript
+#+BEGIN_SRC emacs-lisp
+  (use-package tern :ensure t)
+
+  (use-package js2-mode
+    :ensure t
+    :mode ("\\.jsx\\'" "\\.js\\'")
+    :bind
+    (("M-j" . nil) :map js2-mode-map
+     ("C-c C-c" . js-send-region) :map js2-mode-map)
+    :config
+    (progn
+      (setq js2-basic-offset 2
+            js2-strict-trailing-comma-warning nil)
+      (add-hook 'js2-mode-hook 'tern-mode)))
+
+#+END_SRC
+** Org-mode
+There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still need a GUI to configure org sometimes (baby steps).
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :ensure t
+    :bind
+    (("M-[" . org-set-tags) :map org-mode-map
+     ("C-c s" . org-sort) :map org-mode-map
+     ("<C-up>" . org-up-element) :map org-mode-map
+     ("<C-down>" . org-down-element) :map org-mode-map
+     ("C-S-a" . org-agenda)
+     ("C-S-b" . org-iswitchb)
+     ("C-S-j" . org-clock-jump-to-current-clock)
+     ("C-S-c" . org-capture))
+    :config
+    (progn
+      (setq org-agenda-include-diary t
+            org-log-reschedule 'note
+            org-log-done 'time
+            org-enforce-todo-dependencies t
+            org-enforce-todo-checkbox-dependencies t
+            org-src-fontify-natively t    ; syntax highlight in code blocks
+            org-refile-targets '((nil :maxlevel . 3)
+                                 ("~/org/work.org" :maxlevel . 2)
+                                 ("~/org/notes.org" :maxlevel . 1)
+                                 ("~/org/everything.org" :maxlevel . 2))
+            org-outline-path-complete-in-steps nil         ; Refile in a single go
+            org-refile-use-outline-path t                  ; Show full paths for refiling
+            org-todo-keywords
+            '((sequence "NEXT(n)" "TODO(t)" "WAITING(w)" "SOMEDAY(s)" "|" "DONE(d)" "CANCELLED(c)")))))
+#+END_SRC
+
+
+* Look and feel
+**Note:** Some of these settings, such as font and color scheme, are set in [[file:custom.el][=custom.el=]].
+
+This replaces some words with their Math symbols (eg: lambda).
+
+#+BEGIN_SRC emacs-lisp
+  (global-prettify-symbols-mode 1)
+
+  (add-hook
+   'python-mode-hook
+   (lambda ()
+     (mapc (lambda (pair) (push pair prettify-symbols-alist))
+           '(;; Syntax
+             ("def" .      #x1d453)
+             ("not" .      #x2757)
+             ("in" .       #x2208)
+             ("not in" .   #x2209)
+             ("for" .      #x2200)
+             ;; Logical
+             ("and" . #x2227)
+             ("or" . #x2228)
+             ("True" . #x22a4)
+             ("False" . #x22a5)
+             ;; Base Types
+             ("int" .      #x2124)
+             ("float" .    #x211d)
+             ("str" .      #x1d54a)
+             ;; Mypy
+             ("Dict" .     #x1d507)
+             ("Tuple" .    #x2a02)
+             ("Set" .      #x2126)
+             ("Iterable" . #x1d50a)
+             ("Any" .      #x2754)
+             ("Union" .    #x22c3)))))
+
+  (add-hook
+   'js2-mode-hook
+   (lambda ()
+     (mapc (lambda (pair) (push pair prettify-symbols-alist))
+           '(;; Syntax
+             ("in" .       #x2208)
+             ("=>" . #x27fc)
+             ("function" . #x1d453)
+             ;; Logical
+             ("!" .      #x2757)
+             ("&&" . #x2227)
+             ("||" . #x2228)
+             ("true" . #x22a4)
+             ("false" . #x22a5)
+             ;; Base Types
+             ("Number" .    #x211d)
+             ("String" .      #x1d54a)
+             ;; Mypy
+             ("Array" .     #x2112)))))
+
+#+END_SRC
+
+Prettier Unicode symbols.
+#+BEGIN_SRC emacs-lisp
+  (when (member "Symbola" (font-family-list))
+    (set-fontset-font t 'unicode "Symbola" nil 'prepend))
+#+END_SRC
+
+Highlight changes in the gutter
+#+BEGIN_SRC emacs-lisp
+  (use-package git-gutter
+    :bind
+    (("C-c C-n" . git-gutter:next-hunk)
+     ("C-c C-p" . git-gutter:next-hunk))
+    :config (progn
+              (global-git-gutter-mode t)
+              (setq git-gutter:update-interval 2)
+              (mapc (lambda (pair)
+                      (set-face-background (car pair) (cdr pair))
+                      (set-face-foreground (car pair) (cdr pair)))
+                    '((git-gutter:added . "#8bc34a")
+                      (git-gutter:modified . "#b39ddb")
+                      (git-gutter:deleted . "#f36c60")))))
+#+END_SRC
