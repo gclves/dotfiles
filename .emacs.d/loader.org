@@ -584,49 +584,48 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
 * Programming
 ** Web
 #+BEGIN_SRC emacs-lisp
-    (use-package emmet-mode
-      :ensure t
-      :bind
-      (("<C-return>" . nil) :map emmet-mode-keymap)
-      :config
-      (add-hook 'web-mode-hook 'emmet-mode))
+  (use-package emmet-mode
+    :ensure t
+    :config
+    (add-hook 'web-mode-hook 'emmet-mode)
+    (define-key emmet-mode-keymap (kbd "<C-return>") nil))
 
-    (use-package web-mode
-      :ensure t
-      :mode ("\\.php\\'" "\\.css\\'")
-      :bind
-      (("C-M-u" . web-mode-element-parent) :map web-mode-map
-       ("C-M-d" . web-mode-element-child) :map web-mode-map
-       ("C-M-n" . web-mode-element-next) :map web-mode-map
-       ("C-M-p" . web-mode-element-previous) :map web-mode-map)
-      :config
-      (setq web-mode-enable-css-colorization t
-            web-mode-enable-current-element-highlight t
-            web-mode-markup-indent-offset 2
-            web-mode-css-indent-offset 2
-            web-mode-code-indent-offset 2
-            css-indent-offset 2
-            emmet-indentation 2
-            js-indent-level 2
-            web-mode-auto-close-style 1
-            web-mode-code-indent-offset 4
-            web-mode-enable-auto-indentation t
-            web-mode-enable-auto-opening t
-            web-mode-enable-auto-pairing t
-            web-mode-enable-auto-quoting t))
+  (use-package web-mode
+    :ensure t
+    :mode ("\\.php\\'" "\\.css\\'")
+    :bind
+    (("C-M-u" . web-mode-element-parent) :map web-mode-map
+     ("C-M-d" . web-mode-element-child) :map web-mode-map
+     ("C-M-n" . web-mode-element-next) :map web-mode-map
+     ("C-M-p" . web-mode-element-previous) :map web-mode-map)
+    :config
+    (setq web-mode-enable-css-colorization t
+          web-mode-enable-current-element-highlight t
+          web-mode-markup-indent-offset 2
+          web-mode-css-indent-offset 2
+          web-mode-code-indent-offset 2
+          css-indent-offset 2
+          emmet-indentation 2
+          js-indent-level 2
+          web-mode-auto-close-style 1
+          web-mode-code-indent-offset 4
+          web-mode-enable-auto-indentation t
+          web-mode-enable-auto-opening t
+          web-mode-enable-auto-pairing t
+          web-mode-enable-auto-quoting t))
 
-    (defun php-tpl-localize (p1 p2)
-      "Wrap region in a PHP call to xgettext"
-      (interactive "r")
-      (save-mark-and-excursion
-       (goto-char p1)
-       (insert "<?= _('")
-       (setq begin (point))
-       (forward-char (- p2 p1))
-       (setq end (point))
-       (insert "') ?>")
-       (replace-string "'" "\\'" nil begin end)
-       (message "Localized region")))
+  (defun php-tpl-localize (p1 p2)
+    "Wrap region in a PHP call to xgettext"
+    (interactive "r")
+    (save-mark-and-excursion
+     (goto-char p1)
+     (insert "<?= _('")
+     (setq begin (point))
+     (forward-char (- p2 p1))
+     (setq end (point))
+     (insert "') ?>")
+     (replace-string "'" "\\'" nil begin end)
+     (message "Localized region")))
 #+END_SRC
 ** JavaScript
 #+BEGIN_SRC emacs-lisp
@@ -654,13 +653,15 @@ There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still n
     (("M-[" . org-set-tags) :map org-mode-map
      ("C-c s" . org-sort) :map org-mode-map
      ("<C-up>" . org-up-element) :map org-mode-map
-     ("<C-down>" . org-down-element) :map org-mode-map
-     ("C-S-a" . org-agenda)
-     ("C-S-b" . org-iswitchb)
-     ("C-S-j" . org-clock-jump-to-current-clock)
-     ("C-S-c" . org-capture))
+     ("<C-down>" . org-down-element) :map org-mode-map)
     :config
     (progn
+      ;; For some reason, declaring these in `:bind` won't work
+      (global-set-key (kbd "C-S-a") 'org-agenda)
+      (global-set-key (kbd "C-S-b") 'org-iswitchb)
+      (global-set-key (kbd "C-S-j") 'org-clock-jump-to-current-clock)
+      (global-set-key (kbd "C-S-c") 'org-capture)
+
       (setq org-agenda-include-diary t
             org-log-reschedule 'note
             org-log-done 'time
@@ -675,6 +676,10 @@ There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still n
             org-refile-use-outline-path t                  ; Show full paths for refiling
             org-todo-keywords
             '((sequence "NEXT(n)" "TODO(t)" "WAITING(w)" "SOMEDAY(s)" "|" "DONE(d)" "CANCELLED(c)")))))
+#+END_SRC
+** Other
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.hdl\\'" . vhdl-mode))
 #+END_SRC
 
 
