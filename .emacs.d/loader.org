@@ -6,10 +6,11 @@
 #+TAGS: emacs
 
 * First things first
-Set up the credentials. To be honest, I don't know where I'm using these yet.
+Set up some variables and import =PATH= from the shell.
 #+BEGIN_SRC emacs-lisp
   (setq user-full-name "Guilherme Goncalves"
         user-email-address "gsg@ggoncalves.me")
+  (exec-path-from-shell-copy-env "PATH")
 #+END_SRC
 
 
@@ -41,47 +42,6 @@ by auto-generated stuff.
 
 
 * Security
-Based on the article [[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][Your Text Editor Is Malware]].
-#+BEGIN_SRC sh :exports none
-python -m pip install --user certifi
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (require 'cl)
-  (setq tls-checktrust t)
-
-  (setq python (executable-find "python"))
-
-  (let ((trustfile
-         (replace-regexp-in-string
-          "\\\\" "/"
-          (replace-regexp-in-string
-           "\n" ""
-           (shell-command-to-string (concat python " -m certifi"))))))
-    (setq tls-program
-          (list
-           (format "gnutls-cli%s --x509cafile %s -p %%p %%h"
-                   (if (eq window-system 'w32) ".exe" "") trustfile)))
-    (setq gnutls-verify-error t)
-    (setq gnutls-trustfiles (list trustfile)))
-
-  ;; Test the settings by using the following code snippet:
-  ;; (let ((bad-hosts
-  ;;        (loop for bad
-  ;;              in `("https://wrong.host.badssl.com/"
-  ;;                   "https://self-signed.badssl.com/")
-  ;;              if (condition-case e
-  ;;                     (url-retrieve
-  ;;                      bad (lambda (retrieved) t))
-  ;;                   (error nil))
-  ;;              collect bad)))
-  ;;   (if bad-hosts
-  ;;       (error (format "tls misconfigured; retrieved %s ok" bad-hosts))
-  ;;     (url-retrieve "https://badssl.com"
-  ;;                   (lambda (retrieved) t))))
-#+END_SRC
-
-While we're at it, set the appropriate path for gpg.
 #+BEGIN_SRC emacs-lisp
 (setq epg-gpg-program "/usr/bin/gpg2")  ; Use gpg2 instead of (default) gpg
 #+END_SRC
@@ -130,7 +90,7 @@ be the only one in the list, and the whole block above is overkill (heh).
 #+BEGIN_SRC emacs-lisp
 (defalias 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
-** Experimenting with ivy instead of Helm + Projectile
+** Experimenting with ivy instead of Helm
 #+BEGIN_SRC emacs-lisp
   (use-package counsel
                :ensure t
@@ -175,8 +135,22 @@ be the only one in the list, and the whole block above is overkill (heh).
                    ivy--switch-buffer-other-window-action
                    "other window"))))
 
+  (use-package projectile
+    :ensure t
+    :bind
+    (("C-&" . projectile-run-async-shell-command-in-root)
+     ("C-!" . projectile-run-shell-command-in-root)
+     ("C-c C-e" . projectile-run-eshell)
+     ("C-c C-s" . projectile-run-shell))
+    :config
+    (projectile-mode)
+    (setq projectile-completion-system 'ivy))
+
   (use-package counsel-projectile
                :ensure t
+               :bind
+               (("C-\\" . counsel-projectile)
+                ("C-S-f" . counsel-projectile-ag))
                :config
                (counsel-projectile-on))
 
@@ -188,6 +162,10 @@ be the only one in the list, and the whole block above is overkill (heh).
   (global-set-key (kbd "C-S-w") (lambda () (interactive) (kill-buffer nil)))
   (global-set-key (kbd "C-b") 'ivy-switch-buffer)
   (global-set-key (kbd "C-o") 'other-window)
+
+  (global-set-key (kbd "M-2") 'split-window-below)
+  (global-set-key (kbd "M-3") 'split-window-right)
+  (global-set-key (kbd "M-4") 'delete-window)
 
   (use-package ace-window
     :ensure t
@@ -202,6 +180,7 @@ be the only one in the list, and the whole block above is overkill (heh).
     :bind
     (("C-z" . undo-tree-undo)
      ("C-S-z" . undo-tree-redo)
+     ("C-x u" . undo-tree-visualize)
      ("<S-mouse-4>" . undo-tree-undo)
      ("<S-mouse-5>" . undo-tree-redo)
      :config
@@ -210,7 +189,7 @@ be the only one in the list, and the whole block above is overkill (heh).
   (use-package zoom-window
     :ensure t
     :bind
-    (("C-x C-z" . zoom-window-zoom)))
+    (("M-1" . zoom-window-zoom)))
 
   (defun jump-to-scratch ()
     (interactive)
@@ -413,13 +392,30 @@ be the only one in the list, and the whole block above is overkill (heh).
           do (add-hook hook #'enable-paredit-mode)))
 
 #+END_SRC
+** Autocomplete and snippets
+#+BEGIN_SRC emacs-lisp
+  (use-package auto-complete
+    :ensure t
+    :config
+    (setq ac-auto-start 4)
+    (define-key ac-completing-map [down] nil)
+    (define-key ac-completing-map [up] nil)
+    (add-hook 'prog-mode-hook 'auto-complete-mode))
 
+  (use-package ac-js2 :ensure t)
+  (use-package tern-auto-complete
+    :ensure t
+    :config
+    (add-hook 'tern-mode-hook 'tern-ac-setup))
+#+END_SRC
 ** Misc editing facilities
 I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C--") 'bury-buffer)
   (global-set-key (kbd "C-;") 'comment-line)
+  (electric-pair-mode)
+  (electric-quote-mode)
 
   (use-package expand-region
     :ensure t
@@ -612,7 +608,11 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
           web-mode-enable-auto-indentation t
           web-mode-enable-auto-opening t
           web-mode-enable-auto-pairing t
-          web-mode-enable-auto-quoting t))
+          web-mode-enable-auto-quoting t)
+    (setq-default web-mode-css-indent-offset 2
+                  web-mode-code-indent-offset 2
+                  web-mode-markup-indent-offset 2))
+
 
   (defun php-tpl-localize (p1 p2)
     "Wrap region in a PHP call to xgettext"
@@ -635,13 +635,13 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
     :ensure t
     :mode ("\\.jsx\\'" "\\.js\\'")
     :bind
-    (("M-j" . nil) :map js2-mode-map
-     ("C-c C-c" . js-send-region) :map js2-mode-map)
+    (("C-c C-c" . js-send-region) :map js2-mode-map)
     :config
     (progn
       (setq js2-basic-offset 2
             js2-strict-trailing-comma-warning nil)
-      (add-hook 'js2-mode-hook 'tern-mode)))
+      (add-hook 'js2-mode-hook 'tern-mode)
+      (define-key js2-mode-map (kbd "M-j") nil)))
 
 #+END_SRC
 ** Org-mode
@@ -761,4 +761,165 @@ Highlight changes in the gutter
                     '((git-gutter:added . "#8bc34a")
                       (git-gutter:modified . "#b39ddb")
                       (git-gutter:deleted . "#f36c60")))))
+#+END_SRC
+
+
+* Shell
+Based on the excellent config and article from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]].
+#+BEGIN_SRC emacs-lisp
+  (defun eshell-here ()
+    "Opens up a new shell in the directory associated with the
+  current buffer's file. The eshell is renamed to match that
+  directory to make multiple eshell windows easier."
+    (interactive)
+    (let* ((parent (if (buffer-file-name)
+                       (file-name-directory (buffer-file-name))
+                     default-directory))
+           (height (/ (window-total-height) 3))
+           (name   (car (last (split-string parent "/" t)))))
+      (split-window-vertically (- height))
+      (other-window 1)
+      (eshell "new")
+      (rename-buffer (concat "*eshell: " name "*"))
+
+      (insert "ls")
+      (eshell-send-input)))
+
+  (global-set-key (kbd "C-!") 'eshell-here)
+
+  (defun eshell/x ()
+    (insert "exit")
+    (eshell-send-input)
+    (delete-window))
+#+END_SRC
+
+Some executables don’t behave well with Eshell out of the box, so we tweak them a little.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'eshell-mode-hook (lambda ()
+      (add-to-list 'eshell-visual-commands "ssh")
+      (add-to-list 'eshell-visual-commands "tail")))
+#+END_SRC
+
+I can’t believe you can start an Eshell session remotely via Tramp.
+#+BEGIN_SRC emacs-lisp
+  (defun eshell-there (host)
+    (interactive "sHost: ")
+    (let ((default-directory (format "/%s:" host)))
+      (eshell host)))
+#+END_SRC
+
+** Aliases
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'eshell-mode-hook (lambda ()
+      (eshell/alias "e" "find-file")
+      (eshell/alias "ff" "find-file")
+      (eshell/alias "emacs" "find-file")
+      (eshell/alias "ee" "find-file-other-window")
+
+      (eshell/alias "gd" "magit-diff-unstaged")
+      (eshell/alias "gds" "magit-diff-staged")
+
+      (eshell/alias "ll" (concat "ls" " -AlohG --color=always"))))
+
+  (defun eshell/d (&rest args)
+    (dired (pop args) "."))
+#+END_SRC
+
+** Prompt
+First, we need a function to tell us the current git branch.
+
+#+BEGIN_SRC emacs-lisp
+  (defun curr-dir-git-branch-string (pwd)
+    "Returns current git branch as a string, or the empty string if
+  PWD is not in a git repo (or the git command is not found)."
+    (interactive)
+    (when (and (eshell-search-path "git")
+               (locate-dominating-file pwd ".git"))
+      (let ((git-output (shell-command-to-string (concat "cd " pwd " && git branch | grep '\\*' | sed -e 's/^\\* //'"))))
+        (if (> (length git-output) 0)
+            (concat " :" (substring git-output 0 -1))
+          "(no branch)"))))
+#+END_SRC
+
+The function takes the current directory passed in via =pwd= and
+replaces the =$HOME= part with a tilde. I’m sure this function already
+exists in the eshell source, but I didn’t find it…
+
+#+BEGIN_SRC emacs-lisp
+  (defun pwd-replace-home (pwd)
+    "Replace home in PWD with tilde (~) character."
+    (interactive)
+    (let* ((home (expand-file-name (getenv "HOME")))
+           (home-len (length home)))
+      (if (and
+           (>= (length pwd) home-len)
+           (equal home (substring pwd 0 home-len)))
+          (concat "~" (substring pwd home-len))
+        pwd)))
+#+END_SRC
+
+Make the directory name be shorter…by replacing all directory names
+with just its first names. However, we leave the last two to be the
+full names. Why yes, I did steal this.
+
+#+BEGIN_SRC emacs-lisp
+  (defun pwd-shorten-dirs (pwd)
+    "Shorten all directory names in PWD except the last two."
+    (let ((p-lst (split-string pwd "/")))
+      (if (> (length p-lst) 2)
+          (concat
+           (mapconcat (lambda (elm) (if (zerop (length elm)) ""
+                                 (substring elm 0 1)))
+                      (butlast p-lst 2)
+                      "/")
+           "/"
+           (mapconcat (lambda (elm) elm)
+                      (last p-lst 2)
+                      "/"))
+        pwd)))  ;; Otherwise, we just return the PWD
+#+END_SRC
+
+Break up the directory into a “parent” and a “base”:
+
+#+BEGIN_SRC emacs-lisp
+  (defun split-directory-prompt (directory)
+    (if (string-match-p ".*/.*" directory)
+        (list (file-name-directory directory) (file-name-base directory))
+      (list "" directory)))
+#+END_SRC
+
+Now tie it all together with a prompt function can color each of the
+prompts components and turn off the default one.
+
+#+BEGIN_SRC emacs-lisp
+  (setq eshell-prompt-function
+        (lambda ()
+          (let* ((directory (split-directory-prompt (pwd-shorten-dirs (pwd-replace-home (eshell/pwd)))))
+                 (parent (car directory))
+                 (name (cadr directory))
+                 (branch (or (curr-dir-git-branch-string (eshell/pwd)) "")))
+
+            (if (eq 'dark (frame-parameter nil 'background-mode))
+                (concat   ;; Prompt for Dark Themes
+                 (propertize parent 'face `(:foreground "#8888FF"))
+                 (propertize name   'face `(:foreground "#8888FF" :weight bold))
+                 (propertize branch 'face `(:foreground "green"))
+                 (propertize " $"   'face `(:weight ultra-bold))
+                 (propertize " "    'face `(:weight bold)))
+
+              (concat    ;; Prompt for Light Themes
+               (propertize parent 'face `(:foreground "blue"))
+               (propertize name   'face `(:foreground "blue" :weight bold))
+               (propertize branch 'face `(:foreground "dark green"))
+               (propertize " $"   'face `(:weight ultra-bold))
+               (propertize " "    'face `(:weight bold)))))))
+
+  (setq eshell-highlight-prompt nil)
+#+END_SRC
+
+
+* Experimental features
+Just a group for features I may very well remove very soon.
+#+BEGIN_SRC emacs-lisp
+
 #+END_SRC
