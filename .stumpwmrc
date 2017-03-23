@@ -1,8 +1,8 @@
 ;;;; -*- mode: common-lisp -*-
 
 ;; Cool stuff to do:
-;; - integrate with pass
-;; - terminal velocity command
+;; - manage VirtualBox VMs
+;; - integrate with pass (partially done with dmenu)
 ;; - manage docker containers
 
 (in-package :stumpwm)
@@ -83,7 +83,7 @@
 ;; Misc interactive commands
 (defcommand randr (hdmi?) ((:y-or-n "Is the HDMI cable on? "))
   (let ((base-cmd "xrandr --output eDP-1 --auto --output HDMI-1 ")
-        (hdmi-cmd (if hdmi? "--auto --left-of eDP-1" "--off")))
+        (hdmi-cmd (if hdmi? "--auto --right-of eDP-1" "--off")))
     (run-shell-command (concat base-cmd hdmi-cmd)))
   (run-commands "refresh-heads"))
 
