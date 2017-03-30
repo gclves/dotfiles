@@ -14,7 +14,7 @@
 (setf *timeout-wait* 10)
 
 (defparameter *TERMINAL* (cons "urxvt" "URxvt"))
-(defparameter *BROWSER* (cons "~/bin/firefox-dev" "Firefox"))
+(defparameter *BROWSER* "~/bin/firefox-dev")
 (defparameter *mouse-name* "Kensington      Kensington Expert Mouse")
 
 (bind "w" "windowlist")
@@ -50,10 +50,10 @@
 (define-on-top "F6" "delete")
 
 (defcommand web-browser () ()
-            (destructuring-bind (browser-cmd . browser-class) *BROWSER*
-              (run-or-raise browser-cmd `(:class ,browser-class))
-              (message "Web browser")))
+            (run-or-raise *BROWSER* '(:role "browser"))
+            (message "Web browser"))
 (define-on-top "F9" "web-browser")
+(define-on-top "S-F9" (format nil "exec ~a" *BROWSER*))
 
 (define-on-top "F10" "emacs")
 
@@ -72,13 +72,15 @@
 (define-key *top-map* (kbd "XF86AudioNext") "exec playerctl next")
 (define-key *top-map* (kbd "XF86AudioPrev") "exec playerctl previous")
 
-(define-key *top-map* (kbd "XF86MonBrightnessUp") "exec xbacklight -inc 20")
-(define-key *top-map* (kbd "XF86MonBrightnessDown") "exec xbacklight -dec 20")
+(define-key *top-map* (kbd "XF86MonBrightnessUp") "exec lux -a 20")
+(define-key *top-map* (kbd "XF86MonBrightnessDown") "exec lux -s 20")
 
 (defcommand keyboard () ()
             (run-shell-command "setxkbmap -layout us,us -variant ,alt-intl -option grp:ctrls_toggle"))
 
 (bind "C-x" "exec ~/bin/passmenu")
+
+(bind "C-l" "exec xscreensaver-command -lock")
 
 ;; Misc interactive commands
 (defcommand randr (hdmi?) ((:y-or-n "Is the HDMI cable on? "))

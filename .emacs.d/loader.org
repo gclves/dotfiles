@@ -407,6 +407,15 @@ be the only one in the list, and the whole block above is overkill (heh).
     :ensure t
     :config
     (add-hook 'tern-mode-hook 'tern-ac-setup))
+
+  (use-package yasnippet
+    :ensure t
+    :config
+    (yas-global-mode)
+    (add-hook 'prog-mode-hook 'yas-minor-mode))
+
+  (use-package angular-snippets :ensure t)
+  (use-package common-lisp-snippets :ensure t)
 #+END_SRC
 ** Misc editing facilities
 I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
@@ -525,7 +534,6 @@ I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
 
 * Backup
 #+BEGIN_SRC emacs-lisp
-  ;; Backup settings
   (defvar --backup-directory (concat user-emacs-directory "backups"))
 
   (if (not (file-exists-p --backup-directory))
@@ -543,11 +551,12 @@ I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
         auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
         auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
         )
-    (setq delete-by-moving-to-trash t
-          trash-directory "~/.Trash/emacs")
+    (setq delete-by-moving-to-trash t)
 
     (setq backup-directory-alist `(("." . ,(expand-file-name
                                             (concat user-emacs-directory "backups")))))
+
+  (global-auto-revert-mode)               ; revert a file’s buffer automatically when it’s been changed on disk
 #+END_SRC
 
 

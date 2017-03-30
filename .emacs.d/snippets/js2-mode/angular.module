@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: angular.module
+# key: am
+# --
+(function() {
+  'use strict';
+  angular.module('${1:modName}', [${2:'deps'}])$0;
+})();
