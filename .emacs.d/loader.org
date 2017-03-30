@@ -6,11 +6,14 @@
 #+TAGS: emacs
 
 * First things first
-Set up some variables and import =PATH= from the shell.
+Set up some variables and import =PATH= from the shell. Also set up
+the SSH agent.
 #+BEGIN_SRC emacs-lisp
   (setq user-full-name "Guilherme Goncalves"
         user-email-address "gsg@ggoncalves.me")
   (exec-path-from-shell-copy-env "PATH")
+  (exec-path-from-shell-copy-env "SSH_AGENT_PID")
+  (exec-path-from-shell-copy-env "SSH_AUTH_SOCK")
 #+END_SRC
 
 
@@ -19,7 +22,6 @@ I like to set the appearance as early as possible to avoid glitches in
 the loading process. This makes for a cleaner Emacs window.
 
 #+BEGIN_SRC emacs-lisp
-(toggle-frame-fullscreen)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -107,6 +109,7 @@ be the only one in the list, and the whole block above is overkill (heh).
                (("C-s" . swiper)
                 ("C-c C-r" . ivy-resume)
                 ("C-x C-f" . counsel-find-file)
+                ("C-o" . counsel-find-file)
                 ("C-c h f" . counsel-describe-function)
                 ("C-c h v" . counsel-describe-variable)
                 ("C-c i u" . counsel-unicode-char)
@@ -161,19 +164,22 @@ be the only one in the list, and the whole block above is overkill (heh).
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-S-w") (lambda () (interactive) (kill-buffer nil)))
   (global-set-key (kbd "C-b") 'ivy-switch-buffer)
-  (global-set-key (kbd "C-o") 'other-window)
+  (global-set-key (kbd "M-o") 'other-window)
 
-  (global-set-key (kbd "M-2") 'split-window-below)
-  (global-set-key (kbd "M-3") 'split-window-right)
-  (global-set-key (kbd "M-4") 'delete-window)
+  (global-set-key (kbd "M-3") 'delete-other-windows)
+  (global-set-key (kbd "M-4") 'split-window-below)
+  (global-set-key (kbd "M-$") 'split-window-right)
+  (global-set-key (kbd "M-9") 'delete-window)
 
-  (use-package ace-window
-    :ensure t
-    :bind
-    (("M-o" . ace-window))
-    :config
-    (setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)
-          aw-scope 'frame))
+  (windmove-default-keybindings 'meta)
+
+  ;; (use-package ace-window
+  ;;   :ensure t
+  ;;   :bind
+  ;;   (("M-o" . ace-window))
+  ;;   :config
+  ;;   (setq aw-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)
+  ;;         aw-scope 'frame))
 
   (use-package undo-tree
     :ensure t
@@ -212,8 +218,6 @@ be the only one in the list, and the whole block above is overkill (heh).
           (goto-line (read-number "Goto line: ")))
       (linum-mode -1)))
   (global-set-key [remap goto-line] 'goto-line-with-feedback)
-
-
 #+END_SRC
 
 ** Get rid of useless whitespace
@@ -425,6 +429,7 @@ I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
   (global-set-key (kbd "C-;") 'comment-line)
   (electric-pair-mode)
   (electric-quote-mode)
+  (add-hook 'prog-mode-hook 'subword-mode)
 
   (use-package expand-region
     :ensure t
@@ -457,8 +462,8 @@ I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
       (forward-line -2)
       (move-to-column col)))
 
-  (global-set-key (kbd "<M-up>") 'move-line-up)
-  (global-set-key (kbd "<M-down>") 'move-line-down)
+  (global-set-key (kbd "<M-S-up>") 'move-line-up)
+  (global-set-key (kbd "<M-S-down>") 'move-line-down)
 
   ;; Replace upcase/downcase word with their dwim counterparts
   (global-set-key (kbd "M-u") 'upcase-dwim)
@@ -518,6 +523,12 @@ I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
   (global-set-key (kbd "M-'") 'quote-previous-word)
 #+END_SRC
 
+I run many async commands, and not once have I found the confirmation
+"A command is running in the default buffer.  Use a new buffer?" useful.
+
+#+BEGIN_SRC emacs-lisp
+  (setq async-shell-command-buffer 'rename-buffer)
+#+END_SRC
 *** Silliness
 #+BEGIN_SRC emacs-lisp
   ;;; Super important!!
@@ -638,7 +649,9 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
 #+END_SRC
 ** JavaScript
 #+BEGIN_SRC emacs-lisp
-  (use-package tern :ensure t)
+  (use-package tern
+    :ensure t
+    :bind ("C-S-r" . tern-rename-variable))
 
   (use-package js2-mode
     :ensure t
@@ -648,7 +661,8 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
     :config
     (progn
       (setq js2-basic-offset 2
-            js2-strict-trailing-comma-warning nil)
+            js2-strict-trailing-comma-warning nil
+            js2-global-externs '("angular" "d3" "require" "karma" "it" "describe"))
       (add-hook 'js2-mode-hook 'tern-mode)
       (define-key js2-mode-map (kbd "M-j") nil)))
 
@@ -685,6 +699,27 @@ There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still n
             org-refile-use-outline-path t                  ; Show full paths for refiling
             org-todo-keywords
             '((sequence "NEXT(n)" "TODO(t)" "WAITING(w)" "SOMEDAY(s)" "|" "DONE(d)" "CANCELLED(c)")))))
+
+  (use-package org-pomodoro
+    :ensure t
+    :commands (org-pomodoro)
+    :bind ("C-S-p" . org-pomodoro)
+    :config
+      (setq alert-user-configuration (quote ((((:category . "org-pomodoro")) libnotify nil)))))
+#+END_SRC
+** Common Lisp
+Nothing fancy here, just a regular SLIME installation.
+#+BEGIN_SRC emacs-lisp
+  (use-package slime
+    :ensure t
+    :config
+    (progn
+      (setq inferior-lisp-program "/usr/bin/sbcl"
+            slime-net-coding-system 'utf-8-unix)
+      (slime-setup '(slime-fancy))
+      (set-language-environment "UTF-8")
+      (setenv "LC_LOCALE" "en_US.UTF-8")
+      (setenv "LC_CTYPE" "en_US.UTF-8")))
 #+END_SRC
 ** Other
 #+BEGIN_SRC emacs-lisp
@@ -772,6 +807,10 @@ Highlight changes in the gutter
                       (git-gutter:deleted . "#f36c60")))))
 #+END_SRC
 
+** Miscellaneous
+#+BEGIN_SRC emacs-lisp
+  (setq-default cursor-type 'hbar)
+#+END_SRC
 
 * Shell
 Based on the excellent config and article from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]].
@@ -930,5 +969,6 @@ prompts components and turn off the default one.
 * Experimental features
 Just a group for features I may very well remove very soon.
 #+BEGIN_SRC emacs-lisp
-
+  (desktop-save-mode +1)        ; restore opened files from last session
+  (save-place-mode +1)          ; remember cursor position
 #+END_SRC
