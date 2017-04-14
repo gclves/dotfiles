@@ -97,31 +97,26 @@ else
 fi
 
 if ${use_color} ; then
-    #BSD#@export CLICOLOR=1
-    #GNU#@alias ls='ls --color=auto'
+    export CLICOLOR=1
+    alias ls='ls --color=auto'
     alias grep='grep --colour=auto'
     alias egrep='egrep --colour=auto'
     alias fgrep='fgrep --colour=auto'
-    # . ~/.bash_prompt
-    [[ -f $HOME/dotfiles/liquidprompt/liquidprompt ]] && . $HOME/dotfiles/liquidprompt/liquidprompt
-else
-    export PS1='\[\e[31m\]\[\e[00;32m\]\u\[\e[00m\]@\[\e[00;31m\]\h\[\e[00m\]:\[\e[00;36m\]\w\[\e[00m\]$ '
+    #. ~/.bash_prompt
 fi
-
-for sh in /etc/bash/bashrc.d/* ; do
-    [[ -r ${sh} ]] && source "${sh}"
-done
 
 # Try to keep environment pollution down, EPA loves us.
 unset use_color sh
 
-export PATH=$PATH:$HOME/.local/bin:$HOME/bin:node_modules/.bin
 export VISUAL='emacsclient -a ""'
 export EDITOR="$VISUAL -t"
 export VAGRANT_DEFAULT_PROVIDER=virtualbox
+export PLAN9=/usr/local/plan9
+export PATH=$PATH:$HOME/.local/bin:$HOME/bin:node_modules/.bin:$PLAN9/bin
 
 # Aliases
 alias llrun='docker run -it --rm -v /etc/localtime:/etc/localtime:ro -v $(pwd):/app:Z lastline'
+alias llreload='docker exec -it llproxy service nginx reload'
 alias vim=$EDITOR
 alias gvim=$VISUAL
 alias e=$VISUAL
@@ -134,7 +129,13 @@ function fname() { find . -iname "*$@*"; }
 function remove_lines_from() { grep -F -x -v -f $2 $1; }
 alias pp="ps axuf | pager"
 alias sum="xargs | tr ' ' '+' | bc" ## Usage: echo 1 2 3 | sum
+alias lz='ls -ltsraZ'
 function mcd() { mkdir $1 && cd $1; }
+function sanitize() {
+    find $1 -type f -exec chmod 644 {} +
+    find $1 -type d -exec chmod 755 {} +
+}
 
 # Important security announcements
 dig +short txt istheinternetonfire.com
+[ -r /home/ggoncalves/.byobu/prompt ] && . /home/ggoncalves/.byobu/prompt   #byobu-prompt#

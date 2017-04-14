@@ -13,9 +13,8 @@
 (setf *startup-message* "Hack the planet")
 (setf *timeout-wait* 10)
 
-(defparameter *TERMINAL* (cons "urxvt" "URxvt"))
-(defparameter *BROWSER* "~/bin/firefox-dev")
-(defparameter *mouse-name* "Kensington      Kensington Expert Mouse")
+(defparameter *TERMINAL* (cons "xterm" "XTerm"))
+(defparameter *BROWSER* "firefox")
 
 (bind "w" "windowlist")
 (bind "C-w" "windows")
@@ -121,10 +120,7 @@
 (define-on-top "S-F12" "run-in-terminal")
 
 (when *initializing*
-  (run-commands "randr y"
-                "exec xscreensaver -no-splash"
-                ;; left-handed trackball
-                ;; (format nil "exec xinput set-button-map ~s 3 2 1" *mouse-name*)
+  (run-commands "exec xscreensaver -no-splash"
                 "emacs"))
 
 (load "~/bin/stump/menu")
