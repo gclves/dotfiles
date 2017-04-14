@@ -95,48 +95,48 @@ be the only one in the list, and the whole block above is overkill (heh).
 ** Experimenting with ivy instead of Helm
 #+BEGIN_SRC emacs-lisp
   (use-package counsel
-               :ensure t
-               :bind
-               (("M-x" . counsel-M-x)
-                ("M-y" . counsel-yank-pop)
-                :map ivy-minibuffer-map
-                ("M-y" . ivy-next-line)))
+    :ensure t
+    :bind
+    (:map ivy-minibuffer-map
+          ("M-x" . counsel-M-x)
+          ("M-y" . counsel-yank-pop)
+          ("M-y" . ivy-next-line)))
 
   (use-package swiper
-               :diminish ivy-mode
-               :ensure t
-               :bind*
-               (("C-s" . swiper)
-                ("C-c C-r" . ivy-resume)
-                ("C-x C-f" . counsel-find-file)
-                ("C-o" . counsel-find-file)
-                ("C-c h f" . counsel-describe-function)
-                ("C-c h v" . counsel-describe-variable)
-                ("C-c i u" . counsel-unicode-char)
-                ("M-i" . counsel-imenu)
-                ("C-c g" . counsel-git)
-                ("C-c j" . counsel-git-grep)
-                ("C-c k" . counsel-ag)
-                ("C-c l" . scounsel-locate))
-               :config
-               (ivy-mode 1)
-               (setq ivy-use-virtual-buffers t)
-               (define-key read-expression-map (kbd "C-r") #'counsel-expression-history)
-               (ivy-set-actions
-                'counsel-find-file
-                '(("d" (lambda (x) (delete-file (expand-file-name x)))
-                   "delete"
-                   )))
-               (ivy-set-actions
-                'ivy-switch-buffer
-                '(("k"
-                   (lambda (x)
-                     (kill-buffer x)
-                     (ivy--reset-state ivy-last))
-                   "kill")
-                  ("j"
-                   ivy--switch-buffer-other-window-action
-                   "other window"))))
+    :diminish ivy-mode
+    :ensure t
+    :bind*
+    (("C-s" . swiper)
+     ("C-c C-r" . ivy-resume)
+     ("C-x C-f" . counsel-find-file)
+     ("C-o" . counsel-find-file)
+     ("C-c h f" . counsel-describe-function)
+     ("C-c h v" . counsel-describe-variable)
+     ("C-c i u" . counsel-unicode-char)
+     ("M-i" . counsel-imenu)
+     ("C-c g" . counsel-git)
+     ("C-c j" . counsel-git-grep)
+     ("C-c k" . counsel-ag)
+     ("C-c l" . scounsel-locate))
+    :config
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffers t)
+    (define-key read-expression-map (kbd "C-r") #'counsel-expression-history)
+    (ivy-set-actions
+     'counsel-find-file
+     '(("d" (lambda (x) (delete-file (expand-file-name x)))
+        "delete"
+        )))
+    (ivy-set-actions
+     'ivy-switch-buffer
+     '(("k"
+        (lambda (x)
+          (kill-buffer x)
+          (ivy--reset-state ivy-last))
+        "kill")
+       ("j"
+        ivy--switch-buffer-other-window-action
+        "other window"))))
 
   (use-package projectile
     :ensure t
@@ -150,12 +150,12 @@ be the only one in the list, and the whole block above is overkill (heh).
     (setq projectile-completion-system 'ivy))
 
   (use-package counsel-projectile
-               :ensure t
-               :bind
-               (("C-\\" . counsel-projectile)
-                ("C-S-f" . counsel-projectile-ag))
-               :config
-               (counsel-projectile-on))
+    :ensure t
+    :bind
+    (("C-\\" . counsel-projectile)
+     ("C-S-f" . counsel-projectile-ag))
+    :config
+    (counsel-projectile-on))
 
   (use-package ivy-hydra :ensure t)
 #+END_SRC
@@ -190,7 +190,7 @@ be the only one in the list, and the whole block above is overkill (heh).
      ("<S-mouse-4>" . undo-tree-undo)
      ("<S-mouse-5>" . undo-tree-redo)
      :config
-     (global-undo-tree-mode +1)))
+     (global-undo-tree-mode)))
 
   (use-package zoom-window
     :ensure t
@@ -358,6 +358,7 @@ be the only one in the list, and the whole block above is overkill (heh).
     (which-key-mode))
 
   (use-package discover
+    :ensure t
     :diminish discover-mode
     :config (global-discover-mode))
 #+END_SRC
@@ -575,6 +576,7 @@ I run many async commands, and not once have I found the confirmation
 Magit is so awesome, it barely needs any setup at all.
 #+BEGIN_SRC emacs-lisp
   (use-package magit
+    :ensure t
     :bind ([f8] . magit-status))
 #+END_SRC
 
@@ -582,14 +584,15 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
 #+BEGIN_SRC emacs-lisp
   (defmacro enable-time-machine-and-call (&rest body)
     `(lambda ()
-      (interactive)
-      (unless (bound-and-true-p git-timemachine-mode)
-        (progn
-          (message "Enabling git-timemachine mode")
-          (git-timemachine)))
-      ,@body))
+       (interactive)
+       (unless (bound-and-true-p git-timemachine-mode)
+         (progn
+           (message "Enabling git-timemachine mode")
+           (git-timemachine)))
+       ,@body))
 
   (use-package git-timemachine
+    :ensure t
     :config
     (progn
       (global-set-key (kbd "<M-mouse-5>") (enable-time-machine-and-call (git-timemachine-show-next-revision)))
@@ -610,17 +613,17 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
     :ensure t
     :mode ("\\.php\\'" "\\.css\\'")
     :bind
-    (("C-M-u" . web-mode-element-parent) :map web-mode-map
-     ("C-M-d" . web-mode-element-child) :map web-mode-map
-     ("C-M-n" . web-mode-element-next) :map web-mode-map
-     ("C-M-p" . web-mode-element-previous) :map web-mode-map)
+    (:map web-mode-map
+          ("C-M-u" . web-mode-element-parent)
+          ("C-M-d" . web-mode-element-child)
+          ("C-M-n" . web-mode-element-next)
+          ("C-M-p" . web-mode-element-previous))
     :config
     (setq web-mode-enable-css-colorization t
           web-mode-enable-current-element-highlight t
           web-mode-markup-indent-offset 2
           web-mode-css-indent-offset 2
           web-mode-code-indent-offset 2
-          css-indent-offset 2
           emmet-indentation 2
           js-indent-level 2
           web-mode-auto-close-style 1
@@ -631,7 +634,8 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
           web-mode-enable-auto-quoting t)
     (setq-default web-mode-css-indent-offset 2
                   web-mode-code-indent-offset 2
-                  web-mode-markup-indent-offset 2))
+                  web-mode-markup-indent-offset 2
+                  css-indent-offset 2))
 
 
   (defun php-tpl-localize (p1 p2)
@@ -651,21 +655,21 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
 #+BEGIN_SRC emacs-lisp
   (use-package tern
     :ensure t
-    :bind ("C-S-r" . tern-rename-variable))
+    :bind (:map tern-mode-keymap ("C-S-r" . tern-rename-variable)))
 
   (use-package js2-mode
     :ensure t
     :mode ("\\.jsx\\'" "\\.js\\'")
     :bind
-    (("C-c C-c" . js-send-region) :map js2-mode-map)
+    (:map js2-mode-map ("C-c C-c" . js-send-region))
     :config
     (progn
       (setq js2-basic-offset 2
             js2-strict-trailing-comma-warning nil
-            js2-global-externs '("angular" "d3" "require" "karma" "it" "describe"))
+            js2-global-externs
+            '("angular" "d3" "require" "karma" "it" "describe" "beforeEach" "module"))
       (add-hook 'js2-mode-hook 'tern-mode)
       (define-key js2-mode-map (kbd "M-j") nil)))
-
 #+END_SRC
 ** Org-mode
 There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still need a GUI to configure org sometimes (baby steps).
@@ -673,10 +677,11 @@ There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still n
   (use-package org
     :ensure t
     :bind
-    (("M-[" . org-set-tags) :map org-mode-map
-     ("C-c s" . org-sort) :map org-mode-map
-     ("<C-up>" . org-up-element) :map org-mode-map
-     ("<C-down>" . org-down-element) :map org-mode-map)
+    (:map org-mode-map
+          ("M-[" . org-set-tags)
+          ("C-c s" . org-sort)
+          ("<C-up>" . org-up-element)
+          ("<C-down>" . org-down-element))
     :config
     (progn
       ;; For some reason, declaring these in `:bind` won't work
@@ -685,12 +690,18 @@ There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still n
       (global-set-key (kbd "C-S-j") 'org-clock-jump-to-current-clock)
       (global-set-key (kbd "C-S-c") 'org-capture)
 
+      ;; run shell commands from org-babel
+      (org-babel-do-load-languages 'org-babel-load-languages '((sh . t)))
+
       (setq org-agenda-include-diary t
             org-log-reschedule 'note
             org-log-done 'time
             org-enforce-todo-dependencies t
             org-enforce-todo-checkbox-dependencies t
-            org-src-fontify-natively t    ; syntax highlight in code blocks
+            org-fontify-whole-heading-line t
+            org-hide-emphasis-markers t
+            org-agenda-restore-windows-after-quit t
+            org-src-fontify-natively t                     ; syntax highlight in code blocks
             org-refile-targets '((nil :maxlevel . 3)
                                  ("~/org/work.org" :maxlevel . 2)
                                  ("~/org/notes.org" :maxlevel . 1)
@@ -705,7 +716,7 @@ There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still n
     :commands (org-pomodoro)
     :bind ("C-S-p" . org-pomodoro)
     :config
-      (setq alert-user-configuration (quote ((((:category . "org-pomodoro")) libnotify nil)))))
+    (setq alert-user-configuration (quote ((((:category . "org-pomodoro")) libnotify nil)))))
 #+END_SRC
 ** Common Lisp
 Nothing fancy here, just a regular SLIME installation.
@@ -793,11 +804,12 @@ Prettier Unicode symbols.
 Highlight changes in the gutter
 #+BEGIN_SRC emacs-lisp
   (use-package git-gutter
+    :ensure t
     :bind
     (("C-c C-n" . git-gutter:next-hunk)
      ("C-c C-p" . git-gutter:next-hunk))
     :config (progn
-              (global-git-gutter-mode t)
+              (global-git-gutter-mode)
               (setq git-gutter:update-interval 2)
               (mapc (lambda (pair)
                       (set-face-background (car pair) (cdr pair))
@@ -806,11 +818,16 @@ Highlight changes in the gutter
                       (git-gutter:modified . "#b39ddb")
                       (git-gutter:deleted . "#f36c60")))))
 #+END_SRC
-
 ** Miscellaneous
 #+BEGIN_SRC emacs-lisp
-  (setq-default cursor-type 'hbar)
+  ;;; Display rules at column 80
+  (setq-default fill-column 80)
+  (use-package fill-column-indicator
+    :ensure t
+    :config
+    (add-hook 'prog-mode-hook 'fci-mode))
 #+END_SRC
+
 
 * Shell
 Based on the excellent config and article from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]].
@@ -971,4 +988,9 @@ Just a group for features I may very well remove very soon.
 #+BEGIN_SRC emacs-lisp
   (desktop-save-mode +1)        ; restore opened files from last session
   (save-place-mode +1)          ; remember cursor position
+  (global-set-key (kbd "C-S-r") 'rename-buffer)
+
+  ;; Always try to keep equally sized windows
+  (advice-add 'split-window-right :after #'balance-windows)
+  (advice-add 'delete-window :after #'balance-windows)
 #+END_SRC
