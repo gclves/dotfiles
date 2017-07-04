@@ -12,8 +12,9 @@
 (setf *mouse-focus-policy* :sloppy)     ; focus follows mouse
 (setf *startup-message* "Hack the planet")
 (setf *timeout-wait* 10)
+(set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
 
-(defparameter *TERMINAL* (cons "xterm" "XTerm"))
+(defparameter *TERMINAL* (cons "gnome-terminal" "Gnome-terminal"))
 (defparameter *BROWSER* "firefox")
 
 (bind "w" "windowlist")
@@ -39,8 +40,8 @@
             "Like the native Emacs command, but using emacsclient instead"
             (run-or-raise "emacsclient -nc -a \"\"" '(:class "Emacs")))
 
-(defun define-on-top (key command)
-  (define-key *top-map* (kbd key) command))
+(defmacro define-on-top (key command)
+  `(define-key *top-map* (kbd ,key) ,command))
 
 (define-on-top "F3" "fother")
 (define-on-top "S-F3" "fnext")
@@ -73,6 +74,18 @@
 
 (define-key *top-map* (kbd "XF86MonBrightnessUp") "exec lux -a 20")
 (define-key *top-map* (kbd "XF86MonBrightnessDown") "exec lux -s 20")
+
+;; prompt the user for an interactive command. The first arg is an
+;; optional initial contents.
+(defcommand colon1 (&optional (initial "")) (:rest)
+  (let ((cmd (read-one-line (current-screen) ": " :initial-input initial)))
+    (when cmd
+      (eval-command cmd t))))
+
+;; Browse somewhere
+(bind "b" (format nil "colon1 exec ~a http://www." *BROWSER*))
+;; Ssh somewhere
+(bind "C-s" (format nil "colon1 exec ~a -e ssh " (car *TERMINAL*)))
 
 (defcommand keyboard () ()
             (run-shell-command "setxkbmap -layout us,us -variant ,alt-intl -option grp:ctrls_toggle"))
