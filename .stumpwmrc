@@ -14,7 +14,7 @@
 (setf *timeout-wait* 10)
 (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
 
-(defparameter *TERMINAL* (cons "gnome-terminal" "Gnome-terminal"))
+(defparameter *TERMINAL* (cons "urxvt256c" "URxvt"))
 (defparameter *BROWSER* "firefox")
 
 (bind "w" "windowlist")

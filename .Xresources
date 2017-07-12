@@ -13,13 +13,13 @@ Xcursor.theme: neutral
 !      U R X V T
 !
 !
-URxvt*font:             -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
-URxvt*boldFont:         -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
-URxvt*italicFont:       -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
-URxvt*boldItalicFont:   -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
+! URxvt*font:             -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
+! URxvt*boldFont:         -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
+! URxvt*italicFont:       -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
+! URxvt*boldItalicFont:   -*-terminus-medium-r-*-*-14-140-*-*-*-*-*-*
 
-! URxvt*font:             xft:DejaVu Sans Mono:size=10
-! URxvt*boldFont:         xft:DejaVu Sans Mono:bold:size=10
+URxvt*font:             xft:Iosevka Type:size=12
+URxvt*boldFont:         xft:Iosevka Type:bold:size=12
 
 ! URxvt*font:              xft:Ubuntu Mono:size=10
 ! URxvt*boldFont:          xft:Ubuntu Mono:bold:size=10
@@ -59,51 +59,51 @@ XTerm*charClass:     33:48,35-38:48,39:43,42-47:48,58-59:48,61:48,63-64:48,126:4
 XTerm*utf8:          2
 XTerm*eightBitInput: true
 !XTerm*faceName:      terminus:pixelsize=14
-XTerm*faceName:	    Iosevka:size=10:antialias=true
+XTerm*faceName:	    Iosevka:size=11:antialias=true
 
-URxvt*foreground:   #e6d4c3
-URxvt*background:   #282222
-URxvt*cursorColor:  #e6d4c3
-URxvt*color0:       #222222
-URxvt*color8:       #331c1c
-URxvt*color1:       #997373
-URxvt*color9:       #995454
-URxvt*color2:       #999973
-URxvt*color10:      #999954
-URxvt*color3:       #997e63
-URxvt*color11:      #cc9e70
-URxvt*color4:       #738099
-URxvt*color12:      #7090cc
-URxvt*color5:       #857399
-URxvt*color13:      #a685cc
-URxvt*color6:       #7a9998
-URxvt*color14:      #8fccca
-URxvt*color7:       #b3b3b3
-URxvt*color15:      #cccccc
+! URxvt*foreground:   #e6d4c3
+! URxvt*background:   #282222
+! URxvt*cursorColor:  #e6d4c3
+! URxvt*color0:       #222222
+! URxvt*color8:       #331c1c
+! URxvt*color1:       #997373
+! URxvt*color9:       #995454
+! URxvt*color2:       #999973
+! URxvt*color10:      #999954
+! URxvt*color3:       #997e63
+! URxvt*color11:      #cc9e70
+! URxvt*color4:       #738099
+! URxvt*color12:      #7090cc
+! URxvt*color5:       #857399
+! URxvt*color13:      #a685cc
+! URxvt*color6:       #7a9998
+! URxvt*color14:      #8fccca
+! URxvt*color7:       #b3b3b3
+! URxvt*color15:      #cccccc
 
 !! Solarized
 ! Common
 
-! #define S_yellow        #b58900
-! #define S_orange        #cb4b16
-! #define S_red           #dc322f
-! #define S_magenta       #d33682
-! #define S_violet        #6c71c4
-! #define S_blue          #268bd2
-! #define S_cyan          #2aa198
-! #define S_green         #859900
+#define S_yellow        #b58900
+#define S_orange        #cb4b16
+#define S_red           #dc322f
+#define S_magenta       #d33682
+#define S_violet        #6c71c4
+#define S_blue          #268bd2
+#define S_cyan          #2aa198
+#define S_green         #859900
 
 
 ! Dark
 
-! #define S_base03        #002b36
-! #define S_base02        #073642
-! #define S_base01        #586e75
-! #define S_base00        #657b83
-! #define S_base0         #839496
-! #define S_base1         #93a1a1
-! #define S_base2         #eee8d5
-! #define S_base3         #fdf6e3
+#define S_base03        #002b36
+#define S_base02        #073642
+#define S_base01        #586e75
+#define S_base00        #657b83
+#define S_base0         #839496
+#define S_base1         #93a1a1
+#define S_base2         #eee8d5
+#define S_base3         #fdf6e3
 
 
 ! Light
@@ -117,10 +117,10 @@ URxvt*color15:      #cccccc
 ! #define S_base2         #073642
 ! #define S_base3         #002b36
 
-! URxvt*background:              S_base03
-! URxvt*foreground:              S_base0
-! URxvt*fading:                  40
-! URxvt*fadeColor:               S_base03
-! URxvt*cursorColor:             S_base1
-! URxvt*pointerColorBackground:  S_base01
-! URxvt*pointerColorForeground:  S_base1
+URxvt*background:              S_base03
+URxvt*foreground:              S_base0
+URxvt*fading:                  40
+URxvt*fadeColor:               S_base03
+URxvt*cursorColor:             S_base1
+URxvt*pointerColorBackground:  S_base01
+URxvt*pointerColorForeground:  S_base1

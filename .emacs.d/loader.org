@@ -166,6 +166,7 @@ be the only one in the list, and the whole block above is overkill (heh).
   (global-set-key (kbd "M-9") 'delete-window)
 
   (windmove-default-keybindings 'meta)
+  (setq windmove-wrap-around t)
 
   ;; (use-package ace-window
   ;;   :ensure t
@@ -994,7 +995,6 @@ prompts components and turn off the default one.
 * Experimental features
 Just a group for features I may very well remove very soon.
 #+BEGIN_SRC emacs-lisp
-  (desktop-save-mode +1)        ; restore opened files from last session
   (save-place-mode +1)          ; remember cursor position
   (global-set-key (kbd "C-S-r") 'rename-buffer)
 
