@@ -17,3 +17,5 @@
 /.emacs.d/network-security.data
 /.emacs.d/notes
 /.emacs.d/loader.el
+/.emacs.d/places
+/.emacs.d/session*
