@@ -16,16 +16,22 @@ I like to set the appearance as early as possible to avoid glitches in
 the loading process. This makes for a cleaner Emacs window.
 
 #+BEGIN_SRC emacs-lisp
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(setq inhibit-startup-message t)
-(global-hl-line-mode t)
-(blink-cursor-mode -1)
-(tooltip-mode -1)
-(setq initial-scratch-message "")
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (global-hl-line-mode t)
+  (blink-cursor-mode -1)
+  (tooltip-mode -1)
+  (setq inhibit-startup-message t
+        initial-scratch-message ""
+        mode-line-default-help-echo nil
+        indicate-buffer-boundaries nil
+        indicate-empty-lines nil
+        cursor-in-non-selected-windows nil
+        highlight-nonselected-windows nil
+        bidi-display-reordering nil
+        blink-matching-paren nil)
 #+END_SRC
-
 
 * Custom file
 The custom file holds all auto-generated Emacs configs, which I use
@@ -183,9 +189,9 @@ be the only one in the list, and the whole block above is overkill (heh).
      ("C-S-z" . undo-tree-redo)
      ("C-x u" . undo-tree-visualize)
      ("<S-mouse-4>" . undo-tree-undo)
-     ("<S-mouse-5>" . undo-tree-redo)
-     :config
-     (global-undo-tree-mode)))
+     ("<S-mouse-5>" . undo-tree-redo))
+    :config
+    (global-undo-tree-mode))
 
   (use-package zoom-window
     :ensure t
@@ -601,7 +607,10 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
   (use-package emmet-mode
     :ensure t
     :config
-    (add-hook 'web-mode-hook 'emmet-mode)
+    (add-hook 'web-mode-hook (lambda ()
+                               (emmet-mode)
+                               ;; fci-mode breaks indentation in web-mode
+                               (turn-off-fci-mode)))
     (define-key emmet-mode-keymap (kbd "<C-return>") nil))
 
   (use-package web-mode
@@ -733,9 +742,24 @@ Nothing fancy here, just a regular SLIME installation.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package go-mode :ensure t)
+  (use-package go-mode
+    :ensure t
+    :bind
+    (:map go-mode-map
+          ("M-." . godef-jump)
+          ("M-," . pop-tag-mark))
+    :config
+    (add-hook 'before-save-hook 'gofmt-before-save))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package inf-ruby :ensure t
+    :config (add-hook 'ruby-mode-hook 'inf-ruby-minor-mode)
+    :bind
+    (:map inf-ruby-minor-mode-map
+          ("C-c C-c" . ruby-send-buffer)
+          ("C-c C-e" . ruby-send-last-sexp)))
+#+END_SRC
 
 * Look and feel
 **Note:** Some of these settings, such as font and color scheme, are set in [[file:custom.el][=custom.el=]].
@@ -798,6 +822,15 @@ Prettier Unicode symbols.
 #+BEGIN_SRC emacs-lisp
   (when (member "Symbola" (font-family-list))
     (set-fontset-font t 'unicode "Symbola" nil 'prepend))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-themes
+    :ensure t
+    :config
+    (load-theme 'doom-one t)
+    (doom-themes-visual-bell-config)
+    (doom-themes-org-config))
 #+END_SRC
 
 Highlight changes in the gutter
@@ -988,6 +1021,7 @@ prompts components and turn off the default one.
     (progn
       (exec-path-from-shell-copy-env "PATH")
       (exec-path-from-shell-copy-env "SSH_AGENT_PID")
+      (exec-path-from-shell-copy-env "GOPATH")
       (exec-path-from-shell-copy-env "SSH_AUTH_SOCK")))
 #+END_SRC
 
