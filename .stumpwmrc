@@ -15,7 +15,7 @@
 (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
 
 (defparameter *TERMINAL* (cons "urxvt256c" "URxvt"))
-(defparameter *BROWSER* "firefox")
+(defparameter *BROWSER* "firefox-dev")
 
 (bind "w" "windowlist")
 (bind "C-w" "windows")
@@ -61,7 +61,10 @@
             (destructuring-bind (terminal-cmd . terminal-class) *TERMINAL*
               (run-or-raise terminal-cmd `(:class ,terminal-class))))
 (bind "c" (concat "exec " (car *TERMINAL*)))
-(define-on-top "F11" "terminal")
+(defcommand emacsshell () ()
+            (run-commands "emacs"
+                          "exec emacsclient -e '(shell)'"))
+(define-on-top "F11" "emacsshell")
 (define-on-top "F12" "exec")
 
 (define-key *top-map* (kbd "XF86AudioLowerVolume") "exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '-5%'")
@@ -134,6 +137,7 @@
 
 (when *initializing*
   (run-commands "exec xscreensaver -no-splash"
-                "emacs"))
+                "emacs"
+                "keyboard"))
 
 (load "~/bin/stump/menu")
