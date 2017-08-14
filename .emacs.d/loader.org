@@ -74,14 +74,16 @@ I'm now experimenting with =use-package=, which seems to eliminate the
 need for huge lists being passed to =packages-install=. It should now
 be the only one in the list, and the whole block above is overkill (heh).
 #+BEGIN_SRC emacs-lisp
-(defun init--install-packages ()
-  (packages-install 'use-package))
+  (defun init--install-packages ()
+    (packages-install 'use-package))
 
-(condition-case nil
-    (init--install-packages)
-  (error
-   (package-refresh-contents)
-   (init--install-packages)))
+  (setq use-package-always-ensure t)
+
+  (condition-case nil
+      (init--install-packages)
+    (error
+     (package-refresh-contents)
+     (init--install-packages)))
 #+END_SRC
 
 * Editing goodies
@@ -103,13 +105,12 @@ be the only one in the list, and the whole block above is overkill (heh).
   (defun ido-define-keys () ;; C-n/p is more intuitive in vertical layout
     (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
     (define-key ido-completion-map (kbd "<down>") 'ido-next-match)
-    (define-key ido-completion-map (kbd "<up>") 'ido-next-match)
+    (define-key ido-completion-map (kbd "<up>") 'ido-prev-match)
     (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
   (add-hook 'ido-setup-hook 'ido-define-keys)
   (global-set-key (kbd "C-o") 'ido-find-file)
 
   (use-package projectile
-    :ensure t
     :bind
     (("C-&" . projectile-run-async-shell-command-in-root)
      ("C-!" . projectile-run-shell-command-in-root)
@@ -122,20 +123,17 @@ be the only one in the list, and the whole block above is overkill (heh).
     (setq projectile-completion-system 'ido))
 
   (use-package smex
-    :ensure t
     :bind
     (("M-x" . smex)
      ("M-X" . smex-major-mode-commands)
      ("C-c C-c M-x" . execute-extended-command)))
 
   (use-package ido-completing-read+
-    :ensure t
     :config
     (setq magit-completing-read-function 'magit-ido-completing-read)
     (ido-ubiquitous-mode))
 
   (use-package counsel-projectile
-    :ensure t
     :bind
     ("C-S-f" . counsel-projectile-ag)
     :config
@@ -159,7 +157,6 @@ be the only one in the list, and the whole block above is overkill (heh).
   (setq windmove-wrap-around t)
 
   (use-package undo-tree
-    :ensure t
     :diminish undo-tree-mode
     :bind
     (("C-z" . undo-tree-undo)
@@ -171,7 +168,6 @@ be the only one in the list, and the whole block above is overkill (heh).
     (global-undo-tree-mode))
 
   (use-package zoom-window
-    :ensure t
     :bind
     (("M-1" . zoom-window-zoom)))
 
@@ -201,7 +197,6 @@ be the only one in the list, and the whole block above is overkill (heh).
 ** Get rid of useless whitespace
 #+BEGIN_SRC emacs-lisp
   (use-package ws-butler
-    :ensure t
     :config
     (ws-butler-global-mode))
 
@@ -329,17 +324,11 @@ be the only one in the list, and the whole block above is overkill (heh).
 ** Help Emacs help me
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
-    :ensure t
     :diminish which-key-mode
     :config
     (setq which-key-idle-delay 0.5)
     (which-key-mode)
     (which-key-setup-minibuffer))
-
-  ; (use-package discover
-  ;   :ensure t
-  ;   :diminish discover-mode
-  ;   :config (global-discover-mode))
 #+END_SRC
 
 ** Open line
@@ -365,7 +354,6 @@ be the only one in the list, and the whole block above is overkill (heh).
 ** Paredit
 #+BEGIN_SRC emacs-lisp
   (use-package paredit
-    :ensure t
     :diminish paredit-mode
     :config
     (loop for hook in '(emacs-lisp-mode-hook
@@ -379,27 +367,24 @@ be the only one in the list, and the whole block above is overkill (heh).
 ** Autocomplete and snippets
 #+BEGIN_SRC emacs-lisp
   (use-package auto-complete
-    :ensure t
     :config
     (setq ac-auto-start 4)
     (define-key ac-completing-map [down] nil)
     (define-key ac-completing-map [up] nil)
     (add-hook 'prog-mode-hook 'auto-complete-mode))
 
-  (use-package ac-js2 :ensure t)
+  (use-package ac-js2)
   (use-package tern-auto-complete
-    :ensure t
     :config
     (add-hook 'tern-mode-hook 'tern-ac-setup))
 
   (use-package yasnippet
-    :ensure t
     :config
     (yas-global-mode)
     (add-hook 'prog-mode-hook 'yas-minor-mode))
 
-  (use-package angular-snippets :ensure t)
-  (use-package common-lisp-snippets :ensure t)
+  (use-package angular-snippets)
+  (use-package common-lisp-snippets)
 #+END_SRC
 ** Misc editing facilities
 I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
@@ -412,13 +397,11 @@ I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
   (add-hook 'prog-mode-hook 'subword-mode)
 
   (use-package expand-region
-    :ensure t
     :config (pending-delete-mode t)
     :bind
     (("C-=" . er/expand-region)))
 
   (use-package multiple-cursors
-    :ensure t
     :bind
     (("C-S-l" . mc/edit-lines)
      ("C->" . mc/mark-next-like-this)
@@ -554,7 +537,6 @@ I run many async commands, and not once have I found the confirmation
 Magit is so awesome, it barely needs any setup at all.
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :ensure t
     :bind ([f8] . magit-status))
 #+END_SRC
 
@@ -570,7 +552,6 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
        ,@body))
 
   (use-package git-timemachine
-    :ensure t
     :config
     (progn
       (global-set-key (kbd "<M-mouse-5>") (enable-time-machine-and-call (git-timemachine-show-next-revision)))
@@ -581,7 +562,6 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
 ** Web
 #+BEGIN_SRC emacs-lisp
   (use-package emmet-mode
-    :ensure t
     :config
     (add-hook 'web-mode-hook (lambda ()
                                (emmet-mode)
@@ -590,7 +570,6 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
     (define-key emmet-mode-keymap (kbd "<C-return>") nil))
 
   (use-package web-mode
-    :ensure t
     :mode ("\\.php\\'" "\\.css\\'" "\\.tpl\\’")
     :bind
     (:map web-mode-map
@@ -634,11 +613,9 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
 ** JavaScript
 #+BEGIN_SRC emacs-lisp
   (use-package tern
-    :ensure t
     :bind (:map tern-mode-keymap ("C-S-r" . tern-rename-variable)))
 
   (use-package js2-mode
-    :ensure t
     :mode ("\\.jsx\\'" "\\.js\\'")
     :bind
     (:map js2-mode-map ("C-c C-c" . js-send-region))
@@ -655,7 +632,6 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
 There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still need a GUI to configure org sometimes (baby steps).
 #+BEGIN_SRC emacs-lisp
   (use-package org
-    :ensure t
     :bind
     (:map org-mode-map
           ("M-[" . org-set-tags)
@@ -701,10 +677,9 @@ There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still n
             org-todo-keywords
             '((sequence "TODO(t)" "WAITING(w)" "SOMEDAY(s)" "|" "DONE(d)" "CANCELLED(c)")))))
 
-  (use-package ob-ipython :ensure t)
+  (use-package ob-ipython)
 
   (use-package org-pomodoro
-    :ensure t
     :commands (org-pomodoro)
     :bind ("C-S-p" . org-pomodoro)
     :config
@@ -714,7 +689,6 @@ There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still n
 Nothing fancy here, just a regular SLIME installation.
 #+BEGIN_SRC emacs-lisp
   (use-package slime
-    :ensure t
     :config
     (progn
       (setq inferior-lisp-program "/usr/bin/sbcl"
@@ -726,7 +700,7 @@ Nothing fancy here, just a regular SLIME installation.
 #+END_SRC
 ** Other
 #+BEGIN_SRC emacs-lisp
-  (use-package editorconfig :ensure t
+  (use-package editorconfig
     :config (editorconfig-mode 1))
 #+END_SRC
 
@@ -736,7 +710,6 @@ Nothing fancy here, just a regular SLIME installation.
 
 #+BEGIN_SRC emacs-lisp
   (use-package go-mode
-    :ensure t
     :bind
     (:map go-mode-map
           ("M-." . godef-jump)
@@ -746,7 +719,7 @@ Nothing fancy here, just a regular SLIME installation.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (use-package inf-ruby :ensure t
+  (use-package inf-ruby
     :config (add-hook 'ruby-mode-hook 'inf-ruby-minor-mode)
     :bind
     (:map inf-ruby-minor-mode-map
@@ -755,7 +728,7 @@ Nothing fancy here, just a regular SLIME installation.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (use-package puppet-mode :ensure t)
+  (use-package puppet-mode)
 #+END_SRC
 
 * Look and feel
@@ -822,24 +795,17 @@ Prettier Unicode symbols.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package doom-themes
-  ;;   :ensure t
-  ;;   :config
-  ;;   (load-theme 'doom-one t)
-  ;;   (doom-themes-visual-bell-config)
-  ;;   (doom-themes-org-config))
-#+END_SRC
-
-Too many colors takes the meaning away from syntax highlighting.
-#+BEGIN_SRC emacs-lisp
-  (use-package paper-theme :ensure t)
+  (use-package doom-themes
+    :config
+    (load-theme 'doom-one t)
+    (doom-themes-visual-bell-config)
+    (doom-themes-org-config))
 #+END_SRC
 
 Highlight changes in the gutter
 #+BEGIN_SRC emacs-lisp
   (use-package git-gutter
     :diminish git-gutter-mode
-    :ensure t
     :bind
     (("C-c C-n" . git-gutter:next-hunk)
      ("C-c C-p" . git-gutter:previous-hunk))
@@ -858,13 +824,14 @@ Highlight changes in the gutter
   ;;; Display rules at column 80
   (setq-default fill-column 80)
   (use-package fill-column-indicator
-    :ensure t
     :config
     (add-hook 'prog-mode-hook 'fci-mode))
 #+END_SRC
 
 * Shell
-Based on the excellent config and article from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]].
+Based on the excellent config and article from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]]. Code will mostly
+be different as it turns out that most of his config doesn’t really work for me,
+but the ideas are pretty darn good.
 #+BEGIN_SRC emacs-lisp
   (defun eshell-here ()
     "Opens up a new shell in the directory associated with the
@@ -1003,7 +970,6 @@ prompts components and turn off the default one.
 ** Import some variables from the shell
 #+BEGIN_SRC emacs-lisp
   (use-package exec-path-from-shell
-    :ensure t
     :config
     (progn
       (exec-path-from-shell-copy-env "PATH")
