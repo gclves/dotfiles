@@ -4,6 +4,7 @@
 ;; - manage VirtualBox VMs
 ;; - integrate with pass (partially done with dmenu)
 ;; - manage docker containers
+;; - connect to Bluetooth devices (in my dreams maybe)
 
 (in-package :stumpwm)
 
@@ -14,7 +15,7 @@
 (setf *timeout-wait* 10)
 (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
 
-(defparameter *TERMINAL* (cons "urxvt256c" "URxvt"))
+(defparameter *TERMINAL* (cons "xfce4-terminal" "xfce4-terminal"))
 (defparameter *BROWSER* "firefox-dev")
 
 (bind "w" "windowlist")
@@ -104,11 +105,16 @@
     (run-shell-command (concat base-cmd hdmi-cmd)))
   (run-commands "refresh-heads"))
 
-;; TODO: show a menu with all the available sinks
-(defparameter *headphone-sink* "bluez_sink.04_52_C7_5E_7D_59.headset_head_unit")
-(defcommand audio-src (headphones?) ((:y-or-n "Are the bluetooth headphones on? "))
-  (let ((sink (if headphones? *headphone-sink* "0")))
-    (run-shell-command (concat "pactl set-default-sink " sink))))
+(defun make-menu (options description)
+  "Helper to show a menu on the current screen based on shell output"
+  (select-from-menu (current-screen) (cl-ppcre:split "\\n" options) description))
+
+(defcommand
+    audio-sink () ()
+    "Show a menu to enable a PulseAudio sink"
+    (let* ((sinks (run-shell-command "pactl list sinks | grep -i name: | awk '{print $2}'" t))
+           (sink (make-menu sinks "Sink")))
+      (run-shell-command (format nil "pactl set-default-sink ~s" sink))))
 
 (defparameter *vpn-name* "Lastline")
 (defcommand vpn (up?) ((:y-or-n "Do you want to turn the VPN on? "))
@@ -120,7 +126,7 @@
     network () ()
     "Show a menu to manage network connections (WiFi/VPN)"
     (let* ((connections (run-shell-command "nmcli conn | egrep '(vpn|wireless)' | awk -F '  ' '{print $1}'" t))
-           (net (select-from-menu (current-screen) (cl-ppcre:split "\\n" connections) "Connection"))
+           (net (make-menu connections "Connection"))
            (command (select-from-menu (current-screen) '("up" "down") "Command")))
       (run-shell-command (format nil "nmcli connection ~a ~s" command net))))
 (bind "," "network")

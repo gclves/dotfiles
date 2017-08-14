@@ -829,12 +829,12 @@ Highlight changes in the gutter
 ** Highlight TODO entries
 #+BEGIN_SRC emacs-lisp
   (use-package hl-todo
-    :config (global-hl-todo-mode)
+    :init (global-hl-todo-mode)
     :bind
     (:map hl-todo-mode-map
           ("C-c <up>" . hl-todo-previous)
           ("C-c <down>" . hl-todo-next)
-          ("C-c o" . hl-todo-occur)))
+          ("C-c T" . hl-todo-occur)))
 #+END_SRC
 ** Miscellaneous
 #+BEGIN_SRC emacs-lisp
