@@ -109,6 +109,7 @@ be the only one in the list, and the whole block above is overkill (heh).
     (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
   (add-hook 'ido-setup-hook 'ido-define-keys)
   (global-set-key (kbd "C-o") 'ido-find-file)
+  (global-set-key (kbd "C-O") 'ido-find-file-other-window)
 
   (use-package projectile
     :bind
@@ -118,8 +119,8 @@ be the only one in the list, and the whole block above is overkill (heh).
      ("C-c C-s" . projectile-run-shell)
      ("C-\\" . projectile-find-file)
      ("M-S-f" . projectile-ag))
+    :init (projectile-mode)
     :config
-    (projectile-mode)
     (setq projectile-completion-system 'ido))
 
   (use-package smex
@@ -131,6 +132,7 @@ be the only one in the list, and the whole block above is overkill (heh).
   (use-package ido-completing-read+
     :config
     (setq magit-completing-read-function 'magit-ido-completing-read)
+    :init
     (ido-ubiquitous-mode))
 
   (use-package counsel-projectile
@@ -563,10 +565,12 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
 #+BEGIN_SRC emacs-lisp
   (use-package emmet-mode
     :config
-    (add-hook 'web-mode-hook (lambda ()
-                               (emmet-mode)
-                               ;; fci-mode breaks indentation in web-mode
-                               (turn-off-fci-mode)))
+    (progn
+      (add-hook 'web-mode-hook 'emmet-mode)
+      (add-hook 'sgml-mode-hook 'emmet-mode)
+      (add-hook 'css-mode-hook emmet-mode)
+      (setq emmet-self-closing-tag-style ""
+            emmet-indentation 2))
     (define-key emmet-mode-keymap (kbd "<C-return>") nil))
 
   (use-package web-mode
@@ -583,7 +587,7 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
           web-mode-markup-indent-offset 2
           web-mode-css-indent-offset 2
           web-mode-code-indent-offset 2
-          emmet-indentation 2
+          web-mode-attr-indent-offset nil
           js-indent-level 2
           web-mode-auto-close-style 1
           web-mode-code-indent-offset 4
@@ -594,7 +598,11 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
     (setq-default web-mode-css-indent-offset 2
                   web-mode-code-indent-offset 2
                   web-mode-markup-indent-offset 2
-                  css-indent-offset 2))
+                  css-indent-offset 2)
+    (setq web-mode-ac-sources-alist
+          '(("css" . (ac-source-css-property))
+            ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+    (add-hook 'web-mode-hook 'turn-off-fci-mode))
 
 
   (defun php-tpl-localize (p1 p2)
@@ -701,6 +709,7 @@ Nothing fancy here, just a regular SLIME installation.
 ** Other
 #+BEGIN_SRC emacs-lisp
   (use-package editorconfig
+    :diminish editorconfig-mode
     :config (editorconfig-mode 1))
 #+END_SRC
 
@@ -732,7 +741,8 @@ Nothing fancy here, just a regular SLIME installation.
 #+END_SRC
 
 * Look and feel
-**Note:** Some of these settings, such as font and color scheme, are set in [[file:custom.el][=custom.el=]].
+**Note:** Some of these settings, such as font and color scheme, are set in
+[[file:custom.el][=custom.el=]].
 
 This replaces some words with their Math symbols (eg: lambda).
 
@@ -795,29 +805,36 @@ Prettier Unicode symbols.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-themes
-    :config
-    (load-theme 'doom-one t)
-    (doom-themes-visual-bell-config)
-    (doom-themes-org-config))
+  (use-package gruvbox-theme
+    :config (load-theme 'gruvbox-dark-medium t))
 #+END_SRC
 
 Highlight changes in the gutter
 #+BEGIN_SRC emacs-lisp
   (use-package git-gutter
     :diminish git-gutter-mode
+    :init (global-git-gutter-mode +1)
+    :config
+    (setq git-gutter:update-interval 2)
+    (mapc (lambda (pair)
+            (set-face-background (car pair) (cdr pair))
+            (set-face-foreground (car pair) (cdr pair)))
+          '((git-gutter:added . "#8bc34a")
+            (git-gutter:modified . "#b39ddb")
+            (git-gutter:deleted . "#f36c60")))
     :bind
     (("C-c C-n" . git-gutter:next-hunk)
-     ("C-c C-p" . git-gutter:previous-hunk))
-    :config (progn
-              (global-git-gutter-mode)
-              (setq git-gutter:update-interval 2)
-              (mapc (lambda (pair)
-                      (set-face-background (car pair) (cdr pair))
-                      (set-face-foreground (car pair) (cdr pair)))
-                    '((git-gutter:added . "#8bc34a")
-                      (git-gutter:modified . "#b39ddb")
-                      (git-gutter:deleted . "#f36c60")))))
+     ("C-c C-p" . git-gutter:previous-hunk)))
+#+END_SRC
+** Highlight TODO entries
+#+BEGIN_SRC emacs-lisp
+  (use-package hl-todo
+    :config (global-hl-todo-mode)
+    :bind
+    (:map hl-todo-mode-map
+          ("C-c <up>" . hl-todo-previous)
+          ("C-c <down>" . hl-todo-next)
+          ("C-c o" . hl-todo-occur)))
 #+END_SRC
 ** Miscellaneous
 #+BEGIN_SRC emacs-lisp
@@ -1043,12 +1060,15 @@ Just a group for features I may very well remove very soon.
   (global-set-key (kbd "<S-f8>") 'xah-run-current-file)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-Q") 'kill-emacs)
+#+END_SRC
 ** Dired
 #+BEGIN_SRC emacs-lisp
   (use-package all-the-icons-dired
+    :diminish all-the-icons-dired-mode
     :config
     (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
   (add-hook 'dired-mode-hook 'dired-hide-details-mode)
-
 #+END_SRC
