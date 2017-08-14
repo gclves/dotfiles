@@ -5,7 +5,6 @@
 /.emacs.d/auto-save-list/
 /.emacs.d/.org-id-locations
 
-/.emacs.d/eshell/
 .emacs.d/.*
 /.emacs.d/*.dat
 /.emacs.d/backups
@@ -19,3 +18,7 @@
 /.emacs.d/loader.el
 /.emacs.d/places
 /.emacs.d/session*
+.emacs.d/eshell/history
+.emacs.d/eshell/lastdir
+/.emacs.d/ido.last
+/.emacs.d/smex-items

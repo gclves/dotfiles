@@ -42,12 +42,10 @@ by auto-generated stuff.
 (load custom-file :noerror)
 #+END_SRC
 
-
 * Security
 #+BEGIN_SRC emacs-lisp
 (setq epg-gpg-program "/usr/bin/gpg2")  ; Use gpg2 instead of (default) gpg
 #+END_SRC
-
 
 * Package setup
 #+BEGIN_SRC emacs-lisp
@@ -86,7 +84,6 @@ be the only one in the list, and the whole block above is overkill (heh).
    (init--install-packages)))
 #+END_SRC
 
-
 * Editing goodies
 ** Ain't nobody got time for typing "yes"/"no".
 #+BEGIN_SRC emacs-lisp
@@ -119,7 +116,7 @@ be the only one in the list, and the whole block above is overkill (heh).
      ("C-c C-e" . projectile-run-eshell)
      ("C-c C-s" . projectile-run-shell)
      ("C-\\" . projectile-find-file)
-     ("C-S-f" . projectile-ag))
+     ("M-S-f" . projectile-ag))
     :config
     (projectile-mode)
     (setq projectile-completion-system 'ido))
@@ -137,13 +134,12 @@ be the only one in the list, and the whole block above is overkill (heh).
     (setq magit-completing-read-function 'magit-ido-completing-read)
     (ido-ubiquitous-mode))
 
-  ;; (use-package counsel-projectile
-  ;;   :ensure t
-  ;;   :bind
-  ;;   (("C-\\" . counsel-projectile)
-  ;;    ("C-S-f" . counsel-projectile-ag))
-  ;;   :config
-  ;;   (counsel-projectile-on))
+  (use-package counsel-projectile
+    :ensure t
+    :bind
+    ("C-S-f" . counsel-projectile-ag)
+    :config
+    (counsel-projectile-on))
 
 #+END_SRC
 
@@ -152,6 +148,7 @@ be the only one in the list, and the whole block above is overkill (heh).
   (global-set-key (kbd "C-S-w") (lambda () (interactive) (kill-buffer nil)))
   (global-set-key (kbd "C-b") 'ido-switch-buffer)
   (global-set-key (kbd "M-o") 'other-window)
+  (global-set-key (kbd "M-O") (lambda () (interactive) (other-window -1)))
 
   (global-set-key (kbd "M-3") 'delete-other-windows)
   (global-set-key (kbd "M-4") 'split-window-below)
@@ -336,12 +333,13 @@ be the only one in the list, and the whole block above is overkill (heh).
     :diminish which-key-mode
     :config
     (setq which-key-idle-delay 0.5)
-    (which-key-mode))
+    (which-key-mode)
+    (which-key-setup-minibuffer))
 
-  (use-package discover
-    :ensure t
-    :diminish discover-mode
-    :config (global-discover-mode))
+  ; (use-package discover
+  ;   :ensure t
+  ;   :diminish discover-mode
+  ;   :config (global-discover-mode))
 #+END_SRC
 
 ** Open line
@@ -524,7 +522,6 @@ I run many async commands, and not once have I found the confirmation
     (insert "( ͡° ͜ʖ ͡°)"))
 #+END_SRC
 
-
 * Backup
 #+BEGIN_SRC emacs-lisp
   (defvar --backup-directory (concat user-emacs-directory "backups"))
@@ -553,7 +550,6 @@ I run many async commands, and not once have I found the confirmation
   (diminish 'auto-revert-mode)
 #+END_SRC
 
-
 * Git
 Magit is so awesome, it barely needs any setup at all.
 #+BEGIN_SRC emacs-lisp
@@ -581,7 +577,6 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
       (global-set-key (kbd "<M-mouse-4>") (enable-time-machine-and-call (git-timemachine-show-previous-revision)))))
 #+END_SRC
 
-
 * Programming
 ** Web
 #+BEGIN_SRC emacs-lisp
@@ -596,7 +591,7 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
 
   (use-package web-mode
     :ensure t
-    :mode ("\\.php\\'" "\\.css\\'")
+    :mode ("\\.php\\'" "\\.css\\'" "\\.tpl\\’")
     :bind
     (:map web-mode-map
           ("C-M-u" . web-mode-element-parent)
@@ -676,7 +671,15 @@ There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still n
       (global-set-key (kbd "C-S-c") 'org-capture)
 
       ;; run shell commands from org-babel
-      (org-babel-do-load-languages 'org-babel-load-languages '((sh . t)))
+      (defvar -org-babel-langs '((sh . t) (python . t)))
+      (setq org-babel-python-command "python3")
+      (org-babel-do-load-languages 'org-babel-load-languages -org-babel-langs)
+
+      ;; stop prompting for confirmation for every org-babel eval
+      (setq org-confirm-babel-evaluate nil)
+
+      ;; display/update images in the buffer after I evaluate
+      (add-hook ‘org-babel-after-execute-hook ‘org-display-inline-images ‘append)
 
       (setq org-agenda-include-diary t
             org-log-reschedule 'note
@@ -696,7 +699,9 @@ There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still n
             org-outline-path-complete-in-steps nil         ; Refile in a single go
             org-refile-use-outline-path t                  ; Show full paths for refiling
             org-todo-keywords
-            '((sequence "NEXT(n)" "TODO(t)" "WAITING(w)" "SOMEDAY(s)" "|" "DONE(d)" "CANCELLED(c)")))))
+            '((sequence "TODO(t)" "WAITING(w)" "SOMEDAY(s)" "|" "DONE(d)" "CANCELLED(c)")))))
+
+  (use-package ob-ipython :ensure t)
 
   (use-package org-pomodoro
     :ensure t
@@ -721,6 +726,11 @@ Nothing fancy here, just a regular SLIME installation.
 #+END_SRC
 ** Other
 #+BEGIN_SRC emacs-lisp
+  (use-package editorconfig :ensure t
+    :config (editorconfig-mode 1))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.hdl\\'" . vhdl-mode))
 #+END_SRC
 
@@ -742,6 +752,10 @@ Nothing fancy here, just a regular SLIME installation.
     (:map inf-ruby-minor-mode-map
           ("C-c C-c" . ruby-send-buffer)
           ("C-c C-e" . ruby-send-last-sexp)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package puppet-mode :ensure t)
 #+END_SRC
 
 * Look and feel
@@ -808,12 +822,17 @@ Prettier Unicode symbols.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-    (use-package doom-themes
-      :ensure t
-      :config
-      (load-theme 'doom-one t)
-      (doom-themes-visual-bell-config)
-      (doom-themes-org-config))
+  ;; (use-package doom-themes
+  ;;   :ensure t
+  ;;   :config
+  ;;   (load-theme 'doom-one t)
+  ;;   (doom-themes-visual-bell-config)
+  ;;   (doom-themes-org-config))
+#+END_SRC
+
+Too many colors takes the meaning away from syntax highlighting.
+#+BEGIN_SRC emacs-lisp
+  (use-package paper-theme :ensure t)
 #+END_SRC
 
 Highlight changes in the gutter
@@ -823,7 +842,7 @@ Highlight changes in the gutter
     :ensure t
     :bind
     (("C-c C-n" . git-gutter:next-hunk)
-     ("C-c C-p" . git-gutter:next-hunk))
+     ("C-c C-p" . git-gutter:previous-hunk))
     :config (progn
               (global-git-gutter-mode)
               (setq git-gutter:update-interval 2)
@@ -843,7 +862,6 @@ Highlight changes in the gutter
     :config
     (add-hook 'prog-mode-hook 'fci-mode))
 #+END_SRC
-
 
 * Shell
 Based on the excellent config and article from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]].
@@ -867,11 +885,7 @@ Based on the excellent config and article from [[https://github.com/howardabrams
       (eshell-send-input)))
 
   (global-set-key (kbd "C-!") 'eshell-here)
-
-  (defun eshell/x ()
-    (insert "exit")
-    (eshell-send-input)
-    (delete-window))
+  (defun eshell/x () (kill-buffer-and-window))
 #+END_SRC
 
 Some executables don’t behave well with Eshell out of the box, so we tweak them a little.
@@ -891,17 +905,6 @@ I can’t believe you can start an Eshell session remotely via Tramp.
 
 ** Aliases
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'eshell-mode-hook (lambda ()
-      (eshell/alias "e" "find-file")
-      (eshell/alias "ff" "find-file")
-      (eshell/alias "emacs" "find-file")
-      (eshell/alias "ee" "find-file-other-window")
-
-      (eshell/alias "gd" "magit-diff-unstaged")
-      (eshell/alias "gds" "magit-diff-staged")
-
-      (eshell/alias "ll" (concat "ls" " -AlohG --color=always"))))
-
   (defun eshell/d (&rest args)
     (dired (pop args) "."))
 #+END_SRC
@@ -1009,7 +1012,6 @@ prompts components and turn off the default one.
       (exec-path-from-shell-copy-env "SSH_AUTH_SOCK")))
 #+END_SRC
 
-
 * Experimental features
 Just a group for features I may very well remove very soon.
 #+BEGIN_SRC emacs-lisp
@@ -1017,8 +1019,8 @@ Just a group for features I may very well remove very soon.
   (global-set-key (kbd "C-S-r") 'rename-buffer)
 
   ;; Always try to keep equally sized windows
-  (advice-add 'split-window-right :after #'balance-windows)
-  (advice-add 'delete-window :after #'balance-windows)
+  ;(advice-add 'split-window-right :after #'balance-windows)
+  ;(advice-add 'delete-window :after #'balance-windows)
 
   ;; Run current file
   (defun xah-run-current-file ()
