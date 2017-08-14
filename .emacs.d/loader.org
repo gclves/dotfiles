@@ -655,7 +655,7 @@ There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still n
       (setq org-confirm-babel-evaluate nil)
 
       ;; display/update images in the buffer after I evaluate
-      (add-hook ‘org-babel-after-execute-hook ‘org-display-inline-images ‘append)
+      (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
       (setq org-agenda-include-diary t
             org-log-reschedule 'note
@@ -1046,4 +1046,14 @@ Just a group for features I may very well remove very soon.
             (message "No recognized program file suffix for this file."))))))
 
   (global-set-key (kbd "<S-f8>") 'xah-run-current-file)
+#+END_SRC
+
+** Dired
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons-dired
+    :config
+    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+
+  (add-hook 'dired-mode-hook 'dired-hide-details-mode)
+
 #+END_SRC
