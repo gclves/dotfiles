@@ -11,19 +11,20 @@
         user-email-address "gsg@ggoncalves.me")
 #+END_SRC
 
-* Window appearance
+* Look and feel
+** Window appearance
 I like to set the appearance as early as possible to avoid glitches in
 the loading process. This makes for a cleaner Emacs window.
 
 #+BEGIN_SRC emacs-lisp
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
+  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+  (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
   (global-hl-line-mode t)
   (blink-cursor-mode -1)
   (tooltip-mode -1)
   (setq inhibit-startup-message t
         initial-scratch-message ""
+        initial-major-mode 'org-mode
         mode-line-default-help-echo nil
         indicate-buffer-boundaries nil
         indicate-empty-lines nil
@@ -33,6 +34,65 @@ the loading process. This makes for a cleaner Emacs window.
         blink-matching-paren nil)
 #+END_SRC
 
+** Other customizations
+This replaces some words with their Math symbols (eg: lambda).
+
+#+BEGIN_SRC emacs-lisp
+  (global-prettify-symbols-mode 1)
+#+END_SRC
+
+Prettier Unicode symbols.
+#+BEGIN_SRC emacs-lisp
+  (when (member "Symbola" (font-family-list))
+    (set-fontset-font t 'unicode "Symbola" nil 'prepend))
+#+END_SRC
+
+Leuven is the best color theme ever made.
+#+BEGIN_SRC emacs-lisp
+  (use-package leuven-theme
+    :config
+    (load-theme 'leuven t)
+    ; remove the gigantic org-agenda headers
+    (setq leuven-scale-outline-headlines t
+          leuven-scale-org-agenda-structure nil))
+#+END_SRC
+
+Highlight changes in the gutter
+#+BEGIN_SRC emacs-lisp
+  (use-package git-gutter
+    :diminish git-gutter-mode
+    :init (global-git-gutter-mode +1)
+    :config
+    (setq git-gutter:update-interval 2)
+    (mapc (lambda (pair)
+            (set-face-background (car pair) (cdr pair))
+            (set-face-foreground (car pair) (cdr pair)))
+          '((git-gutter:added . "#8bc34a")
+            (git-gutter:modified . "#b39ddb")
+            (git-gutter:deleted . "#f36c60")))
+    :bind
+    (("C-c C-n" . git-gutter:next-hunk)
+     ("C-c C-p" . git-gutter:previous-hunk)))
+#+END_SRC
+*** Highlight TODO entries
+#+BEGIN_SRC emacs-lisp
+  (use-package hl-todo
+    :init (global-hl-todo-mode)
+    :bind
+    (:map hl-todo-mode-map
+          ("C-c <up>" . hl-todo-previous)
+          ("C-c <down>" . hl-todo-next)
+          ("C-c T" . hl-todo-occur)))
+#+END_SRC
+*** Miscellaneous
+#+BEGIN_SRC emacs-lisp
+  ;;; Display rules at column 80
+  (setq-default fill-column 80)
+  (use-package fill-column-indicator
+    :config
+    (add-hook 'prog-mode-hook 'fci-mode))
+#+END_SRC
+
 * Custom file
 The custom file holds all auto-generated Emacs configs, which I use
 for Org-mode quite a lot. This is so my =init.el= doesn't get littered
@@ -40,11 +100,6 @@ by auto-generated stuff.
 #+BEGIN_SRC emacs-lisp
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file :noerror)
-#+END_SRC
-
-* Security
-#+BEGIN_SRC emacs-lisp
-(setq epg-gpg-program "/usr/bin/gpg2")  ; Use gpg2 instead of (default) gpg
 #+END_SRC
 
 * Package setup
@@ -60,30 +115,20 @@ by auto-generated stuff.
   (unless package-archive-contents
     (package-refresh-contents))
 
-  (defun packages-install (&rest packages)
-    (message "Installing missing packages")
-    (mapc (lambda (package-name)
-            (unless (package-installed-p package-name)
-              (package-initialize)
-              (package-install package-name)))
-          packages)
-    (package-initialize))
-#+END_SRC
-
-I'm now experimenting with =use-package=, which seems to eliminate the
-need for huge lists being passed to =packages-install=. It should now
-be the only one in the list, and the whole block above is overkill (heh).
-#+BEGIN_SRC emacs-lisp
-  (defun init--install-packages ()
-    (packages-install 'use-package))
+  (unless (package-installed-p 'use-package)
+    (package-initialize)
+    (package-install 'use-package))
 
   (setq use-package-always-ensure t)
 
-  (condition-case nil
-      (init--install-packages)
-    (error
-     (package-refresh-contents)
-     (init--install-packages)))
+  ;; (defun packages-install (&rest packages)
+  ;;   (message "Installing missing packages")
+  ;;   (mapc (lambda (package-name)
+  ;;           (unless (package-installed-p package-name)
+  ;;             (package-initialize)
+  ;;             (package-install package-name)))
+  ;;         packages)
+  ;;   (package-initialize))
 #+END_SRC
 
 * Editing goodies
@@ -93,53 +138,55 @@ be the only one in the list, and the whole block above is overkill (heh).
 #+END_SRC
 ** Interactively do things
 #+BEGIN_SRC emacs-lisp
-  (ido-mode)
-  (ido-everywhere)
-  ;; Set up fuzzy matching
-  (setq ido-enable-flex-matching t)
-  ;; Refer to past buffers as existing ones
-  (setq ido-use-virtual-buffers t)
-
-  ;; Display ido results vertically, rather than horizontally
-  (setq ido-decorations (quote ("\n-> " "" "\n   " "\n   ..." "[" "]" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
-  (defun ido-disable-line-truncation () (set (make-local-variable 'truncate-lines) nil))
-  (add-hook 'ido-minibuffer-setup-hook 'ido-disable-line-truncation)
-  (defun ido-define-keys () ;; C-n/p is more intuitive in vertical layout
-    (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
-    (define-key ido-completion-map (kbd "<down>") 'ido-next-match)
-    (define-key ido-completion-map (kbd "<up>") 'ido-prev-match)
-    (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
-  (add-hook 'ido-setup-hook 'ido-define-keys)
-  (global-set-key (kbd "C-o") 'ido-find-file)
-  (global-set-key (kbd "C-S-o") 'ido-find-file-other-window)
+  (use-package helm
+    :bind
+    (:map global-map
+          ("M-x" . helm-M-x)
+          ("M-y" . helm-show-kill-ring)
+          ("C-x b" . helm-mini)
+          ("s-b" . helm-mini)
+          ("C-x C-f" . helm-find-files)
+          ("s-o" . helm-find-files)
+     :map helm-map
+          ("<tab>" . helm-execute-persistent-action) ; rebind tab to run persistent action
+          ("C-i" . helm-execute-persistent-action)   ; make TAB work in terminal
+          ("C-z" . helm-select-action))              ; list actions using C-z
+    :config
+    (progn
+      (global-set-key (kbd "C-c h") 'helm-comand-prefix)
+      (global-unset-key (kbd "C-x c"))
+      (setq helm-split-window-in-side-p       t ; open helm buffer inside current window, not occupy whole other window
+            helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+            helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+            helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+            helm-ff-file-name-history-use-recentf t
+            helm-echo-input-in-header-line nil
+            helm-autoresize-max-height 0
+            helm-autoresize-min-height 20
+            helm-M-x-fuzzy-match t
+            helm-buffers-fuzzy-matching t
+            helm-recentf-fuzzy-match t)
+      (helm-autoresize-mode)
+      (helm-mode)))
 
   (use-package projectile
     :bind
-    (("C-&" . projectile-run-async-shell-command-in-root)
+    (("s-&" . projectile-run-async-shell-command-in-root)
+     ("s-!" . projectile-run-eshell)
      ("C-!" . projectile-run-shell-command-in-root)
      ("C-c C-e" . projectile-run-eshell)
      ("C-c C-s" . projectile-run-shell)
      ("C-\\" . projectile-find-file)
+     ("s-p" . projectile-find-file)
      ("M-F" . projectile-ag))
-    :init (projectile-mode)
+    ;:init (projectile-mode)
     :config
-    (setq projectile-completion-system 'ido))
+    (setq projectile-completion-system 'helm))
 
-  (use-package smex
+  (use-package helm-ag :ensure t)
+  (use-package helm-projectile
     :bind
-    (("M-x" . smex)
-     ("M-X" . smex-major-mode-commands)
-     ("C-c C-c M-x" . execute-extended-command)))
-
-  (use-package ido-completing-read+
-    :config
-    (setq magit-completing-read-function 'magit-ido-completing-read)
-    :init
-    (ido-ubiquitous-mode))
-
-  (use-package counsel-projectile
-    :bind
-    ("C-S-f" . counsel-projectile-ag))
+    ("C-S-f" . helm-projectile-ag))
 
 #+END_SRC
 
@@ -155,7 +202,7 @@ be the only one in the list, and the whole block above is overkill (heh).
   (global-set-key (kbd "M-$") 'split-window-right)
   (global-set-key (kbd "M-9") 'delete-window)
 
-  (windmove-default-keybindings 'meta)
+  (windmove-default-keybindings 'super)
   (setq windmove-wrap-around t)
 
   (use-package undo-tree
@@ -163,6 +210,9 @@ be the only one in the list, and the whole block above is overkill (heh).
     :bind
     (("C-z" . undo-tree-undo)
      ("C-S-z" . undo-tree-redo)
+     ("s-z" . undo-tree-undo)
+     ("s-S-z" . undo-tree-redo)
+     ("s-Z" . undo-tree-redo)
      ("C-x u" . undo-tree-visualize)
      ("<S-mouse-4>" . undo-tree-undo)
      ("<S-mouse-5>" . undo-tree-redo))
@@ -184,6 +234,7 @@ be the only one in the list, and the whole block above is overkill (heh).
     (if (= (point) (progn (back-to-indentation) (point)))
         (beginning-of-line)))
   (global-set-key (kbd "<home>") 'back-to-indentation-or-beginning)
+  (global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
 
   (defun goto-line-with-feedback ()
     "Show line numbers temporarily, while prompting for the line number input"
@@ -198,9 +249,7 @@ be the only one in the list, and the whole block above is overkill (heh).
 
 ** Get rid of useless whitespace
 #+BEGIN_SRC emacs-lisp
-  (use-package ws-butler
-    :config
-    (ws-butler-global-mode))
+  (use-package ws-butler :config (ws-butler-global-mode))
 
   (defun cleanup-buffer-safe ()
     "Perform a bunch of safe operations on the whitespace content of a buffer.
@@ -211,7 +260,6 @@ be the only one in the list, and the whole block above is overkill (heh).
     (set-buffer-file-coding-system 'utf-8))
 
   ;; Various superfluous white-space. Just say no.
-  ;; (add-hook 'before-save-hook 'cleanup-buffer-safe)
   (ws-butler-global-mode)
 
   (defun cleanup-buffer ()
@@ -284,7 +332,9 @@ be the only one in the list, and the whole block above is overkill (heh).
       (forward-char)))
 
   (global-set-key (kbd "C-w") 'xah-cut-line-or-region)
+  (global-set-key (kbd "s-x") 'xah-cut-line-or-region)
   (global-set-key (kbd "M-w") 'xah-copy-line-or-region)
+  (global-set-key (kbd "s-c") 'xah-copy-line-or-region)
 #+END_SRC
 
 ** Manipulate a file directly from its buffer
@@ -323,16 +373,6 @@ be the only one in the list, and the whole block above is overkill (heh).
 
 #+END_SRC
 
-** Help Emacs help me
-#+BEGIN_SRC emacs-lisp
-  (use-package which-key
-    :diminish which-key-mode
-    :config
-    (setq which-key-idle-delay 0.5)
-    (which-key-mode)
-    (which-key-setup-minibuffer))
-#+END_SRC
-
 ** Open line
 #+BEGIN_SRC emacs-lisp
   (defun open-line-below ()
@@ -364,21 +404,16 @@ be the only one in the list, and the whole block above is overkill (heh).
                         lisp-interaction-mode-hook
                         scheme-mode-hook)
           do (add-hook hook #'enable-paredit-mode)))
-
 #+END_SRC
-** Autocomplete and snippets
-#+BEGIN_SRC emacs-lisp
-  (use-package auto-complete
-    :config
-    (setq ac-auto-start 4)
-    (define-key ac-completing-map [down] nil)
-    (define-key ac-completing-map [up] nil)
-    (add-hook 'prog-mode-hook 'auto-complete-mode))
 
-  (use-package ac-js2)
-  (use-package tern-auto-complete
-    :config
-    (add-hook 'tern-mode-hook 'tern-ac-setup))
+** TODO Autocomplete and snippets
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package auto-complete
+  ;;   :config
+  ;;   (setq ac-auto-start 4)
+  ;;   (define-key ac-completing-map [down] nil)
+  ;;   (define-key ac-completing-map [up] nil)
+  ;;   (add-hook 'prog-mode-hook 'auto-complete-mode))
 
   (use-package yasnippet
     :config
@@ -388,14 +423,15 @@ be the only one in the list, and the whole block above is overkill (heh).
   (use-package angular-snippets)
   (use-package common-lisp-snippets)
 #+END_SRC
+
 ** Misc editing facilities
 I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C--") 'bury-buffer)
+  (global-set-key (kbd "s--") 'bury-buffer)
   (global-set-key (kbd "C-;") 'comment-line)
   (electric-pair-mode)
-  (electric-quote-mode)
   (add-hook 'prog-mode-hook 'subword-mode)
 
   (use-package expand-region
@@ -436,56 +472,7 @@ I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
   (global-set-key (kbd "C-x C-u") 'upcase-initials-region)
   (global-set-key (kbd "C-x C-l") nil)
 
-
-  (defun xah-toggle-letter-case ()
-    "Toggle the letter case of current word or text selection.
-  Always cycle in this order: Init Caps, ALL CAPS, all lower.
-
-  URL `http://ergoemacs.org/emacs/modernization_upcase-word.html'
-  Version 2016-01-08"
-    (interactive)
-    (let ((deactivate-mark nil)
-          -p1 -p2)
-      (if (use-region-p)
-          (setq -p1 (region-beginning)
-                -p2 (region-end))
-        (save-excursion
-          (skip-chars-backward "[:alnum:]")
-          (setq -p1 (point))
-          (skip-chars-forward "[:alnum:]")
-          (setq -p2 (point))))
-      (when (not (eq last-command this-command))
-        (put this-command 'state 0))
-      (cond
-       ((equal 0 (get this-command 'state))
-        (upcase-initials-region -p1 -p2)
-        (put this-command 'state 1))
-       ((equal 1  (get this-command 'state))
-        (upcase-region -p1 -p2)
-        (put this-command 'state 2))
-       ((equal 2 (get this-command 'state))
-        (downcase-region -p1 -p2)
-        (put this-command 'state 0)))))
-  (global-set-key (kbd "M-c") 'xah-toggle-letter-case)
-
-  (defun quote-previous-word ()
-    "Wrap the previous word in quotes"
-    (interactive)
-    (let ((deactivate-mark nil)
-          -p1 -p2)
-      (if (use-region-p)
-          (progn
-            (setq -p1 (region-beginning)
-                  -p2 (region-end))
-            (message "Not implemented :("))
-        (progn
-          (save-excursion
-            (skip-chars-backward "[:alnum:]")
-            (insert "'")
-            (skip-chars-forward "[:alnum:]")
-            (insert "'"))
-          (forward-char)))))
-  (global-set-key (kbd "M-'") 'quote-previous-word)
+  (global-set-key (kbd "s-r") 'rename-buffer)
 #+END_SRC
 
 I run many async commands, and not once have I found the confirmation
@@ -494,6 +481,7 @@ I run many async commands, and not once have I found the confirmation
 #+BEGIN_SRC emacs-lisp
   (setq async-shell-command-buffer 'rename-buffer)
 #+END_SRC
+
 *** Silliness
 #+BEGIN_SRC emacs-lisp
   ;;; Super important!!
@@ -560,243 +548,16 @@ Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.
       (global-set-key (kbd "<M-mouse-4>") (enable-time-machine-and-call (git-timemachine-show-previous-revision)))))
 #+END_SRC
 
-* Programming
-** Web
-#+BEGIN_SRC emacs-lisp
-  (use-package emmet-mode
-    :config
-    (progn
-      (add-hook 'web-mode-hook 'emmet-mode)
-      (add-hook 'sgml-mode-hook 'emmet-mode)
-      (add-hook 'css-mode-hook emmet-mode)
-      (setq emmet-self-closing-tag-style ""
-            emmet-indentation 2))
-    (define-key emmet-mode-keymap (kbd "<C-return>") nil))
-
-  (use-package web-mode
-    :mode ("\\.php\\'" "\\.css\\'" "\\.tpl\\’")
-    :bind
-    (:map web-mode-map
-          ("C-M-u" . web-mode-element-parent)
-          ("C-M-d" . web-mode-element-child)
-          ("C-M-n" . web-mode-element-next)
-          ("C-M-p" . web-mode-element-previous))
-    :config
-    (setq-default web-mode-css-indent-offset 2
-                  web-mode-code-indent-offset 2
-                  web-mode-markup-indent-offset 2
-                  web-mode-attr-indent-offset nil
-                  css-indent-offset 2)
-    ;; the docs say these have to be defined in a hook
-    (add-hook 'web-mode-hook (lambda ()
-                               (setq web-mode-enable-css-colorization t
-                                     web-mode-enable-current-element-highlight t
-                                     web-mode-code-indent-offset 2
-                                     js-indent-level 2
-                                     web-mode-auto-close-style 1
-                                     web-mode-enable-auto-indentation t
-                                     web-mode-enable-auto-opening t
-                                     web-mode-enable-auto-pairing t
-                                     web-mode-enable-auto-quoting t
-                                     web-mode-attr-indent-offset nil
-                                     web-mode-attr-indent-offset nil)))
-    (setq web-mode-ac-sources-alist
-          '(("css" . (ac-source-css-property))
-            ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
-    (add-hook 'web-mode-hook 'turn-off-fci-mode))
-
-  (defun php-tpl-localize (p1 p2)
-    "Wrap region in a PHP call to xgettext"
-    (interactive "r")
-    (save-mark-and-excursion
-     (goto-char p1)
-     (insert "<?= _('")
-     (setq begin (point))
-     (forward-char (- p2 p1))
-     (setq end (point))
-     (insert "') ?>")
-     (replace-string "'" "\\'" nil begin end)
-     (message "Localized region")))
-#+END_SRC
-** JavaScript
-#+BEGIN_SRC emacs-lisp
-  (use-package tern
-    :bind (:map tern-mode-keymap ("C-S-r" . tern-rename-variable)))
-
-  (use-package js2-mode
-    :mode ("\\.jsx\\'" "\\.js\\'")
-    :bind
-    (:map js2-mode-map ("C-c C-c" . js-send-region))
-    :config
-    (progn
-      (setq js2-basic-offset 2
-            js2-strict-trailing-comma-warning nil
-            js2-global-externs
-            '("angular" "d3" "require" "karma" "it" "describe" "beforeEach" "module"))
-      (add-hook 'js2-mode-hook 'tern-mode)
-      (define-key js2-mode-map (kbd "M-j") nil)))
-#+END_SRC
-** Org-mode
-There is also a bunch of my config in [[file:custom.el][=custom.el=]]. I still need a GUI to configure org sometimes (baby steps).
-#+BEGIN_SRC emacs-lisp
-  (use-package org
-    :bind
-    (:map org-mode-map
-          ("M-[" . org-set-tags)
-          ("C-c s" . org-sort)
-          ("<C-up>" . org-up-element)
-          ("<C-down>" . org-down-element))
-    :config
-    (progn
-      ;; For some reason, declaring these in `:bind` won't work
-      (global-set-key (kbd "C-S-a") 'org-agenda)
-      (global-set-key (kbd "C-S-b") 'org-iswitchb)
-      (global-set-key (kbd "C-S-j") 'org-clock-jump-to-current-clock)
-      (global-set-key (kbd "C-S-c") 'org-capture)
-
-      ;; run shell commands from org-babel
-      (defvar -org-babel-langs '((sh . t) (python . t)))
-      (setq org-babel-python-command "python3")
-      (org-babel-do-load-languages 'org-babel-load-languages -org-babel-langs)
-
-      ;; stop prompting for confirmation for every org-babel eval
-      (setq org-confirm-babel-evaluate nil)
-
-      ;; display/update images in the buffer after I evaluate
-      (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
-
-      (setq org-agenda-include-diary t
-            org-log-reschedule 'note
-            org-log-done 'time
-            org-enforce-todo-dependencies t
-            org-enforce-todo-checkbox-dependencies t
-            org-fontify-whole-heading-line t
-            org-fontify-done-headline t
-            org-fontify-quote-and-verse-blocks t
-            org-hide-emphasis-markers t
-            org-agenda-restore-windows-after-quit t
-            org-src-fontify-natively t                     ; syntax highlight in code blocks
-            org-refile-targets '((nil :maxlevel . 3)
-                                 ("~/org/work.org" :maxlevel . 2)
-                                 ("~/org/notes.org" :maxlevel . 1)
-                                 ("~/org/everything.org" :maxlevel . 2))
-            org-outline-path-complete-in-steps nil         ; Refile in a single go
-            org-refile-use-outline-path t                  ; Show full paths for refiling
-            org-todo-keywords
-            '((sequence "TODO(t)" "WAITING(w)" "SOMEDAY(s)" "|" "DONE(d)" "CANCELLED(c)")))))
-
-  (use-package ob-ipython)
-
-  (use-package org-pomodoro
-    :commands (org-pomodoro)
-    :bind ("C-S-p" . org-pomodoro)
-    :config
-    (setq alert-user-configuration (quote ((((:category . "org-pomodoro")) libnotify nil)))))
-#+END_SRC
-** Common Lisp
-Nothing fancy here, just a regular SLIME installation.
-#+BEGIN_SRC emacs-lisp
-  (use-package slime
-    :config
-    (progn
-      (setq inferior-lisp-program "/usr/bin/sbcl"
-            slime-net-coding-system 'utf-8-unix)
-      (slime-setup '(slime-fancy))
-      (set-language-environment "UTF-8")
-      (setenv "LC_LOCALE" "en_US.UTF-8")
-      (setenv "LC_CTYPE" "en_US.UTF-8")))
-#+END_SRC
-** Other
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.hdl\\'" . vhdl-mode))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package go-mode
-    :bind
-    (:map go-mode-map
-          ("M-." . godef-jump)
-          ("M-," . pop-tag-mark))
-    :config
-    (add-hook 'before-save-hook 'gofmt-before-save))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package inf-ruby
-    :config (add-hook 'ruby-mode-hook 'inf-ruby-minor-mode)
-    :bind
-    (:map inf-ruby-minor-mode-map
-          ("C-c C-c" . ruby-send-buffer)
-          ("C-c C-e" . ruby-send-last-sexp)))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-    (use-package puppet-mode
-      :config
-      (setq-default puppet-indent-level 4))
-#+END_SRC
-
-* Look and feel
-**Note:** Some of these settings, such as font and color scheme, are set in
-[[file:custom.el][=custom.el=]].
-
-This replaces some words with their Math symbols (eg: lambda).
-
-#+BEGIN_SRC emacs-lisp
-  (global-prettify-symbols-mode 1)
-#+END_SRC
-
-Prettier Unicode symbols.
-#+BEGIN_SRC emacs-lisp
-  (when (member "Symbola" (font-family-list))
-    (set-fontset-font t 'unicode "Symbola" nil 'prepend))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package gruvbox-theme
-    :config (load-theme 'gruvbox-dark-medium t))
-#+END_SRC
-
-Highlight changes in the gutter
-#+BEGIN_SRC emacs-lisp
-  (use-package git-gutter
-    :diminish git-gutter-mode
-    :init (global-git-gutter-mode +1)
-    :config
-    (setq git-gutter:update-interval 2)
-    (mapc (lambda (pair)
-            (set-face-background (car pair) (cdr pair))
-            (set-face-foreground (car pair) (cdr pair)))
-          '((git-gutter:added . "#8bc34a")
-            (git-gutter:modified . "#b39ddb")
-            (git-gutter:deleted . "#f36c60")))
-    :bind
-    (("C-c C-n" . git-gutter:next-hunk)
-     ("C-c C-p" . git-gutter:previous-hunk)))
-#+END_SRC
-** Highlight TODO entries
-#+BEGIN_SRC emacs-lisp
-  (use-package hl-todo
-    :init (global-hl-todo-mode)
-    :bind
-    (:map hl-todo-mode-map
-          ("C-c <up>" . hl-todo-previous)
-          ("C-c <down>" . hl-todo-next)
-          ("C-c T" . hl-todo-occur)))
-#+END_SRC
-** Miscellaneous
-#+BEGIN_SRC emacs-lisp
-  ;;; Display rules at column 80
-  (setq-default fill-column 80)
-  (use-package fill-column-indicator
-    :config
-    (add-hook 'prog-mode-hook 'fci-mode))
-#+END_SRC
-
 * Shell
 Based on the excellent config and article from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]]. Code will mostly
 be different as it turns out that most of his config doesn’t really work for me,
 but the ideas are pretty darn good.
+
+First of all, we need a convenient way to spawn shells.
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "<f1>") 'eshell)
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
   (defun eshell-here ()
     "Opens up a new shell in the directory associated with the
@@ -942,74 +703,106 @@ prompts components and turn off the default one.
       (exec-path-from-shell-copy-env "GOPATH")
       (exec-path-from-shell-copy-env "SSH_AUTH_SOCK")))
 #+END_SRC
-
-* Experimental features
-Just a group for features I may very well remove very soon.
+* MacOS-specific
+Some workarounds for the MacOS binding madness (Command key is =Super=, =<Home>= and
+=<End>= behavior is insane).
 #+BEGIN_SRC emacs-lisp
-  (save-place-mode +1)          ; remember cursor position
-  (global-set-key (kbd "C-S-r") 'rename-buffer)
-
-  ;; Always try to keep equally sized windows
-  ;(advice-add 'split-window-right :after #'balance-windows)
-  ;(advice-add 'delete-window :after #'balance-windows)
-
-  ;; Run current file
-  (defun xah-run-current-file ()
-    "Execute the current file.
-  For example, if the current buffer is x.py, then it'll call 「python x.py」 in a shell. Output is printed to message buffer.
-  The file can be Emacs Lisp, PHP, Perl, Python, Ruby, JavaScript, TypeScript, Bash, Ocaml, Visual Basic, TeX, Java, Clojure.
-  File suffix is used to determine what program to run.
-
-  If the file is modified or not saved, save it automatically before run.
-
-  URL `http://ergoemacs.org/emacs/elisp_run_current_file.html'
-  Version 2017-02-10"
-    (interactive)
-    (let ((-suffix-map
-           ;; (‹extension› . ‹shell program name›)
-           `(("php" . "php")
-             ("pl" . "perl")
-             ("py" . "python")
-             ("py3" . ,(if (string-equal system-type "windows-nt") "c:/Python32/python.exe" "python3"))
-             ("rb" . "ruby")
-             ("go" . "go run")
-             ("js" . "node") ; node.js
-             ("ts" . "tsc --alwaysStrict --lib DOM,ES2015,DOM.Iterable,ScriptHost --target ES5") ; TypeScript
-             ("sh" . "bash")
-             ("rkt" . "racket")
-             ("ml" . "ocaml")
-             ("vbs" . "cscript")
-             ("tex" . "pdflatex")
-             ("latex" . "pdflatex")
-             ("java" . "javac")))
-          -fname
-          -fSuffix
-          -prog-name
-          -cmd-str)
-      (when (not (buffer-file-name)) (save-buffer))
-      (when (buffer-modified-p) (save-buffer))
-      (setq -fname (buffer-file-name))
-      (setq -fSuffix (file-name-extension -fname))
-      (setq -prog-name (cdr (assoc -fSuffix -suffix-map)))
-      (setq -cmd-str (concat -prog-name " \""   -fname "\""))
-      (cond
-       ((string-equal -fSuffix "el") (load -fname))
-       ((string-equal -fSuffix "java")
-        (progn
-          (shell-command -cmd-str "*xah-run-current-file output*" )
-          (shell-command
-           (format "java %s" (file-name-sans-extension (file-name-nondirectory -fname))))))
-       (t (if -prog-name
-              (progn
-                (message "Running…")
-                (shell-command -cmd-str "*xah-run-current-file output*" ))
-            (message "No recognized program file suffix for this file."))))))
-
-  (global-set-key (kbd "<S-f8>") 'xah-run-current-file)
+  (global-set-key (kbd "C-<end>") 'end-of-buffer)
+  (global-set-key (kbd "<end>") 'end-of-line)
+  (global-set-key (kbd "s-W") 'kill-this-buffer)
+  (global-set-key (kbd "s-t") nil)
+  (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
 #+END_SRC
 
+* Mode-specific
+** JavaScript
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-Q") 'kill-emacs)
+  (use-package tern
+    :bind (:map tern-mode-keymap ("s-r" . tern-rename-variable)))
+
+  (use-package js2-mode
+    :mode ("\\.jsx\\'" "\\.js\\'")
+    :bind
+    (:map js2-mode-map ("C-c C-c" . js-send-region))
+    :config
+    (progn
+      (setq js2-basic-offset 2
+            js2-strict-trailing-comma-warning nil
+            js2-global-externs
+            '("angular" "d3" "require" "karma" "it" "describe" "beforeEach" "module"))
+      (add-hook 'js2-mode-hook 'tern-mode)
+      (define-key js2-mode-map (kbd "M-j") nil)))
+#+END_SRC
+** Common Lisp
+Nothing fancy here, just a regular SLIME installation.
+#+BEGIN_SRC emacs-lisp
+  (use-package slime
+    :config
+    (progn
+      (setq inferior-lisp-program "/usr/bin/sbcl"
+            slime-net-coding-system 'utf-8-unix)
+      (slime-setup '(slime-fancy))
+      (set-language-environment "UTF-8")
+      (setenv "LC_LOCALE" "en_US.UTF-8")
+      (setenv "LC_CTYPE" "en_US.UTF-8")))
+#+END_SRC
+** Web
+#+BEGIN_SRC emacs-lisp
+  (use-package emmet-mode
+    :config
+    (progn
+      (add-hook 'web-mode-hook 'emmet-mode)
+      (add-hook 'sgml-mode-hook 'emmet-mode)
+      (add-hook 'css-mode-hook emmet-mode)
+      (setq emmet-self-closing-tag-style ""
+            emmet-indentation 2
+            css-mode-indent-offset 2))
+    (define-key emmet-mode-keymap (kbd "<C-return>") nil))
+
+  (use-package web-mode
+    :mode ("\\.php\\'" "\\.css\\'" "\\.tpl\\’" "\\.less\\'")
+    :bind
+    (:map web-mode-map
+          ("C-M-u" . web-mode-element-parent)
+          ("C-M-d" . web-mode-element-child)
+          ("C-M-n" . web-mode-element-next)
+          ("C-M-p" . web-mode-element-previous))
+    :config
+    (setq-default web-mode-css-indent-offset 2
+                  web-mode-code-indent-offset 2
+                  web-mode-markup-indent-offset 2
+                  web-mode-attr-indent-offset nil
+                  css-indent-offset 2)
+    ;; the docs say these have to be defined in a hook
+    (add-hook 'web-mode-hook (lambda ()
+                               (setq web-mode-enable-css-colorization t
+                                     web-mode-enable-current-element-highlight t
+                                     web-mode-code-indent-offset 2
+                                     js-indent-level 2
+                                     web-mode-auto-close-style 1
+                                     web-mode-enable-auto-indentation t
+                                     web-mode-enable-auto-opening t
+                                     web-mode-enable-auto-pairing t
+                                     web-mode-enable-auto-quoting t
+                                     web-mode-attr-indent-offset nil
+                                     web-mode-attr-indent-offset nil)))
+    (setq web-mode-ac-sources-alist
+          '(("css" . (ac-source-css-property))
+            ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+    (add-hook 'web-mode-hook 'turn-off-fci-mode))
+
+  (defun php-tpl-localize (p1 p2)
+    "Wrap region in a PHP call to xgettext"
+    (interactive "r")
+    (save-mark-and-excursion
+     (goto-char p1)
+     (insert "<?= _('")
+     (setq begin (point))
+     (forward-char (- p2 p1))
+     (setq end (point))
+     (insert "') ?>")
+     (replace-string "'" "\\'" nil begin end)
+     (message "Localized region")))
 #+END_SRC
 ** Dired
 #+BEGIN_SRC emacs-lisp
@@ -1019,4 +812,137 @@ Just a group for features I may very well remove very soon.
     (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
   (add-hook 'dired-mode-hook 'dired-hide-details-mode)
+#+END_SRC
+** Org
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :bind
+    (:map org-mode-map
+          ("M-[" . org-set-tags)
+          ("C-c s" . org-sort)
+          ("<C-up>" . org-up-element)
+          ("<C-down>" . org-down-element)
+          ("s-t" . org-todo))
+    :config
+    (progn
+      ;; For some reason, declaring these in `:bind` won't work
+      (global-set-key (kbd "C-c b") 'org-iswitchb)
+      (global-set-key (kbd "C-c j") 'org-clock-jump-to-current-clock)
+      (global-set-key (kbd "<f2>") 'org-capture)
+      (global-set-key (kbd "<f3>") 'org-agenda)
+
+      ;; run shell commands from org-babel
+      (defvar -org-babel-langs '((sh . t) (python . t)))
+      (setq org-babel-python-command "python3")
+      (org-babel-do-load-languages 'org-babel-load-languages -org-babel-langs)
+
+      ;; display/update images in the buffer after I evaluate
+      (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+
+      (setq org-agenda-include-diary t
+            org-log-reschedule 'note
+            org-log-done 'time
+            org-enforce-todo-dependencies t
+            org-enforce-todo-checkbox-dependencies t
+            org-fontify-whole-heading-line t
+            org-fontify-done-headline t
+            org-fontify-quote-and-verse-blocks t
+            org-hide-emphasis-markers t
+            org-agenda-restore-windows-after-quit t
+            org-src-fontify-natively t     ; syntax highlight in code blocks
+            org-return-follows-link t      ; return opens links
+            org-confirm-babel-evaluate nil ; stop prompting for confirmation on eval
+            org-refile-targets '((nil :maxlevel . 3)
+                                 ("~/Org/work.org" :maxlevel . 1)
+                                 ("~/Org/gtd.org" :maxlevel . 3)
+                                 ("~/Org/someday.org" :maxlevel . 1)
+                                 ("~/Org/tickler.org" :maxlevel . 2))
+            org-outline-path-complete-in-steps nil ; Refile in a single go
+            org-refile-use-outline-path 'file      ; Refile to top-level
+            org-todo-keywords
+            '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))))
+
+  (use-package ob-ipython)
+
+  (use-package org-pomodoro
+    :commands (org-pomodoro)
+    :bind ("C-S-p" . org-pomodoro)
+    :config
+    (setq alert-user-configuration (quote ((((:category . "org-pomodoro")) libnotify nil)))))
+#+END_SRC
+
+*** Getting Things Done
+This is a new section as I'm experimenting with implementing GTD in org-mode. I'll likely refile it soon.
+
+I want to be able to quickly file new items to my inbox. Let's do so via capture templates.
+#+BEGIN_SRC emacs-lisp
+  (setq org-capture-templates '(("t" "Todo [inbox]" entry
+                                 (file+headline "~/Org/inbox.org" "Inbox")
+                                 "* TODO %i%?")
+                                ("T" "Tickler" entry
+                                 (file+headline "~/Org/tickler.org" "Tickler")
+                                 "* %i%? \n %^t")
+                                ("j" "Journal entry" entry
+                                 (file+datetree "~/Org/journal.org")
+                                 "* %?")))
+#+END_SRC
+
+What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html][custom agenda commands]] to filter my backlog.
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-custom-commands
+        '(("n" "Next actions" alltodo nil
+           ((org-agenda-overriding-header "Next actions")
+            (org-agenda-skip-function #'my-org-agenda-skip-all-siblings-but-first)))
+          ("w" "Next actions (work)" tags-todo "WORK"
+           ((org-agenda-overriding-header "Work tasks")
+            (org-agenda-skip-function #'my-org-agenda-skip-all-siblings-but-first)))
+          ("W" "Waiting for..." todo "WAITING")))
+
+  (defun my-org-agenda-skip-all-siblings-but-first ()
+    "Skip all but the first non-done entry."
+    (let (should-skip-entry)
+      (unless (org-current-is-todo)
+        (setq should-skip-entry t))
+      (save-excursion
+        (while (and (not should-skip-entry) (org-goto-sibling t))
+          (when (org-current-is-todo)
+            (setq should-skip-entry t))))
+      (when should-skip-entry
+        (or (outline-next-heading)
+            (goto-char (point-max))))))
+
+  (defun org-current-is-todo ()
+    (string= "TODO" (org-get-todo-state)))
+
+  (setq org-agenda-files '("~/Org/tickler.org" "~/Org/work.org" "~/Org/gtd.org"))
+#+END_SRC
+** Other
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.hdl\\'" . vhdl-mode))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package go-mode
+    :bind
+    (:map go-mode-map
+          ("M-." . godef-jump)
+          ("M-," . pop-tag-mark)
+          ("C-\\" . compile))
+    :config
+    (add-hook 'before-save-hook 'gofmt-before-save))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package inf-ruby
+    :config (add-hook 'ruby-mode-hook 'inf-ruby-minor-mode)
+    :bind
+    (:map inf-ruby-minor-mode-map
+          ("C-c C-c" . ruby-send-buffer)
+          ("C-c C-e" . ruby-send-last-sexp)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+    (use-package puppet-mode
+      :config
+      (setq-default puppet-indent-level 4))
 #+END_SRC

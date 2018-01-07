@@ -43,9 +43,6 @@ case ${TERM} in
     screen*)
         PS1='\[\033k\u@\h:\w\033\\\]'
         ;;
-    *)
-        unset PS1
-        ;;
 esac
 
 # Set colorful PS1 only on colorful terminals.
