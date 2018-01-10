@@ -10,9 +10,7 @@
   (setq user-full-name "Guilherme Goncalves"
         user-email-address "gsg@ggoncalves.me")
 #+END_SRC
-
-* Look and feel
-** Window appearance
+* Window setup
 I like to set the appearance as early as possible to avoid glitches in
 the loading process. This makes for a cleaner Emacs window.
 
@@ -32,65 +30,7 @@ the loading process. This makes for a cleaner Emacs window.
         highlight-nonselected-windows nil
         bidi-display-reordering nil
         blink-matching-paren nil)
-#+END_SRC
-
-** Other customizations
-This replaces some words with their Math symbols (eg: lambda).
-
-#+BEGIN_SRC emacs-lisp
-  (global-prettify-symbols-mode 1)
-#+END_SRC
-
-Prettier Unicode symbols.
-#+BEGIN_SRC emacs-lisp
-  (when (member "Symbola" (font-family-list))
-    (set-fontset-font t 'unicode "Symbola" nil 'prepend))
-#+END_SRC
-
-Leuven is the best color theme ever made.
-#+BEGIN_SRC emacs-lisp
-  (use-package leuven-theme
-    :config
-    (load-theme 'leuven t)
-    ; remove the gigantic org-agenda headers
-    (setq leuven-scale-outline-headlines t
-          leuven-scale-org-agenda-structure nil))
-#+END_SRC
-
-Highlight changes in the gutter
-#+BEGIN_SRC emacs-lisp
-  (use-package git-gutter
-    :diminish git-gutter-mode
-    :init (global-git-gutter-mode +1)
-    :config
-    (setq git-gutter:update-interval 2)
-    (mapc (lambda (pair)
-            (set-face-background (car pair) (cdr pair))
-            (set-face-foreground (car pair) (cdr pair)))
-          '((git-gutter:added . "#8bc34a")
-            (git-gutter:modified . "#b39ddb")
-            (git-gutter:deleted . "#f36c60")))
-    :bind
-    (("C-c C-n" . git-gutter:next-hunk)
-     ("C-c C-p" . git-gutter:previous-hunk)))
-#+END_SRC
-*** Highlight TODO entries
-#+BEGIN_SRC emacs-lisp
-  (use-package hl-todo
-    :init (global-hl-todo-mode)
-    :bind
-    (:map hl-todo-mode-map
-          ("C-c <up>" . hl-todo-previous)
-          ("C-c <down>" . hl-todo-next)
-          ("C-c T" . hl-todo-occur)))
-#+END_SRC
-*** Miscellaneous
-#+BEGIN_SRC emacs-lisp
-  ;;; Display rules at column 80
-  (setq-default fill-column 80)
-  (use-package fill-column-indicator
-    :config
-    (add-hook 'prog-mode-hook 'fci-mode))
+  (set-default-font "Fantasque Sans Mono-13")
 #+END_SRC
 
 * Custom file
@@ -121,14 +61,72 @@ by auto-generated stuff.
 
   (setq use-package-always-ensure t)
 
-  ;; (defun packages-install (&rest packages)
-  ;;   (message "Installing missing packages")
-  ;;   (mapc (lambda (package-name)
-  ;;           (unless (package-installed-p package-name)
-  ;;             (package-initialize)
-  ;;             (package-install package-name)))
-  ;;         packages)
-  ;;   (package-initialize))
+#+END_SRC
+
+* Look and feel
+** Color schemes
+Install a few color themes. =leuven= (preinstalled) is my favorite, but I like to
+switch back and forth.
+#+BEGIN_SRC emacs-lisp
+  (use-package gruvbox-theme)
+  (use-package solarized-theme)
+#+END_SRC
+
+** Other customizations
+This replaces some words with their Math symbols (eg: lambda).
+
+#+BEGIN_SRC emacs-lisp
+  (global-prettify-symbols-mode 1)
+#+END_SRC
+
+Prettier Unicode symbols.
+#+BEGIN_SRC emacs-lisp
+  (when (member "Symbola" (font-family-list))
+    (set-fontset-font t 'unicode "Symbola" nil 'prepend))
+#+END_SRC
+
+Highlight changes in the gutter
+#+BEGIN_SRC emacs-lisp
+  (use-package git-gutter
+    :diminish git-gutter-mode
+    :init (global-git-gutter-mode +1)
+    :config
+    (setq git-gutter:update-interval 2)
+    (mapc (lambda (pair)
+            (set-face-background (car pair) (cdr pair))
+            (set-face-foreground (car pair) (cdr pair)))
+          '((git-gutter:added . "#8bc34a")
+            (git-gutter:modified . "#b39ddb")
+            (git-gutter:deleted . "#f36c60")))
+    :bind
+    (("C-c C-n" . git-gutter:next-hunk)
+     ("C-c C-p" . git-gutter:previous-hunk)))
+#+END_SRC
+
+Fullscreen window. Also show time and status information on the modeline, so we
+don't depend on the OS.
+#+BEGIN_SRC emacs-lisp
+  (set-frame-parameter nil 'fullscreen 'fullboth)
+  (setq display-time-default-load-average 0) ; 1-minute load average
+  (display-time-mode)
+#+END_SRC
+*** Highlight TODO entries
+#+BEGIN_SRC emacs-lisp
+  (use-package hl-todo
+    :init (global-hl-todo-mode)
+    :bind
+    (:map hl-todo-mode-map
+          ("C-c <up>" . hl-todo-previous)
+          ("C-c <down>" . hl-todo-next)
+          ("C-c T" . hl-todo-occur)))
+#+END_SRC
+*** Miscellaneous
+#+BEGIN_SRC emacs-lisp
+  ;;; Display rules at column 80
+  (setq-default fill-column 80)
+  (use-package fill-column-indicator
+    :config
+    (add-hook 'prog-mode-hook 'fci-mode))
 #+END_SRC
 
 * Editing goodies
@@ -138,36 +136,34 @@ by auto-generated stuff.
 #+END_SRC
 ** Interactively do things
 #+BEGIN_SRC emacs-lisp
-  (use-package helm
+  (use-package ivy
     :bind
     (:map global-map
-          ("M-x" . helm-M-x)
-          ("M-y" . helm-show-kill-ring)
-          ("C-x b" . helm-mini)
-          ("s-b" . helm-mini)
-          ("C-x C-f" . helm-find-files)
-          ("s-o" . helm-find-files)
-     :map helm-map
-          ("<tab>" . helm-execute-persistent-action) ; rebind tab to run persistent action
-          ("C-i" . helm-execute-persistent-action)   ; make TAB work in terminal
-          ("C-z" . helm-select-action))              ; list actions using C-z
+          ("C-s" . swiper)
+          ("s-f" . swiper)
+          ("s-b" . ivy-switch-buffer)
+          ("C-c C-r" . ivy-resume)
+          ("s-g" . ivy-resume)
+          ("M-x" . counsel-M-x)
+          ("C-x C-f" . counsel-find-file)
+          ("s-o" . counsel-find-file)
+          ("<f6> f" . counsel-describe-function)
+          ("<f6> v" . counsel-describe-variable)
+          ("<f6> l" . counsel-find-library)
+          ("<f6> i" . counsel-info-lookup-symbol)
+          ("<f6> u" . counsel-unicode-char)
+          ("C-c g" . counsel-git)
+          ("C-c G" . counsel-git-grep)
+          ("M-S-f" . counsel-ag)
+          ("C-x l" . counsel-locate)
+          :map minibuffer-local-map
+          ("C-r" . counsel-minibuffer-history))
     :config
     (progn
-      (global-set-key (kbd "C-c h") 'helm-comand-prefix)
-      (global-unset-key (kbd "C-x c"))
-      (setq helm-split-window-in-side-p       t ; open helm buffer inside current window, not occupy whole other window
-            helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-            helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
-            helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
-            helm-ff-file-name-history-use-recentf t
-            helm-echo-input-in-header-line nil
-            helm-autoresize-max-height 0
-            helm-autoresize-min-height 20
-            helm-M-x-fuzzy-match t
-            helm-buffers-fuzzy-matching t
-            helm-recentf-fuzzy-match t)
-      (helm-autoresize-mode)
-      (helm-mode)))
+      (setq ivy-use-virtual-buffers 1
+            ivy-use-selectable-prompts 0
+            enable-recursive-minibuffers 1)
+      (ivy-mode)))
 
   (use-package projectile
     :bind
@@ -179,23 +175,21 @@ by auto-generated stuff.
      ("C-\\" . projectile-find-file)
      ("s-p" . projectile-find-file)
      ("M-F" . projectile-ag))
-    ;:init (projectile-mode)
+    :init (projectile-mode)
     :config
-    (setq projectile-completion-system 'helm))
+    (setq projectile-completion-system 'ivy))
 
-  (use-package helm-ag :ensure t)
-  (use-package helm-projectile
+  (use-package counsel-projectile
     :bind
-    ("C-S-f" . helm-projectile-ag))
-
+    ("C-S-f" . counsel-projectile-ag))
 #+END_SRC
 
 ** Moving around
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-S-w") (lambda () (interactive) (kill-buffer nil)))
   (global-set-key (kbd "C-b") 'ido-switch-buffer)
-  (global-set-key (kbd "M-o") 'other-window)
-  (global-set-key (kbd "M-O") (lambda () (interactive) (other-window -1)))
+  (global-set-key (kbd "M-o") 'next-multiframe-window)
+  (global-set-key (kbd "M-O") 'previous-multiframe-window)
 
   (global-set-key (kbd "M-3") 'delete-other-windows)
   (global-set-key (kbd "M-4") 'split-window-below)
@@ -790,6 +784,9 @@ Nothing fancy here, just a regular SLIME installation.
           '(("css" . (ac-source-css-property))
             ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
     (add-hook 'web-mode-hook 'turn-off-fci-mode))
+
+  (use-package less-css-mode
+    :mode ("\\.less\\'"))
 
   (defun php-tpl-localize (p1 p2)
     "Wrap region in a PHP call to xgettext"

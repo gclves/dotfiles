@@ -1,9 +1,9 @@
-alias ll ls -AlohG --color=always
-alias gds magit-diff-staged
-alias gd magit-diff-unstaged
-alias ee find-file-other-window
 alias emacs find-file
-alias ff find-file
-alias e find-file
-alias v view-file $1
+alias e find-file $1
+alias ee find-file-other-window $1
 alias V view-file-other-window $1
+alias v view-file $1
+alias ff find-file
+alias gd magit-diff-unstaged
+alias gds magit-diff-staged
+alias ll ls -AlohG --color=always
