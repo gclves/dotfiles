@@ -496,6 +496,23 @@ I run many async commands, and not once have I found the confirmation
     (insert "( ͡° ͜ʖ ͡°)"))
 #+END_SRC
 
+** Remapping out-of-reach commands
+On the Kinesis Advantage, some key combinations are painful to reach (at least
+on my RSI'd wrists). Translate some of those here.
+#+BEGIN_SRC emacs-lisp
+  (define-key key-translation-map (kbd "s-h") (kbd "C-h"))
+  ; mapping <escape> to 'keyboard-escape-quit doesn't seem to work for some reason, so we just translate
+  (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
+
+  (define-key org-agenda-mode-map (kbd "s-M-i") 'org-agenda-clock-in)
+  (define-key org-agenda-mode-map (kbd "s-M-o") 'org-agenda-clock-out)
+
+  (define-key org-mode-map (kbd "s-M-i") 'org-clock-in)
+  (define-key org-mode-map (kbd "s-M-o") 'org-clock-out)
+
+  (define-key key-translation-map (kbd "<s-return>") (kbd "<C-return>"))
+  (define-key key-translation-map (kbd "<s-S-return>") (kbd "<C-S-return>"))
+#+END_SRC
 * Backup
 #+BEGIN_SRC emacs-lisp
   (defvar --backup-directory (concat user-emacs-directory "backups"))
