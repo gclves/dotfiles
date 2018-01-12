@@ -164,8 +164,8 @@ don't depend on the OS.
     (progn
       (setq ivy-use-virtual-buffers 1
             ivy-use-selectable-prompts 0
-            enable-recursive-minibuffers 1)
-      (ivy-mode)))
+            enable-recursive-minibuffers 1))
+    :init (ivy-mode))
 
   (use-package projectile
     :bind
@@ -403,19 +403,23 @@ don't depend on the OS.
           do (add-hook hook #'enable-paredit-mode)))
 #+END_SRC
 
-** TODO Autocomplete and snippets
+** Autocomplete and snippets
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package auto-complete
-  ;;   :config
-  ;;   (setq ac-auto-start 4)
-  ;;   (define-key ac-completing-map [down] nil)
-  ;;   (define-key ac-completing-map [up] nil)
-  ;;   (add-hook 'prog-mode-hook 'auto-complete-mode))
+  (use-package company
+    :config (global-company-mode))
+
+  (use-package company-tern)
+  (package-install 'company-tern)
+  (require 'company-tern)
+  (add-to-list 'company-backends 'company-tern)
 
   (use-package yasnippet
     :config
     (yas-global-mode)
     (add-hook 'prog-mode-hook 'yas-minor-mode))
+
+  (setq-default abbrev-mode t)
+  (setq save-abbrevs 'silently)
 
   (use-package angular-snippets)
   (use-package common-lisp-snippets)
