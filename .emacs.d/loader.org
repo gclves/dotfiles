@@ -31,7 +31,7 @@ the loading process. This makes for a cleaner Emacs window.
         highlight-nonselected-windows nil
         bidi-display-reordering nil
         blink-matching-paren nil)
-  (set-default-font "Fantasque Sans Mono-13")
+  (set-default-font "Fantasque Sans Mono-14")
 #+END_SRC
 
 * Custom file
@@ -69,9 +69,10 @@ by auto-generated stuff.
 Install a few color themes. =leuven= (preinstalled) is my favorite, but I like to
 switch back and forth.
 #+BEGIN_SRC emacs-lisp
-  (use-package gruvbox-theme)
-  (use-package solarized-theme)
-  (use-package color-theme-cobalt)
+  ;(use-package gruvbox-theme)
+  ;(use-package color-theme-cobalt)
+  ;(use-package dracula-theme)
+  (use-package plan9-theme)
 #+END_SRC
 
 ** Other customizations
@@ -405,12 +406,14 @@ don't depend on the OS.
 ** Autocomplete and snippets
 #+BEGIN_SRC emacs-lisp
   (use-package company
-    :config (global-company-mode))
+    :config
+    (progn
+      (global-company-mode)
+      (setq company-tooltip-align-annotations t)))
 
-  (use-package company-tern)
-  (package-install 'company-tern)
-  (require 'company-tern)
-  (add-to-list 'company-backends 'company-tern)
+  (use-package company-tern
+    :config
+    (add-to-list 'company-backends 'company-tern))
 
   (use-package yasnippet
     :config
@@ -424,6 +427,12 @@ don't depend on the OS.
   (use-package common-lisp-snippets)
 #+END_SRC
 
+** Flycheck
+All the cool kids seem to be using it.
+#+BEGIN_SRC emacs-lisp
+    (use-package flycheck
+      :init (global-flycheck-mode))
+#+END_SRC
 ** Misc editing facilities
 I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
 
@@ -502,12 +511,6 @@ on my RSI'd wrists). Translate some of those here.
   (define-key key-translation-map (kbd "s-h") (kbd "C-h"))
   ; mapping <escape> to 'keyboard-escape-quit doesn't seem to work for some reason, so we just translate
   (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
-
-  (define-key org-agenda-mode-map (kbd "s-M-i") 'org-agenda-clock-in)
-  (define-key org-agenda-mode-map (kbd "s-M-o") 'org-agenda-clock-out)
-
-  (define-key org-mode-map (kbd "s-M-i") 'org-clock-in)
-  (define-key org-mode-map (kbd "s-M-o") 'org-clock-out)
 
   (define-key key-translation-map (kbd "<s-return>") (kbd "<C-return>"))
   (define-key key-translation-map (kbd "<s-S-return>") (kbd "<C-S-return>"))
@@ -812,7 +815,9 @@ Nothing fancy here, just a regular SLIME installation.
     :mode ("\\.less\\'"))
 
   (defun php-tpl-localize (p1 p2)
-    "Wrap region in a PHP call to xgettext"
+    "Wrap region in a PHP call to xgettext.
+  Called interactively, use the selected region.
+  When called from Lisp, use delimiters P1 and P2."
     (interactive "r")
     (save-mark-and-excursion
      (goto-char p1)
@@ -823,6 +828,17 @@ Nothing fancy here, just a regular SLIME installation.
      (insert "') ?>")
      (replace-string "'" "\\'" nil begin end)
      (message "Localized region")))
+
+  (use-package tide
+    :config
+    (progn
+      (defun setup-tide-mode ()
+        (tide-setup)
+        (eldoc-mode +1)
+        (tide-hl-identifier-mode +1)
+        (add-hook 'before-save-hook 'tide-format-before-save))
+
+      (add-hook 'typescript-mode-hook 'setup-tide-mode)))
 #+END_SRC
 ** Dired
 #+BEGIN_SRC emacs-lisp
@@ -850,6 +866,9 @@ Nothing fancy here, just a regular SLIME installation.
       (global-set-key (kbd "C-c j") 'org-clock-jump-to-current-clock)
       (global-set-key (kbd "<f2>") 'org-capture)
       (global-set-key (kbd "<f3>") 'org-agenda)
+
+      (define-key org-mode-map (kbd "M-s-i") 'org-clock-in)
+      (define-key org-mode-map (kbd "M-s-o") 'org-clock-out)
 
       ;; run shell commands from org-babel
       (defvar -org-babel-langs '((sh . t) (python . t)))
@@ -949,7 +968,19 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
           ("M-," . pop-tag-mark)
           ("C-\\" . compile))
     :config
-    (add-hook 'before-save-hook 'gofmt-before-save))
+    (setq gofmt-command "goimports")
+    (add-hook 'go-mode-hook (lambda ()
+                              (add-hook 'before-save-hook 'gofmt-before-save))))
+
+  (use-package go-eldoc
+    :config
+    (add-hook 'go-mode-hook 'go-eldoc-setup))
+
+  (use-package company-go
+    :config
+    (add-hook 'go-mode-hook (lambda ()
+                              (set (make-local-variable 'company-backends) '(company-go))
+                              (company-mode))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
