@@ -966,9 +966,22 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
     (:map go-mode-map
           ("M-." . godef-jump)
           ("M-," . pop-tag-mark)
-          ("C-\\" . compile))
+          ("M-p" . compile)
+          ("M-P" . recompile))
     :config
     (setq gofmt-command "goimports")
+
+    (defun go-compile ()
+      (interactive)
+      (compile "go build"))
+
+    (defun go-test ()
+      (interactive)
+      (compile "go test"))
+
+    (define-key go-mode-map (kbd "C-\\") 'go-compile)
+    (define-key go-mode-map (kbd "M-\\") 'go-test)
+
     (add-hook 'go-mode-hook (lambda ()
                               (add-hook 'before-save-hook 'gofmt-before-save))))
 
