@@ -857,10 +857,6 @@ golang.org/x/tools/cmd/...~), but there may be more dependencies missing here.
 
 #+BEGIN_SRC emacs-lisp
   (use-package go-mode
-    :bind
-    (:map go-mode-map
-          ("M-." . godef-jump)
-          ("M-," . pop-tag-mark))
     :config
     (setq gofmt-command "goimports")
 
@@ -887,6 +883,14 @@ golang.org/x/tools/cmd/...~), but there may be more dependencies missing here.
     (add-hook 'go-mode-hook (lambda ()
                               (set (make-local-variable 'company-backends) '(company-go))
                               (company-mode))))
+
+  (use-package go-guru
+    :bind
+    (:map go-mode-map
+          ("M-." . go-guru-definition)
+          ("M-," . pop-tag-mark))
+    :config
+    (add-hook 'go-mode-hook 'go-guru-hl-identifier-mode))
 #+END_SRC
 ** Org
 #+BEGIN_SRC emacs-lisp
@@ -930,6 +934,8 @@ golang.org/x/tools/cmd/...~), but there may be more dependencies missing here.
             org-src-fontify-natively t     ; syntax highlight in code blocks
             org-return-follows-link t      ; return opens links
             org-confirm-babel-evaluate nil ; stop prompting for confirmation on eval
+            org-src-tab-acts-natively t    ; make TAB behave as expected in src blocks
+            org-support-shift-select 'always
             org-refile-targets '((nil :maxlevel . 3)
                                  ("~/Org/work.org" :maxlevel . 1)
                                  ("~/Org/gtd.org" :maxlevel . 3)
