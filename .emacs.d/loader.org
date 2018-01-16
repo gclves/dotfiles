@@ -849,6 +849,45 @@ Nothing fancy here, just a regular SLIME installation.
 
   (add-hook 'dired-mode-hook 'dired-hide-details-mode)
 #+END_SRC
+
+** Go
+Please note that this configuration requires quite a bit of external tools and
+resources. You'll need at least to get the extra tools (~go get -u
+golang.org/x/tools/cmd/...~), but there may be more dependencies missing here.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package go-mode
+    :bind
+    (:map go-mode-map
+          ("M-." . godef-jump)
+          ("M-," . pop-tag-mark))
+    :config
+    (setq gofmt-command "goimports")
+
+    (defun go-compile ()
+      (interactive)
+      (compile "go build"))
+
+    (defun go-test ()
+      (interactive)
+      (compile "go test"))
+
+    (define-key go-mode-map (kbd "C-\\") 'go-compile)
+    (define-key go-mode-map (kbd "M-\\") 'go-test)
+
+    (add-hook 'go-mode-hook (lambda ()
+                              (add-hook 'before-save-hook 'gofmt-before-save))))
+
+  (use-package go-eldoc
+    :config
+    (add-hook 'go-mode-hook 'go-eldoc-setup))
+
+  (use-package company-go
+    :config
+    (add-hook 'go-mode-hook (lambda ()
+                              (set (make-local-variable 'company-backends) '(company-go))
+                              (company-mode))))
+#+END_SRC
 ** Org
 #+BEGIN_SRC emacs-lisp
   (use-package org
@@ -957,43 +996,12 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
 #+END_SRC
 ** Other
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.hdl\\'" . vhdl-mode))
+(global-set-key (kbd "M-p") 'compile)
+(global-set-key (kbd "M-P") 'recompile)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (use-package go-mode
-    :bind
-    (:map go-mode-map
-          ("M-." . godef-jump)
-          ("M-," . pop-tag-mark)
-          ("M-p" . compile)
-          ("M-P" . recompile))
-    :config
-    (setq gofmt-command "goimports")
-
-    (defun go-compile ()
-      (interactive)
-      (compile "go build"))
-
-    (defun go-test ()
-      (interactive)
-      (compile "go test"))
-
-    (define-key go-mode-map (kbd "C-\\") 'go-compile)
-    (define-key go-mode-map (kbd "M-\\") 'go-test)
-
-    (add-hook 'go-mode-hook (lambda ()
-                              (add-hook 'before-save-hook 'gofmt-before-save))))
-
-  (use-package go-eldoc
-    :config
-    (add-hook 'go-mode-hook 'go-eldoc-setup))
-
-  (use-package company-go
-    :config
-    (add-hook 'go-mode-hook (lambda ()
-                              (set (make-local-variable 'company-backends) '(company-go))
-                              (company-mode))))
+(add-to-list 'auto-mode-alist '("\\.hdl\\'" . vhdl-mode))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
