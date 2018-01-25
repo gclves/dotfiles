@@ -1,0 +1,6 @@
+# key: fe
+# name: forEach
+# --
+forEach(function(${1:item, index, array}) {
+  $0
+});

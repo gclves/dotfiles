@@ -18,6 +18,7 @@ the loading process. This makes for a cleaner Emacs window.
   (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
   (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
   (global-hl-line-mode t)
+  (fringe-mode 1) ; 1px fringe
   (column-number-mode)
   (blink-cursor-mode)
   (tooltip-mode -1)
@@ -70,7 +71,6 @@ Install a few color themes. =leuven= (preinstalled) is my favorite, but I like t
 switch back and forth.
 #+BEGIN_SRC emacs-lisp
   ;(use-package gruvbox-theme)
-  ;(use-package color-theme-cobalt)
   ;(use-package dracula-theme)
   (use-package plan9-theme)
 #+END_SRC
@@ -547,7 +547,9 @@ on my RSI'd wrists). Translate some of those here.
 Magit is so awesome, it barely needs any setup at all.
 #+BEGIN_SRC emacs-lisp
   (use-package magit
-    :bind ([f8] . magit-status))
+    :bind
+    (([f8] . magit-status)
+     ("M-s-b" . magit-blame)))
 #+END_SRC
 
 Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.]])
@@ -935,7 +937,7 @@ golang.org/x/tools/cmd/...~), but there may be more dependencies missing here.
             org-return-follows-link t      ; return opens links
             org-confirm-babel-evaluate nil ; stop prompting for confirmation on eval
             org-src-tab-acts-natively t    ; make TAB behave as expected in src blocks
-            org-support-shift-select 'always
+            org-support-shift-select nil
             org-refile-targets '((nil :maxlevel . 3)
                                  ("~/Org/work.org" :maxlevel . 1)
                                  ("~/Org/gtd.org" :maxlevel . 3)
@@ -1023,4 +1025,13 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
     (use-package puppet-mode
       :config
       (setq-default puppet-indent-level 4))
+#+END_SRC
+** Elfeed
+#+BEGIN_SRC emacs-lisp
+  (use-package elfeed
+    :config
+    (setq elfeed-feeds '("https://jvns.ca/atom.xml"
+                         "https://lobste.rs/rss"
+                         "http://blog.ricbit.com/feeds/posts/default"
+                         "https://sivers.org/en.atom")))
 #+END_SRC
