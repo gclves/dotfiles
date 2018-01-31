@@ -199,7 +199,8 @@ don't depend on the OS.
         (defun run-grunt ()
           "Runs the command \"grunt fwatch\" on the projectile
           root. Splits the current window and display the output in
-          a new buffer named *grunt*"
+          a new buffer named *grunt*. In the *grunt* buffer, C-c C-c
+          kills the process and closes the window."
           (interactive)
           (let ((buffer (get-buffer-create "*grunt*"))
                 (height (/ (window-total-height) 3)))
@@ -207,6 +208,10 @@ don't depend on the OS.
             (other-window 1)
             (switch-to-buffer buffer)
             (comint-mode)
+            (local-set-key (kbd "C-c C-c") (lambda ()
+                                             (interactive)
+                                             (comint-kill-subjob)
+                                             (delete-window)))
             (cd (projectile-project-root))
             (start-process "grunt" buffer "grunt" "fwatch" "--no-color")
             (other-window -1)))
@@ -275,7 +280,9 @@ don't depend on the OS.
 
 ** Get rid of useless whitespace
 #+BEGIN_SRC emacs-lisp
-  (use-package ws-butler :config (ws-butler-global-mode))
+  (use-package ws-butler
+    :config (ws-butler-global-mode)
+    :diminish ws-butler-mode)
 
   (defun cleanup-buffer-safe ()
     "Perform a bunch of safe operations on the whitespace content of a buffer.
@@ -284,9 +291,6 @@ don't depend on the OS.
     (interactive)
     (untabify (point-min) (point-max))
     (set-buffer-file-coding-system 'utf-8))
-
-  ;; Various superfluous white-space. Just say no.
-  (ws-butler-global-mode)
 
   (defun cleanup-buffer ()
     "Perform a bunch of operations on the whitespace content of a buffer.

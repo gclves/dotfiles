@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: ll-form-element
+# key: f-e
+# --
+
+<ll-form-element ll-name="<?= _('${1:element name}') ?>">
+  $0
+</ll-form-element>
