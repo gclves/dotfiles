@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: angular-component
+# key: a_c
+# --
+.component('${1:componentName}', {
+  $0,
+});
