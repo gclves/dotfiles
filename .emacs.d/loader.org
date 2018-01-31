@@ -1077,10 +1077,11 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
 #+END_SRC
 ** Elfeed
 #+BEGIN_SRC emacs-lisp
-  (use-package elfeed
-    :config
-    (setq elfeed-feeds '("https://jvns.ca/atom.xml"
-                         "https://lobste.rs/rss"
-                         "http://blog.ricbit.com/feeds/posts/default"
-                         "https://sivers.org/en.atom")))
+    (use-package elfeed
+      :config
+      (setq elfeed-feeds '("https://jvns.ca/atom.xml"
+                           "https://lobste.rs/rss"
+                           "http://blog.ricbit.com/feeds/posts/default"
+                           "https://sivers.org/en.atom"
+                           "https://wingolog.org/feed/atom")))
 #+END_SRC
