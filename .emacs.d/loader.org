@@ -32,9 +32,23 @@ the loading process. This makes for a cleaner Emacs window.
         highlight-nonselected-windows nil
         bidi-display-reordering nil
         blink-matching-paren nil)
-  (set-default-font "Fantasque Sans Mono-14")
 #+END_SRC
 
+This config file is used across multiple computers and different OSes, which
+render fonts quite differently. This might be overkill, but I want to have a
+list of options of fonts to render so we don't end up with garbage.
+
+#+BEGIN_SRC emacs-lisp
+  (let ((font-list '(("Fantasque Sans Mono" . 16) ("Inconsolata" . 16)))
+        (supported-fonts (font-family-list))
+        (format-font-name (lambda (font)
+                            (destructuring-bind (font-name . font-size) font
+                              (concat font-name "-" (number-to-string font-size))))))
+    (some (lambda (font) (when (member (car font) supported-fonts)
+                      (set-default-font (funcall format-font-name font))
+                      t))
+          font-list))
+#+END_SRC
 * Custom file
 The custom file holds all auto-generated Emacs configs, which I use
 for Org-mode quite a lot. This is so my =init.el= doesn't get littered
