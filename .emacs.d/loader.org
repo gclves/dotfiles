@@ -152,73 +152,75 @@ don't depend on the OS.
 #+END_SRC
 ** Interactively do things
 #+BEGIN_SRC emacs-lisp
-    (use-package ivy
-      :bind
-      (:map global-map
-            ("C-s" . swiper)
-            ("s-f" . swiper)
-            ("s-b" . ivy-switch-buffer)
-            ("C-c C-r" . ivy-resume)
-            ("s-g" . ivy-resume)
-            ("M-x" . counsel-M-x)
-            ("C-x C-f" . counsel-find-file)
-            ("s-o" . counsel-find-file)
-            ("<f6> f" . counsel-describe-function)
-            ("<f6> v" . counsel-describe-variable)
-            ("<f6> l" . counsel-find-library)
-            ("<f6> i" . counsel-info-lookup-symbol)
-            ("<f6> u" . counsel-unicode-char)
-            ("C-c g" . counsel-git)
-            ("C-c G" . counsel-git-grep)
-            ("M-S-f" . counsel-ag)
-            ("C-x l" . counsel-locate)
-            :map minibuffer-local-map
-            ("C-r" . counsel-minibuffer-history))
-      :config
-      (progn
-        (setq ivy-use-virtual-buffers 1
-              ivy-use-selectable-prompts 0
-              enable-recursive-minibuffers 1))
-      :init (ivy-mode))
+  (use-package ivy
+    :bind
+    (:map global-map
+          ("C-s" . swiper)
+          ("s-f" . swiper)
+          ("s-b" . ivy-switch-buffer)
+          ("C-c C-r" . ivy-resume)
+          ("s-g" . ivy-resume)
+          ("M-x" . counsel-M-x)
+          ("C-x C-f" . counsel-find-file)
+          ("s-o" . counsel-find-file)
+          ("<f6> f" . counsel-describe-function)
+          ("<f6> v" . counsel-describe-variable)
+          ("<f6> l" . counsel-find-library)
+          ("<f6> i" . counsel-info-lookup-symbol)
+          ("<f6> u" . counsel-unicode-char)
+          ("C-c g" . counsel-git)
+          ("C-c G" . counsel-git-grep)
+          ("M-S-f" . counsel-ag)
+          ("C-x l" . counsel-locate)
+          ("C-c i" . counsel-imenu)
+          ("s-i" . counsel-imenu)
+          :map minibuffer-local-map
+          ("C-r" . counsel-minibuffer-history))
+    :config
+    (progn
+      (setq ivy-use-virtual-buffers 1
+            ivy-use-selectable-prompts 0
+            enable-recursive-minibuffers 1))
+    :init (ivy-mode))
 
-    (use-package projectile
-      :bind
-      (("s-&" . projectile-run-async-shell-command-in-root)
-       ("s-!" . projectile-run-eshell)
-       ("C-!" . projectile-run-shell-command-in-root)
-       ("C-c C-e" . projectile-run-eshell)
-       ("C-c C-s" . projectile-run-shell)
-       ("C-\\" . projectile-find-file)
-       ("s-p" . projectile-find-file)
-       ("M-F" . projectile-ag))
-      :init (projectile-mode)
-      :config
-      (progn
-        (setq projectile-completion-system 'ivy)
+  (use-package projectile
+    :bind
+    (("s-&" . projectile-run-async-shell-command-in-root)
+     ("s-!" . projectile-run-eshell)
+     ("C-!" . projectile-run-shell-command-in-root)
+     ("C-c C-e" . projectile-run-eshell)
+     ("C-c C-s" . projectile-run-shell)
+     ("C-\\" . projectile-find-file)
+     ("s-p" . projectile-find-file)
+     ("M-F" . projectile-ag))
+    :init (projectile-mode)
+    :config
+    (progn
+      (setq projectile-completion-system 'ivy)
 
-        (defun run-grunt ()
-          "Runs the command \"grunt fwatch\" on the projectile
-          root. Splits the current window and display the output in
-          a new buffer named *grunt*. In the *grunt* buffer, C-c C-c
-          kills the process and closes the window."
-          (interactive)
-          (let ((buffer (get-buffer-create "*grunt*"))
-                (height (/ (window-total-height) 3)))
-            (split-window-below (- height))
-            (other-window 1)
-            (switch-to-buffer buffer)
-            (comint-mode)
-            (local-set-key (kbd "C-c C-c") (lambda ()
-                                             (interactive)
-                                             (comint-kill-subjob)
-                                             (delete-window)))
-            (cd (projectile-project-root))
-            (start-process "grunt" buffer "grunt" "fwatch" "--no-color")
-            (other-window -1)))
-        (define-key projectile-mode-map (kbd "<f5>") 'run-grunt)))
+      (defun run-grunt ()
+        "Runs the command \"grunt fwatch\" on the projectile
+        root. Splits the current window and display the output in
+        a new buffer named *grunt*. In the *grunt* buffer, C-c C-c
+        kills the process and closes the window."
+        (interactive)
+        (let ((buffer (get-buffer-create "*grunt*"))
+              (height (/ (window-total-height) 3)))
+          (split-window-below (- height))
+          (other-window 1)
+          (switch-to-buffer buffer)
+          (comint-mode)
+          (local-set-key (kbd "C-c C-c") (lambda ()
+                                           (interactive)
+                                           (comint-kill-subjob)
+                                           (kill-buffer-and-window)))
+          (cd (projectile-project-root))
+          (start-process "grunt" buffer "grunt" "fwatch" "--no-color")
+          (other-window -1)))
+      (define-key projectile-mode-map (kbd "<f5>") 'run-grunt)))
 
-    (use-package counsel-projectile
-      :bind ("C-S-f" . counsel-projectile-ag))
+  (use-package counsel-projectile
+    :bind ("C-S-f" . counsel-projectile-ag))
 #+END_SRC
 
 ** Moving around
@@ -536,7 +538,6 @@ I run many async commands, and not once have I found the confirmation
     (interactive)
     (insert "( ͡° ͜ʖ ͡°)"))
 #+END_SRC
-
 ** Remapping out-of-reach commands
 On the Kinesis Advantage, some key combinations are painful to reach (at least
 on my RSI'd wrists). Translate some of those here.
@@ -547,6 +548,13 @@ on my RSI'd wrists). Translate some of those here.
 
   (define-key key-translation-map (kbd "<s-return>") (kbd "<C-return>"))
   (define-key key-translation-map (kbd "<s-S-return>") (kbd "<C-S-return>"))
+#+END_SRC
+
+** Getting help
+~which-key~ is useful for discovering keybindings I'm not yet used to.
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key :ensure t
+    :config (which-key-mode))
 #+END_SRC
 * Backup
 #+BEGIN_SRC emacs-lisp
@@ -786,7 +794,27 @@ Some workarounds for the MacOS binding madness (Command key is =Super=, =<Home>=
             js2-global-externs
             '("angular" "d3" "require" "karma" "it" "describe" "beforeEach" "module"))
       (add-hook 'js2-mode-hook 'tern-mode)
+      (add-hook 'js2-mode-hook 'js2-imenu-extras-mode)
       (define-key js2-mode-map (kbd "M-j") nil)))
+
+  (use-package js2-refactor
+    :ensure t
+    :bind
+    (:map js2-mode-map ("C-k" . js2r-kill))
+    :config
+    (progn
+      (add-hook 'js2-mode-hook 'js2-refactor-mode)
+      (js2r-add-keybindings-with-prefix "C-c C-r")))
+
+  (use-package xref-js2
+    :ensure t
+    :config
+    (progn
+      ;; js-mode (which js2 is based on) binds "M-." which conflicts with xref, so
+      ;; unbind it.
+      (define-key js-mode-map (kbd "M-.") nil)
+      (define-key tern-mode-keymap (kbd "M-.") nil)
+      (add-hook 'js2-mode-hook (lambda () (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))))
 #+END_SRC
 ** Common Lisp
 Nothing fancy here, just a regular SLIME installation.
