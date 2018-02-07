@@ -24,7 +24,6 @@ the loading process. This makes for a cleaner Emacs window.
   (tooltip-mode -1)
   (setq inhibit-startup-message t
         initial-scratch-message ""
-        initial-major-mode 'org-mode
         mode-line-default-help-echo nil
         indicate-buffer-boundaries nil
         indicate-empty-lines nil
@@ -252,7 +251,7 @@ don't depend on the OS.
   (defun jump-to-scratch ()
     (interactive)
     (switch-to-buffer "*scratch*"))
-  (global-set-key (kbd "M-0") 'jump-to-scratch)
+  (global-set-key (kbd "M--") 'jump-to-scratch)
 
   (defun back-to-indentation-or-beginning ()
     "Move point to beginning of line, or to first non-space character"
@@ -892,6 +891,9 @@ Nothing fancy here, just a regular SLIME installation.
       (add-hook 'typescript-mode-hook 'setup-tide-mode)))
 #+END_SRC
 ** Dired
+Note that you'll need to call ~all-the-icons-install-fonts~ if you don't have the
+required fonts installed (likely).
+
 #+BEGIN_SRC emacs-lisp
   (use-package all-the-icons-dired
     :diminish all-the-icons-dired-mode
@@ -899,7 +901,7 @@ Nothing fancy here, just a regular SLIME installation.
     (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
   (add-hook 'dired-mode-hook 'dired-hide-details-mode)
-  (setq dired-dwim-target t)
+  (setq dired-dwim-target t)              ; move/copy files across dired buffers
 #+END_SRC
 
 ** Go
@@ -1125,7 +1127,18 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
                          "http://feeds.feedburner.com/zenhabits"
                          "http://lisperator.net/atom"
                          "http://n-gate.com/index.atom"
-                         "http://emacsrocks.com/atom.xml")))
+                         "http://emacsrocks.com/atom.xml"
+                         "https://www.destroyallsoftware.com/screencasts/feed")))
+#+END_SRC
+* Startup
+#+BEGIN_SRC emacs-lisp
+  (defun initial-window-setup ()
+    "Initially set up split windows and buffers"
+    (interactive)
+    (org-agenda-list)
+    (find-file-other-window "~/Org/inbox.org"))
+
+  (add-hook 'after-init-hook 'initial-window-setup)
 #+END_SRC
 * Custom file
 The custom file holds all auto-generated Emacs configs, which I use for Org-mode
