@@ -71,15 +71,6 @@ list of options of fonts to render so we don't end up with garbage.
 #+END_SRC
 
 * Look and feel
-** Color schemes
-Install a few color themes. =leuven= (preinstalled) is my favorite, but I like to
-switch back and forth.
-#+BEGIN_SRC emacs-lisp
-  ;(use-package gruvbox-theme)
-  ;(use-package dracula-theme)
-  (use-package plan9-theme)
-#+END_SRC
-
 ** Other customizations
 This replaces some words with their Math symbols (eg: lambda => λ).
 #+BEGIN_SRC emacs-lisp
@@ -110,12 +101,12 @@ Highlight changes in the gutter
      ("C-c C-p" . git-gutter:previous-hunk)))
 #+END_SRC
 
-Fullscreen window. Also show time and status information on the modeline, so we
+Show time and status information on the modeline, so we can go fullscreen and
 don't depend on the OS.
 #+BEGIN_SRC emacs-lisp
-  (set-frame-parameter nil 'fullscreen 'fullboth)
   (setq display-time-default-load-average 0) ; 1-minute load average
   (display-time-mode)
+  (display-battery-mode)
 #+END_SRC
 *** Highlight TODO entries
 #+BEGIN_SRC emacs-lisp
@@ -310,8 +301,8 @@ don't depend on the OS.
           (space-mark 32 [183] [46])
           (space-mark 160 [164])
           (newline-mark 10 [8617 10])))
-  (global-whitespace-mode)
-  ;; (global-whitespace-newline-mode)
+
+  (add-hook 'prog-mode-hook 'whitespace-mode)
 #+END_SRC
 
 ** Copy-paste goodness stolen from Xah Lee
@@ -575,7 +566,6 @@ on my RSI'd wrists). Translate some of those here.
                                             (concat user-emacs-directory "backups")))))
 
   (global-auto-revert-mode)               ; revert a file’s buffer automatically when it’s been changed on disk
-  (diminish 'auto-revert-mode)
 #+END_SRC
 
 * Git
@@ -760,17 +750,6 @@ prompts components and turn off the default one.
       (exec-path-from-shell-copy-env "GOPATH")
       (exec-path-from-shell-copy-env "SSH_AUTH_SOCK")))
 #+END_SRC
-* MacOS-specific
-Some workarounds for the MacOS binding madness (Command key is =Super=, =<Home>= and
-=<End>= behavior is insane).
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-<end>") 'end-of-buffer)
-  (global-set-key (kbd "<end>") 'end-of-line)
-  (global-set-key (kbd "s-W") 'kill-this-buffer)
-  (global-set-key (kbd "s-t") nil)
-  (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
-#+END_SRC
-
 * Mode-specific
 ** JavaScript
 #+BEGIN_SRC emacs-lisp
@@ -803,8 +782,8 @@ Some workarounds for the MacOS binding madness (Command key is =Super=, =<Home>=
   (use-package tide
     :config
     (progn
-      (tide-restart-server)
       (defun setup-tide-mode ()
+        (tide-restart-server)
         (tide-setup)
         (eldoc-mode +1)
         (tide-hl-identifier-mode +1))
@@ -963,6 +942,8 @@ golang.org/x/tools/cmd/...~), but there may be more dependencies missing here.
       (global-set-key (kbd "C-c j") 'org-clock-goto)
       (global-set-key (kbd "<f2>") 'org-capture)
       (global-set-key (kbd "<f3>") 'org-agenda)
+      (global-set-key (kbd "C-c c") 'org-capture)
+      (global-set-key (kbd "C-c a") 'org-agenda)
 
       (define-key org-mode-map (kbd "M-s-i") 'org-clock-in)
       (define-key org-mode-map (kbd "M-s-o") 'org-clock-out)
