@@ -1,5 +1,3 @@
-;;;; -*- mode: common-lisp -*-
-
 ;; Cool stuff to do:
 ;; - manage VirtualBox VMs
 ;; - integrate with pass (partially done with dmenu)
@@ -15,8 +13,8 @@
 (setf *timeout-wait* 10)
 (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
 
-(defparameter *TERMINAL* (cons "xfce4-terminal" "xfce4-terminal"))
-(defparameter *BROWSER* "firefox-dev")
+(defparameter *TERMINAL* (cons "alacritty" "Alacritty"))
+(defparameter *BROWSER* "firefox")
 
 (bind "w" "windowlist")
 (bind "C-w" "windows")
@@ -29,17 +27,16 @@
 (bind "z" "chromium")
 (bind "C-z" "exec chromium-browser")
 
-;; Google Chrome is required by Deezer because of proprietary plugins and other crap
 (defcommand chromium-app (app-id) ((:string "What's the app's id? "))
             (run-or-raise
-             (concat "google-chrome --app-id=" app-id) `(:instance ,(concat "crx_" app-id))))
+             (concat "chromium-browser --app-id=" app-id) `(:instance ,(concat "crx_" app-id))))
 
 (bind "[" "chromium-app paccflbfblppaoidibhflahkogodngie") ; deezer
 (bind "]" "chromium-app jeogkiiogjbmhklcnbgkdcjoioegiknm") ; slack
 
-(defcommand emacs () ()
-            "Like the native Emacs command, but using emacsclient instead"
-            (run-or-raise "emacsclient -nc -a \"\"" '(:class "Emacs")))
+;; (defcommand emacs () ()
+;;             "Like the native Emacs command, but using emacsclient instead"
+;;             (run-or-raise "emacsclient -nc -a \"\"" '(:class "Emacs")))
 
 (defmacro define-on-top (key command)
   `(define-key *top-map* (kbd ,key) ,command))
@@ -63,8 +60,9 @@
               (run-or-raise terminal-cmd `(:class ,terminal-class))))
 (bind "c" (concat "exec " (car *TERMINAL*)))
 (defcommand emacsshell () ()
-            (run-commands "emacs"
-                          "exec emacsclient -e '(shell)'"))
+            (run-commands "exec emacsclient -e '(shell)'")
+            (run-commands "emacs"))
+(bind "`" "terminal")
 (define-on-top "F11" "emacsshell")
 (define-on-top "F12" "exec")
 
@@ -95,8 +93,7 @@
             (run-shell-command "setxkbmap -layout us,us -variant ,alt-intl -option grp:ctrls_toggle"))
 
 (bind "C-x" "exec ~/bin/passmenu")
-
-(bind "C-l" "exec xscreensaver-command -lock")
+(bind "C-l" "exec slock")
 
 ;; Misc interactive commands
 (defcommand randr (hdmi?) ((:y-or-n "Is the HDMI cable on? "))
@@ -142,8 +139,9 @@
 (define-on-top "S-F12" "run-in-terminal")
 
 (when *initializing*
-  (run-commands "exec xscreensaver -no-splash"
-                "emacs"
-                "keyboard"))
+  (run-commands "emacs"
+                "keyboard"
+                "exec dropbox start"
+                "exec xsetroot -cursor_name left_ptr -solid black -name root-window"))
 
-(load "~/bin/stump/menu")
+(load "~/.stumpwm.d/menu.lisp")
