@@ -21,7 +21,7 @@
 
 (defcommand chromium () ()
             (run-or-raise "chromium-browser"
-                          ; the :role prop rules out the apps
+                          ;; the :role prop rules out the apps
                           '(:class "Chromium" :role "browser"))
             (message "Chromium"))
 (bind "z" "chromium")
@@ -44,7 +44,9 @@
 (define-on-top "F3" "fother")
 (define-on-top "S-F3" "fnext")
 (define-on-top "F4" "pull-hidden-other")
+(define-on-top "S-F4" "gother")
 (define-on-top "F5" "pull-hidden-next")
+(define-on-top "S-F5" "gnext")
 (define-on-top "F6" "delete")
 
 (defcommand web-browser () ()
@@ -80,9 +82,9 @@
 ;; prompt the user for an interactive command. The first arg is an
 ;; optional initial contents.
 (defcommand colon1 (&optional (initial "")) (:rest)
-  (let ((cmd (read-one-line (current-screen) ": " :initial-input initial)))
-    (when cmd
-      (eval-command cmd t))))
+            (let ((cmd (read-one-line (current-screen) ": " :initial-input initial)))
+              (when cmd
+                (eval-command cmd t))))
 
 ;; Browse somewhere
 (bind "b" (format nil "colon1 exec ~a http://www." *BROWSER*))
@@ -97,10 +99,10 @@
 
 ;; Misc interactive commands
 (defcommand randr (hdmi?) ((:y-or-n "Is the HDMI cable on? "))
-  (let ((base-cmd "xrandr --output eDP-1 --auto --output HDMI-1 ")
-        (hdmi-cmd (if hdmi? "--auto --right-of eDP-1" "--off")))
-    (run-shell-command (concat base-cmd hdmi-cmd)))
-  (run-commands "refresh-heads"))
+            (let ((base-cmd "xrandr --output eDP-1 --auto --output HDMI-1 ")
+                  (hdmi-cmd (if hdmi? "--auto --right-of eDP-1" "--off")))
+              (run-shell-command (concat base-cmd hdmi-cmd)))
+            (run-commands "refresh-heads"))
 
 (defun make-menu (options description)
   "Helper to show a menu on the current screen based on shell output"
@@ -137,6 +139,13 @@
 (defcommand run-in-terminal (command) ((:string "Run in terminal: "))
             (run-shell-command (concat (car *TERMINAL*) " -e " command)))
 (define-on-top "S-F12" "run-in-terminal")
+
+(define-on-top "s-;" "mode-line")
+
+;;; Super + F<n> switches groups
+(dotimes (i 13)
+  (unless (eq i 0) ; F0 is non-existant and will error.
+    (define-key *top-map* (kbd (format nil "s-F~a" i)) (format nil "gselect ~a" i))))
 
 (when *initializing*
   (run-commands "emacs"

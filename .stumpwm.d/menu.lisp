@@ -6,8 +6,9 @@
                               ("Bible Study" "xiphos")
                               ("Build Your Own AngularJS" "evince ~/Library/angularjs.pdf")
                               ("Haskell Programming From First Principles" "evince ~/Library/haskell-book.pdf")
-                              ("My Kindle Books" "chromium-browser --app=https://read.amazon.com/")
-                              ("On LISP" "evince ~/Library/onlisp.pdf"))
+                              ("Kindle library" "chromium-browser --app=https://read.amazon.com/")
+                              ("On LISP" "evince ~/Library/onlisp.pdf")
+                              ("Pocket list" "emacsclient -e '(pocket-reader)'"))
                              ("Internet"
                               ("Chromium" "chromium-browser")
                               ("Firefox" "firefox")
