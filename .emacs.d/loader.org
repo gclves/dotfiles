@@ -621,7 +621,9 @@ First of all, we need a convenient way to spawn shells.
       (eshell-send-input)))
 
   (global-set-key (kbd "C-!") 'eshell-here)
-  (defun eshell/x () (kill-buffer-and-window))
+  (defun eshell/x ()
+    (delete-window)
+    (eshell/exit))
 #+END_SRC
 
 Some executables don’t behave well with Eshell out of the box, so we tweak them a little.
@@ -1014,8 +1016,6 @@ golang.org/x/tools/cmd/...~), but there may be more dependencies missing here.
             org-refile-use-outline-path 'file      ; Refile to top-level
             org-todo-keywords
             '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))))
-
-  (use-package ob-ipython)
 
   (use-package org-pomodoro
     :commands (org-pomodoro)
