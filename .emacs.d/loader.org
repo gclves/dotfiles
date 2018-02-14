@@ -1040,6 +1040,9 @@ I want to be able to quickly file new items to my inbox. Let's do so via capture
                                  "* %i%? \n %^t")
                                 ("j" "Journal entry" entry
                                  (file+datetree "~/Org/journal.org")
+                                 "* %?")
+                                ("L" "Today I Learned" entry
+                                 (file+datetree "~/Org/TIL.org")
                                  "* %?")))
 #+END_SRC
 
