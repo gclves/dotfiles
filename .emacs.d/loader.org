@@ -777,7 +777,8 @@ prompts components and turn off the default one.
           ("s-r" . js2r-rename-var))
     :config
     (progn
-      (add-hook 'js2-mode-hook 'js2-refactor-mode)
+      (defun setup-js2r-mode () (js2-refactor-mode +1))
+      (add-hook 'js2-mode-hook 'setup-js2r-mode)
       (js2r-add-keybindings-with-prefix "C-c C-r")))
 
   (use-package tide
