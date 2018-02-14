@@ -53,8 +53,7 @@ list of options of fonts to render so we don't end up with garbage.
 #+BEGIN_SRC emacs-lisp
     (require 'package)
     (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                             ;; disabled for lack of HTTPS support
-                             ;; ("org" . "http://orgmode.org/elpa/")
+                             ("org" . "http://orgmode.org/elpa/")
                              ("marmalade" . "https://marmalade-repo.org/packages/")
                              ("melpa" . "https://melpa.org/packages/")))
   (package-initialize)
@@ -1110,6 +1109,7 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
                          "http://n-gate.com/index.atom"
                          "http://emacsrocks.com/atom.xml"
                          "https://www.destroyallsoftware.com/screencasts/feed")))
+  (use-package pocket-reader)
 #+END_SRC
 * Startup
 #+BEGIN_SRC emacs-lisp
