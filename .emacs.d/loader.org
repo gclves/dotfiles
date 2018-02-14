@@ -1093,7 +1093,7 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
       :config
       (setq-default puppet-indent-level 4))
 #+END_SRC
-** Elfeed
+** RSS + Pocket
 #+BEGIN_SRC emacs-lisp
   (use-package elfeed
     :config
@@ -1108,7 +1108,12 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
                          "http://lisperator.net/atom"
                          "http://n-gate.com/index.atom"
                          "http://emacsrocks.com/atom.xml"
-                         "https://www.destroyallsoftware.com/screencasts/feed")))
+                         "https://www.destroyallsoftware.com/screencasts/feed"
+                         "https://www.masteringemacs.org/feed"
+                         ("http://xahlee.info/math/blog.xml" xah-lee)
+                         ("http://xahlee.info/js/blog.xml" xah-lee)
+                         ("http://xahlee.info/comp/blog.xml" xah-lee))))
+
   (use-package pocket-reader)
 #+END_SRC
 * Startup
