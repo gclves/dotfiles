@@ -1131,6 +1131,12 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
 
   (add-hook 'after-init-hook 'initial-window-setup)
 #+END_SRC
+* Mail
+I'm trying out mu4e, let's see how this goes
+#+BEGIN_SRC emacs-lisp
+    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+    (require 'mu4e)
+#+END_SRC
 * Custom file
 The custom file holds all auto-generated Emacs configs, which I use for Org-mode
 quite a lot. This is so my =init.el= doesn't get littered by auto-generated stuff.
