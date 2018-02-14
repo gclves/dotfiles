@@ -428,11 +428,8 @@ don't depend on the OS.
     :config
     (progn
       (global-company-mode)
-      (setq company-tooltip-align-annotations t)))
-
-  (use-package company-tern
-    :config
-    (add-to-list 'company-backends 'company-tern))
+      (setq company-tooltip-align-annotations t
+            company-show-numbers t)))
 
   (use-package yasnippet
     :config
@@ -781,8 +778,11 @@ prompts components and turn off the default one.
   (use-package tide
     :config
     (progn
+      (setq tide-completion-detailed t
+            tide-completion-enable-autoimport-suggestions t
+            tide-always-show-documentation t)
+
       (defun setup-tide-mode ()
-        (tide-restart-server)
         (tide-setup)
         (eldoc-mode +1)
         (tide-hl-identifier-mode +1))
