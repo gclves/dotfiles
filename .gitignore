@@ -1,3 +1,5 @@
+*~
+
 /.emacs.d/backup/
 /.emacs.d/bookmarks
 /.emacs.d/custom.el
@@ -12,7 +14,6 @@
 /.emacs.d/recentf
 /.emacs.d/tramp
 /.emacs.d/%backup%~
-*~
 /.emacs.d/network-security.data
 /.emacs.d/notes
 /.emacs.d/loader.el
@@ -23,3 +24,4 @@
 /.emacs.d/ido.last
 /.emacs.d/smex-items
 /.emacs.d/url/
+/.emacs.d/semanticdb

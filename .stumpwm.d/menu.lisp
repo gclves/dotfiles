@@ -1,7 +1,12 @@
-(defparameter *start-menu* '(("Spotify" "chromium-browser --app=https://listen.spotify.com")
+(defparameter *start-menu* '(("Spotify" "chromium-browser --app=https://play.spotify.com")
                              ("Audio/Video"
                               ("VLC" "vlc")
                               ("Pavu Control" "pavucontrol"))
+                             ("Courses"
+                              ("Destroy All Software" "emacsclient ~/Videos/DAS")
+                              ("Mastering Python" "emacsclient '~/Videos/Mastering Python'")
+                              ("Python Design Patters" "emacsclient '~/Videos/Python Design Patterns'")
+                              ("Video Library" "emacsclient ~/Videos"))
                              ("BookShelf"
                               ("Bible Study" "xiphos")
                               ("Build Your Own AngularJS" "evince ~/Library/angularjs.pdf")

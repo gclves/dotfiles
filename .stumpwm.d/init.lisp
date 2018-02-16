@@ -13,7 +13,7 @@
 (setf *timeout-wait* 10)
 (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
 
-(defparameter *TERMINAL* (cons "alacritty" "Alacritty"))
+(defparameter *TERMINAL* (cons "stterm" "stterm-256color"))
 (defparameter *BROWSER* "firefox")
 
 (bind "w" "windowlist")
@@ -34,9 +34,15 @@
 (bind "[" "chromium-app paccflbfblppaoidibhflahkogodngie") ; deezer
 (bind "]" "chromium-app jeogkiiogjbmhklcnbgkdcjoioegiknm") ; slack
 
-;; (defcommand emacs () ()
-;;             "Like the native Emacs command, but using emacsclient instead"
-;;             (run-or-raise "emacsclient -nc -a \"\"" '(:class "Emacs")))
+(defcommand emacs () ()
+            "Like the native Emacs command, but using emacsclient instead"
+            (run-or-raise "emacsclient -nc -a \"\"" '(:class "Emacs")))
+
+(defcommand emacs-server () ()
+            "Start the Emacs server and switch to it"
+            (message "Starting the Emacs server")
+            (run-commands "exec emacs -e 'server-start'"
+                          "emacs"))
 
 (defmacro define-on-top (key command)
   `(define-key *top-map* (kbd ,key) ,command))
@@ -62,8 +68,8 @@
               (run-or-raise terminal-cmd `(:class ,terminal-class))))
 (bind "c" (concat "exec " (car *TERMINAL*)))
 (defcommand emacsshell () ()
-            (run-commands "exec emacsclient -e '(shell)'")
-            (run-commands "emacs"))
+            (run-commands "exec emacsclient -e '(shell)'"
+                          "emacs"))
 (bind "`" "terminal")
 (define-on-top "F11" "emacsshell")
 (define-on-top "F12" "exec")
@@ -147,10 +153,13 @@
   (unless (eq i 0) ; F0 is non-existant and will error.
     (define-key *top-map* (kbd (format nil "s-F~a" i)) (format nil "gselect ~a" i))))
 
+(defcommand reload-menu () ()
+            "Reload the menu configuration"
+            (load "~/.stumpwm.d/menu.lisp"))
+
 (when *initializing*
-  (run-commands "emacs"
+  (run-commands "emacs-server"
                 "keyboard"
                 "exec dropbox start"
-                "exec xsetroot -cursor_name left_ptr -solid black -name root-window"))
-
-(load "~/.stumpwm.d/menu.lisp")
+                "exec xsetroot -cursor_name left_ptr -solid black -name root-window"
+                "reload-menu"))
