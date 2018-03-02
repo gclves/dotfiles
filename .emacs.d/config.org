@@ -7,8 +7,9 @@
 
 * Who am I
 #+BEGIN_SRC emacs-lisp
-  (setq user-full-name "Guilherme Goncalves"
-        user-email-address "gsg@ggoncalves.me")
+    (setq user-full-name "Guilherme Goncalves"
+          user-email-address "gsg@ggoncalves.me"
+          system-time-locale "C")
 #+END_SRC
 * Window setup
 I like to set the appearance as early as possible to avoid glitches in
@@ -56,7 +57,7 @@ list of options of fonts to render so we don't end up with garbage.
 #+BEGIN_SRC emacs-lisp
     (require 'package)
     (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                             ("org" . "http://orgmode.org/elpa/")
+                             ;("org" . "http://orgmode.org/elpa/")
                              ("marmalade" . "https://marmalade-repo.org/packages/")
                              ("melpa" . "https://melpa.org/packages/")))
   (package-initialize)
@@ -220,10 +221,15 @@ don't depend on the OS.
 
 ** Moving around
 #+BEGIN_SRC emacs-lisp
+  (defun another-window ()
+    "Select the previous window in the current frame.  Use `other-window' with an argument -1."
+    (interactive)
+    (other-window -1))
+
   (global-set-key (kbd "C-S-w") (lambda () (interactive) (kill-buffer nil)))
   (global-set-key (kbd "C-b") 'ido-switch-buffer)
-  (global-set-key (kbd "M-o") 'next-multiframe-window)
-  (global-set-key (kbd "M-O") 'previous-multiframe-window)
+  (global-set-key (kbd "M-o") 'other-window)
+  (global-set-key (kbd "M-O")  'another-window)
 
   (global-set-key (kbd "M-3") 'delete-other-windows)
   (global-set-key (kbd "M-4") 'split-window-below)
@@ -775,7 +781,10 @@ prompts components and turn off the default one.
   (use-package js2-mode
     :mode ("\\.jsx\\'" "\\.js\\'")
     :bind
-    (:map js2-mode-map ("C-c C-c" . js-send-region))
+    (:map js2-mode-map
+          ("C-c C-c" . js-send-region)
+          ("M-." . js2-jump-to-definition)
+          ("M-," . pop-tag-mark))
     :config
     (progn
       (setq js2-basic-offset 2
@@ -800,21 +809,20 @@ prompts components and turn off the default one.
       (add-hook 'js2-mode-hook 'setup-js2r-mode)
       (js2r-add-keybindings-with-prefix "C-c C-r")))
 
-  (use-package tide
-    :config
-    (progn
-      (setq tide-completion-detailed t
-            tide-completion-enable-autoimport-suggestions t
-            tide-always-show-documentation t)
+  ;; (use-package tide
+  ;;   :config
+  ;;   (progn
+  ;;     (setq tide-completion-detailed t
+  ;;           tide-completion-enable-autoimport-suggestions t
+  ;;           tide-always-show-documentation t)
 
-      (defun setup-tide-mode ()
-        (tide-setup)
-        (eldoc-mode +1)
-        (tide-hl-identifier-mode +1))
+  ;;     (defun setup-tide-mode ()
+  ;;       (tide-setup)
+  ;;       (eldoc-mode +1)
+  ;;       (tide-hl-identifier-mode +1))
 
-      (add-hook 'typescript-mode-hook 'setup-tide-mode)
-      (add-hook 'js2-mode-hook 'tide-hl-identifier-mode)
-      (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)))
+  ;;     (add-hook 'typescript-mode-hook 'setup-tide-mode)
+  ;;     (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)))
 
   (use-package tern
     :config
@@ -1037,6 +1045,8 @@ golang.org/x/tools/cmd/...~), but there may be more dependencies missing here.
             org-confirm-babel-evaluate nil ; stop prompting for confirmation on eval
             org-src-tab-acts-natively t    ; make TAB behave as expected in src blocks
             org-support-shift-select nil
+            org-image-actual-width nil
+            org-html-doctype "html5"
             org-refile-targets '((nil :maxlevel . 3)
                                  ("~/Org/work.org" :maxlevel . 1)
                                  ("~/Org/gtd.org" :maxlevel . 3)
@@ -1070,7 +1080,7 @@ I want to be able to quickly file new items to my inbox. Let's do so via capture
                                  "* %?")
                                 ("L" "Today I Learned" entry
                                  (file+datetree "~/Org/TIL.org")
-                                 "* %?")))
+                                 "* %?" :prepend t)))
 #+END_SRC
 
 What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html][custom agenda commands]] to filter my backlog.
@@ -1126,7 +1136,11 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
       :config
       (setq-default puppet-indent-level 4))
 #+END_SRC
-** RSS + Pocket
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dockerfile-mode)
+#+END_SRC
+* RSS + Pocket
 #+BEGIN_SRC emacs-lisp
   (use-package elfeed
     :config
@@ -1143,11 +1157,12 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
                          "http://emacsrocks.com/atom.xml"
                          "https://www.destroyallsoftware.com/screencasts/feed"
                          "https://www.masteringemacs.org/feed"
+                         "https://defn.io/index.xml"
                          ("http://xahlee.info/math/blog.xml" xah-lee)
                          ("http://xahlee.info/js/blog.xml" xah-lee)
                          ("http://xahlee.info/comp/blog.xml" xah-lee))))
 
-  (use-package pocket-reader)
+  ;(use-package pocket-reader)
 #+END_SRC
 * Startup
 #+BEGIN_SRC emacs-lisp
@@ -1164,16 +1179,35 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
 
   (add-hook 'after-init-hook 'initial-window-setup)
 #+END_SRC
-* Mail
-I'm trying out mu4e, let's see how this goes
-#+BEGIN_SRC emacs-lisp
-    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-    (require 'mu4e)
-#+END_SRC
+
 * Custom file
 The custom file holds all auto-generated Emacs configs, which I use for Org-mode
 quite a lot. This is so my =init.el= doesn't get littered by auto-generated stuff.
 #+BEGIN_SRC emacs-lisp
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file :noerror)
+#+END_SRC
+* Org-mode and blogging
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path (concat user-emacs-directory "lib"))
+  (require 'blog)
+
+  (add-to-list 'org-structure-template-alist
+               '("b" "#+TITLE: ?
+  ,#+AUTHOR: Guilherme Gonçalves
+  ,#+EMAIL: g@ggoncalves.me
+  ,#+DATE:
+  ,#+STARTUP: showall
+  ,#+STARTUP: inlineimages
+  ,#+BEGIN_PREVIEW\n\n#+END_PREVIEW\n"))
+
+  (defun blog-publish ()
+    "`org-publish' all blog files.  Reload settings from this file first."
+    (interactive)
+    (let ((blog-config (concat user-emacs-directory "lib/blog.el")))
+      (message (format "Reloading %s first" blog-config))
+      (load blog-config))
+    (org-publish-project "blog" t))
+
+  (global-set-key (kbd "C-x p") 'blog-publish)
 #+END_SRC

@@ -16,7 +16,7 @@
 /.emacs.d/%backup%~
 /.emacs.d/network-security.data
 /.emacs.d/notes
-/.emacs.d/loader.el
+/.emacs.d/config.el
 /.emacs.d/places
 /.emacs.d/session*
 .emacs.d/eshell/history
