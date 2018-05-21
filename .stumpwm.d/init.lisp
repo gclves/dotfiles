@@ -31,7 +31,11 @@
             (run-or-raise
              (concat "chromium-browser --app-id=" app-id) `(:instance ,(concat "crx_" app-id))))
 
-(bind "[" "chromium-app paccflbfblppaoidibhflahkogodngie") ; deezer
+(defcommand spotify () ()
+            "Run or raise the Spotify client"
+            (run-or-raise "spotify" '(:class "Spotify")))
+
+(bind "[" "spotify")
 (bind "]" "chromium-app jeogkiiogjbmhklcnbgkdcjoioegiknm") ; slack
 
 (defcommand emacs () ()
