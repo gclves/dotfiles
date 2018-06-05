@@ -1,13 +1,12 @@
 *~
 
+/.emacs.d/.*
 /.emacs.d/backup/
 /.emacs.d/bookmarks
 /.emacs.d/custom.el
 /.emacs.d/elpa
 /.emacs.d/auto-save-list/
 /.emacs.d/.org-id-locations
-
-.emacs.d/.*
 /.emacs.d/*.dat
 /.emacs.d/backups
 /.emacs.d/projectile*
@@ -19,10 +18,11 @@
 /.emacs.d/config.el
 /.emacs.d/places
 /.emacs.d/session*
-.emacs.d/eshell/history
-.emacs.d/eshell/lastdir
+/.emacs.d/eshell/history
+/.emacs.d/eshell/lastdir
 /.emacs.d/ido.last
 /.emacs.d/smex-items
 /.emacs.d/url/
 /.emacs.d/semanticdb
 /.emacs.d/request
+/.emacs.d/image-dired
