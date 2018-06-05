@@ -99,7 +99,7 @@ if ${use_color} ; then
     alias grep='grep --colour=auto'
     alias egrep='egrep --colour=auto'
     alias fgrep='fgrep --colour=auto'
-    #. ~/.bash_prompt
+    . ~/.bash_prompt
 fi
 
 # Try to keep environment pollution down, EPA loves us.
