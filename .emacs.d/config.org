@@ -58,7 +58,7 @@ list of options of fonts to render so we don't end up with garbage.
 #+BEGIN_SRC emacs-lisp
     (require 'package)
     (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                             ;("org" . "http://orgmode.org/elpa/")
+                             ("org" . "http://orgmode.org/elpa/")
                              ("marmalade" . "https://marmalade-repo.org/packages/")
                              ("melpa" . "https://melpa.org/packages/")))
   (package-initialize)
@@ -131,6 +131,7 @@ don't depend on the OS.
     (add-hook 'prog-mode-hook 'fci-mode))
 
   (show-paren-mode +1)
+  (setq async-shell-command-display-buffer nil)
 #+END_SRC
 
 * Editing goodies
@@ -238,7 +239,7 @@ don't depend on the OS.
   (global-set-key (kbd "M-$") 'split-window-right)
   (global-set-key (kbd "M-9") 'delete-window)
 
-  (windmove-default-keybindings 'control)
+  (windmove-default-keybindings 'super)
   (setq windmove-wrap-around t)
 
   ; no more janky scrolling
@@ -280,9 +281,9 @@ don't depend on the OS.
     (interactive)
     (unwind-protect
         (progn
-          (linum-mode 1)
+          (display-line-numbers-mode 1)
           (goto-line (read-number "Goto line: ")))
-      (linum-mode -1)))
+      (display-line-numbers-mode -1)))
   (global-set-key [remap goto-line] 'goto-line-with-feedback)
 #+END_SRC
 
@@ -472,11 +473,15 @@ don't depend on the OS.
   (use-package common-lisp-snippets)
 #+END_SRC
 
-** Flycheck
+** Flycheck + Flymake
 All the cool kids seem to be using it.
 #+BEGIN_SRC emacs-lisp
-    (use-package flycheck
-      :init (global-flycheck-mode))
+  (use-package flycheck)
+#+END_SRC
+
+Emacs 26.1 introduced a completely redesigned Flymake mode, which I'm testing now!
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook 'flymake-mode)
 #+END_SRC
 ** Misc editing facilities
 I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
@@ -601,7 +606,10 @@ Magit is so awesome, it barely needs any setup at all.
   (use-package magit
     :bind
     (([f8] . magit-status)
-     ("M-s-b" . magit-blame)))
+     ("M-s-b" . magit-blame))
+    :config
+    ;; magit windows should open in the current window
+    (add-to-list 'same-window-regexps "^magit: "))
 #+END_SRC
 
 Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.]])
@@ -809,9 +817,12 @@ prompts components and turn off the default one.
     :config
     (progn
       ;; FIXME: freaking js2-refactor hook doesn't get called still
-      (defun setup-js2r-mode () (interactive) (js2-refactor-mode +1))
-      (add-hook 'js2-mode-hook 'setup-js2r-mode)
-      (js2r-add-keybindings-with-prefix "C-c C-r")))
+      (defun setup-js2r-mode ()
+        (interactive)
+        (message "Why won't this goddamn thing start for fuck's sake")
+        (js2-refactor-mode +1)
+        (js2r-add-keybindings-with-prefix "C-c C-r"))
+      (add-hook 'js2-mode-hook 'setup-js2r-mode)))
 
   (use-package tide
     :config
@@ -993,7 +1004,7 @@ golang.org/x/tools/cmd/...~), but there may be more dependencies missing here.
       (define-key org-mode-map (kbd "M-s-o") 'org-clock-out)
 
       ;; run shell commands from org-babel
-      (defvar -org-babel-langs '((sh . t) (python . t)))
+      (defvar -org-babel-langs '((shell . t) (python . t)))
       (setq org-babel-python-command "python3")
       (org-babel-do-load-languages 'org-babel-load-languages -org-babel-langs)
 
@@ -1166,7 +1177,7 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
                          "https://martinfowler.com/feed.atom"
                          "https://monades.roperzh.com/index.xml")))
 
-  ;(use-package pocket-reader)
+  (use-package pocket-reader)
 #+END_SRC
 * Startup
 #+BEGIN_SRC emacs-lisp
