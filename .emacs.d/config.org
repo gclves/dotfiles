@@ -75,6 +75,10 @@ list of options of fonts to render so we don't end up with garbage.
 #+END_SRC
 
 * Look and feel
+** Themes
+#+BEGIN_SRC emacs-lisp
+  (use-package nofrils-acme-theme)
+#+END_SRC
 ** Other customizations
 This replaces some words with their Math symbols (eg: lambda => λ).
 #+BEGIN_SRC emacs-lisp
@@ -572,6 +576,16 @@ on my RSI'd wrists). Translate some of those here.
 #+BEGIN_SRC emacs-lisp
   (use-package which-key :ensure t
     :config (which-key-mode))
+#+END_SRC
+
+~Helpful~ is a better help.
+#+BEGIN_SRC emacs-lisp
+  (use-package helpful
+    :bind
+    (("C-h f" . helpful-callable)
+     ("C-h v" . helpful-variable)
+     ("C-h k" . helpful-key)
+     ("C-x C-d" . helpful-at-point)))
 #+END_SRC
 * Backup
 #+BEGIN_SRC emacs-lisp
@@ -1119,6 +1133,14 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
     (string= "TODO" (org-get-todo-state)))
 
   (setq org-agenda-files '("~/Org/tickler.org" "~/Org/work.org" "~/Org/gtd.org"))
+#+END_SRC
+** HTTP and REST
+Incredibly useful stuff.
+#+BEGIN_SRC emacs-lisp
+  (use-package know-your-http-well)
+  (use-package restclient)
+  (use-package company-restclient)
+
 #+END_SRC
 ** Other
 #+BEGIN_SRC emacs-lisp
