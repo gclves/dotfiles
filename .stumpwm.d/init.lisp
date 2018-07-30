@@ -13,7 +13,7 @@
 (setf *timeout-wait* 10)
 (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
 
-(defparameter *TERMINAL* (cons "stterm" "stterm-256color"))
+(defparameter *TERMINAL* (cons "st" "st-256color"))
 (defparameter *BROWSER* "firefox")
 
 (bind "w" "windowlist")
@@ -125,7 +125,7 @@
            (sink (make-menu sinks "Sink")))
       (run-shell-command (format nil "pactl set-default-sink ~s" sink))))
 
-(defparameter *vpn-name* "Lastline")
+(defparameter *vpn-name* "'Lastline Goleta'")
 (defcommand vpn (up?) ((:y-or-n "Do you want to turn the VPN on? "))
             (run-shell-command
              (concat "nmcli connection " (if up? "up " "down ") *vpn-name*)))
@@ -154,7 +154,7 @@
 
 ;;; Super + F<n> switches groups
 (dotimes (i 13)
-  (unless (eq i 0) ; F0 is non-existant and will error.
+  (unless (eq i 0) ; F0 is non-existent and will error.
     (define-key *top-map* (kbd (format nil "s-F~a" i)) (format nil "gselect ~a" i))))
 
 (defcommand reload-menu () ()
