@@ -829,7 +829,6 @@ prompts components and turn off the default one.
           ("s-r" . js2r-rename-var))
     :init
     (defun setup-js2r-mode ()
-      (message "why is this not loading ffs")
       (js2-refactor-mode +1)
       (js2r-add-keybindings-with-prefix "C-c C-r"))
     (add-hook 'js2-mode-hook 'setup-js2r-mode))
