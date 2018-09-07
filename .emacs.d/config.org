@@ -148,7 +148,7 @@ don't depend on the OS.
   (use-package ivy
     :bind
     (:map global-map
-          ("s-f" . swiper)
+          ("C-S-s" . swiper)
           ("s-b" . ivy-switch-buffer)
           ("s-g" . ivy-resume)
           ("M-x" . counsel-M-x)
@@ -185,27 +185,28 @@ don't depend on the OS.
      ("C-\\" . projectile-find-file)
      ("s-p" . projectile-find-file)
      ("M-F" . projectile-ag))
-    :init (projectile-mode)
+    :init (progn
+            (setq projectile-keymap-prefix (kbd "C-c p"))
+            (projectile-mode))
     :config
-    (progn
-      (setq projectile-completion-system 'ivy)
+    (setq projectile-completion-system 'ivy)
 
-      (defun npm-start ()
-        "Runs the command \"grunt fwatch\" on the projectile
+    (defun npm-start ()
+      "Runs the command \"grunt fwatch\" on the projectile
         root. Splits the current window and display the output in
         a new buffer named *grunt*. In the *grunt* buffer, C-c C-c
         kills the process and closes the window."
-        (interactive)
-        (let ((buffer (get-buffer-create "*npm*"))
-              (height (/ (window-total-height) 3)))
-          (split-window-below (- height))
-          (other-window 1)
-          (switch-to-buffer buffer)
-          (running-grunt-mode)
-          (cd (projectile-project-root))
-          (start-process "npm" buffer "npm" "start")
-          (other-window -1)))
-      (define-key projectile-mode-map (kbd "<C-f5>") 'npm-start)))
+      (interactive)
+      (let ((buffer (get-buffer-create "*npm*"))
+            (height (/ (window-total-height) 3)))
+        (split-window-below (- height))
+        (other-window 1)
+        (switch-to-buffer buffer)
+        (running-grunt-mode)
+        (cd (projectile-project-root))
+        (start-process "npm" buffer "npm" "start")
+        (other-window -1)))
+    (define-key projectile-mode-map (kbd "<C-f5>") 'npm-start))
 
   (use-package counsel-projectile
     :bind ("C-S-f" . counsel-projectile-ag))
