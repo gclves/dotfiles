@@ -102,7 +102,7 @@
 (bind "C-s" (format nil "colon1 exec ~a -e ssh " (car *TERMINAL*)))
 
 (defcommand keyboard () ()
-            (run-shell-command "setxkbmap -layout us,us -variant ,alt-intl -option grp:ctrls_toggle"))
+            (run-shell-command "setxkbmap -layout us,us -variant ,alt-intl -option grp:ctrls_toggle -option ctrl:swapcaps"))
 
 (bind "C-x" "exec ~/bin/passmenu")
 (bind "C-l" "exec slock")
