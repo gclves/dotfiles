@@ -1142,6 +1142,37 @@ Incredibly useful stuff.
   (use-package company-restclient)
 
 #+END_SRC
+** Python
+Out-of-the-box Python support for emacs seems remarkably good, at least for my
+(admittedly limited these days) purposes. In any case, I stole most of these
+snippets from [[https://vxlabs.com/2018/06/08/python-language-server-with-emacs-and-lsp-mode/][this article from vxlabs]]. Please note that this requires
+~python-language-server~ to be installed:
+
+#+BEGIN_SRC sh
+cd ~/Code/python-project
+pipenv install python-language-server[all]
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :config
+    (require 'lsp-imenu)
+    (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
+
+    (lsp-define-stdio-client lsp-python "python" #'projectile-project-root '("pyls"))
+
+    (add-hook 'python-mode-hook (lambda () (lsp-python-enable))))
+
+  (use-package lsp-ui
+    :config
+    (setq lsp-ui-sideline-ignore-duplicate t)
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
+  (use-package company-lsp
+    :config
+    (push 'company-lsp company-backends))
+#+END_SRC
+
 ** Other
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "M-p") 'compile)
