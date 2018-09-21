@@ -276,8 +276,7 @@ don't depend on the OS.
     :init
     (global-undo-tree-mode)
     :config
-    (setq undo-tree-auto-save-history t
-          undo-tree-visualizer-timestamps t
+    (setq undo-tree-visualizer-timestamps t
           undo-tree-visualizer-diff t))
 
   (use-package zoom-window
