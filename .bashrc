@@ -118,7 +118,6 @@ alias vim=$EDITOR
 alias gvim=$VISUAL
 alias e=$VISUAL
 alias n='terminal_velocity'     # quick notes
-alias npm='yarn'
 
 function lt() { ls -ltrsa "$@" | tail; }
 function psgrep() { ps axuf | grep -v grep | grep "$@" -i --color=auto; }
