@@ -16,23 +16,24 @@ I like to set the appearance as early as possible to avoid glitches in
 the loading process. This makes for a cleaner Emacs window.
 
 #+BEGIN_SRC emacs-lisp
-  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-  (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-  (global-hl-line-mode t)
-  (fringe-mode 1) ; 1px fringe
-  (column-number-mode)
-  (blink-cursor-mode)
-  (tooltip-mode -1)
-  (menu-bar-mode -1)
-  (setq inhibit-startup-message t
-        initial-scratch-message ""
-        mode-line-default-help-echo nil
-        indicate-buffer-boundaries nil
-        indicate-empty-lines nil
-        cursor-in-non-selected-windows nil
-        highlight-nonselected-windows nil
-        bidi-display-reordering nil
-        blink-matching-paren nil)
+    (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+    (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+    (global-hl-line-mode t)
+    (fringe-mode 1) ; 1px fringe
+    (column-number-mode)
+    (blink-cursor-mode 0)
+    (tooltip-mode -1)
+    (menu-bar-mode -1)
+    (setq inhibit-startup-message t
+          initial-scratch-message ""
+          mode-line-default-help-echo nil
+          indicate-buffer-boundaries nil
+          indicate-empty-lines nil
+          cursor-in-non-selected-windows t
+          highlight-nonselected-windows nil
+          bidi-display-reordering nil
+          blink-matching-paren nil
+          help-window-select t)
 #+END_SRC
 
 This config file is used across multiple computers and different OSes, which
@@ -116,6 +117,7 @@ don't depend on the OS.
   (display-time-mode)
   (display-battery-mode)
 #+END_SRC
+
 *** Highlight TODO entries
 #+BEGIN_SRC emacs-lisp
   (use-package hl-todo
@@ -137,7 +139,13 @@ don't depend on the OS.
   (show-paren-mode +1)
   (setq async-shell-command-display-buffer nil)
 #+END_SRC
-
+*** Cleaner modeline
+#+BEGIN_SRC emacs-lisp
+  (use-package rich-minority
+    :config
+    (rich-minority-mode 1)
+    (setf rm-blacklist ""))
+#+END_SRC
 * Editing goodies
 ** Ain't nobody got time for typing "yes"/"no".
 #+BEGIN_SRC emacs-lisp
@@ -248,7 +256,11 @@ don't depend on the OS.
   (setq windmove-wrap-around t)
 
   ; no more janky scrolling
-  (setq scroll-conservatively 100)
+  (setq next-line-add-newlines nil
+        scroll-margin 10
+        scroll-step 1
+        scroll-conservatively 100
+        scroll-preserve-screen-position 1)
 
   (use-package undo-tree
     :diminish undo-tree-mode
@@ -261,8 +273,12 @@ don't depend on the OS.
      ("C-x u" . undo-tree-visualize)
      ("<S-mouse-4>" . undo-tree-undo)
      ("<S-mouse-5>" . undo-tree-redo))
+    :init
+    (global-undo-tree-mode)
     :config
-    (global-undo-tree-mode))
+    (setq undo-tree-auto-save-history t
+          undo-tree-visualizer-timestamps t
+          undo-tree-visualizer-diff t))
 
   (use-package zoom-window
     :bind
@@ -587,6 +603,12 @@ on my RSI'd wrists). Translate some of those here.
      ("C-h v" . helpful-variable)
      ("C-h k" . helpful-key)
      ("C-x C-d" . helpful-at-point)))
+#+END_SRC
+** Visual search
+#+BEGIN_SRC emacs-lisp
+  (use-package visual-regexp
+    :bind
+    (("C-M-%" . vr/replace)))
 #+END_SRC
 * Backup
 #+BEGIN_SRC emacs-lisp
