@@ -288,6 +288,11 @@ don't depend on the OS.
     (switch-to-buffer "*scratch*"))
   (global-set-key (kbd "M--") 'jump-to-scratch)
 
+  (defun edit-init-file ()
+    (interactive)
+    (find-file "~/.emacs.d/config.org"))
+  (global-set-key (kbd "<f7>") 'edit-init-file)
+
   (defun back-to-indentation-or-beginning ()
     "Move point to beginning of line, or to first non-space character"
     (interactive)
