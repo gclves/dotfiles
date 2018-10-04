@@ -160,6 +160,7 @@ don't depend on the OS.
           ("s-b" . ivy-switch-buffer)
           ("s-g" . ivy-resume)
           ("M-x" . counsel-M-x)
+          ("C-x C-m" . counsel-M-x)
           ("C-x C-f" . counsel-find-file)
           ("s-o" . counsel-find-file)
           ("<f6> f" . counsel-describe-function)
@@ -397,7 +398,8 @@ don't depend on the OS.
       (end-of-line)
       (forward-char)))
 
-  (global-set-key (kbd "C-w") 'xah-cut-line-or-region)
+  (global-set-key (kbd "C-w") 'backward-kill-word)
+  (global-set-key (kbd "C-x C-k") 'xah-cut-line-or-region)
   (global-set-key (kbd "s-x") 'xah-cut-line-or-region)
   (global-set-key (kbd "M-w") 'xah-copy-line-or-region)
   (global-set-key (kbd "s-c") 'xah-copy-line-or-region)
