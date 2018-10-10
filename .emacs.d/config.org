@@ -164,6 +164,7 @@ don't depend on the OS.
     :bind
     (:map global-map
           ("C-S-s" . swiper)
+          ("s-f" . swiper)
           ("s-b" . ivy-switch-buffer)
           ("s-g" . ivy-resume)
           ("M-x" . counsel-M-x)
@@ -251,11 +252,9 @@ don't depend on the OS.
     (other-window -1))
 
   (global-set-key (kbd "C-S-w") (lambda () (interactive) (kill-buffer nil)))
-  (global-set-key (kbd "C-b") 'ido-switch-buffer)
   (global-set-key (kbd "M-o") 'other-window)
   (global-set-key (kbd "M-O")  'another-window)
 
-  (global-set-key (kbd "M-3") 'delete-other-windows)
   (global-set-key (kbd "M-4") 'split-window-below)
   (global-set-key (kbd "M-$") 'split-window-right)
   (global-set-key (kbd "M-9") 'delete-window)
@@ -299,7 +298,6 @@ don't depend on the OS.
   (defun edit-init-file ()
     (interactive)
     (find-file "~/.emacs.d/config.org"))
-  (global-set-key (kbd "<f7>") 'edit-init-file)
 
   (defun back-to-indentation-or-beginning ()
     "Move point to beginning of line, or to first non-space character"
@@ -910,7 +908,7 @@ Nothing fancy here, just a regular SLIME installation.
     (define-key emmet-mode-keymap (kbd "<C-return>") nil))
 
   (use-package web-mode
-    :mode ("\\.php\\'" "\\.css\\'" "\\.tpl\\’" "\\.less\\'")
+    :mode ("\\.html\\'" "\\.tsx\\'" "\\.jsx\\'" "\\.php\\'" "\\.css\\'" "\\.tpl\\'" "\\.less\\'")
     :bind
     (:map web-mode-map
           ("C-M-u" . web-mode-element-parent)
@@ -935,7 +933,14 @@ Nothing fancy here, just a regular SLIME installation.
                                      web-mode-enable-auto-pairing t
                                      web-mode-enable-auto-quoting t
                                      web-mode-attr-indent-offset nil
-                                     web-mode-attr-indent-offset nil)))
+                                     web-mode-attr-indent-offset nil)
+
+                               (when (string-equal "tsx" (file-name-extension buffer-file-name))
+                                 (setup-tide-mode))
+
+                               (when (string-equal "jsx" (file-name-extension buffer-file-name))
+                                 (js2-mode +1))))
+    (flycheck-add-mode 'typescript-tslint 'web-mode)
     (setq web-mode-ac-sources-alist
           '(("css" . (ac-source-css-property))
             ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
@@ -1273,18 +1278,21 @@ and the fancy transparent window titlebar.
 #+END_SRC
 * Startup
 #+BEGIN_SRC emacs-lisp
-  (defun initial-window-setup ()
-    "Initially set up split windows and buffers"
-    (interactive)
-    (org-agenda-list)
-    (other-window +1)
-    (find-file "~/Org/inbox.org")
-    (split-window-below)
-    (other-window +1)
-    (cd "~")
-    (eshell))
+    (defun initial-window-setup ()
+      "Initially set up split windows and buffers"
+      (interactive)
+      (toggle-frame-fullscreen)
+      (org-agenda-list)
+      (other-window +1)
+      (find-file "~/Org/dev-notes.org")
+      (split-window-below)
+      (other-window +1)
+      (eshell)
+      (insert "cd ~/Code")
+      (eshell-send-input)
+      (other-window))
 
-  (add-hook 'after-init-hook 'initial-window-setup)
+    (add-hook 'after-init-hook 'initial-window-setup)
 #+END_SRC
 
 * Custom file
