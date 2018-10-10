@@ -112,10 +112,6 @@ export PLAN9=/usr/local/plan9
 export PATH=$PATH:$HOME/.local/bin:$HOME/bin:node_modules/.bin:$PLAN9/bin
 
 # Aliases
-alias llrun='docker run -it --rm -v /etc/localtime:/etc/localtime:ro -v $(pwd):/app:Z lastline'
-alias llreload='docker exec -it llproxy service nginx reload'
-alias vim=$EDITOR
-alias gvim=$VISUAL
 alias e=$VISUAL
 alias n='terminal_velocity'     # quick notes
 
