@@ -949,20 +949,7 @@ Nothing fancy here, just a regular SLIME installation.
   (use-package less-css-mode
     :mode ("\\.less$" . less-css-mode))
 
-  (defun php-tpl-localize (p1 p2)
-    "Wrap region in a PHP call to xgettext.
-  Called interactively, use the selected region.
-  When called from Lisp, use delimiters P1 and P2."
-    (interactive "r")
-    (save-mark-and-excursion
-     (goto-char p1)
-     (insert "<?= _('")
-     (setq begin (point))
-     (forward-char (- p2 p1))
-     (setq end (point))
-     (insert "') ?>")
-     (replace-string "'" "\\'" nil begin end)
-     (message "Localized region")))
+  (use-package graphql-mode)
 #+END_SRC
 ** Dired
 Note that you'll need to call ~all-the-icons-install-fonts~ if you don't have the
@@ -1171,8 +1158,6 @@ What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-co
 
   (defun org-current-is-todo ()
     (string= "TODO" (org-get-todo-state)))
-
-  (setq org-agenda-files '("~/Org/tickler.org" "~/Org/work.org" "~/Org/gtd.org"))
 #+END_SRC
 ** HTTP and REST
 Incredibly useful stuff.
