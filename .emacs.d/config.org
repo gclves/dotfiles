@@ -93,12 +93,6 @@ This replaces some words with their Math symbols (eg: lambda => λ).
   (global-prettify-symbols-mode 1)
 #+END_SRC
 
-Prettier Unicode symbols.
-#+BEGIN_SRC emacs-lisp
-  (when (member "Symbola" (font-family-list))
-    (set-fontset-font t 'unicode "Symbola" nil 'prepend))
-#+END_SRC
-
 Highlight changes in the gutter
 #+BEGIN_SRC emacs-lisp
   (use-package git-gutter
@@ -153,6 +147,109 @@ don't depend on the OS.
     (rich-minority-mode 1)
     (setf rm-blacklist ""))
 #+END_SRC
+
+Some awesome customisations stolen from [[http://www.holgerschurig.de/en/emacs-tayloring-the-built-in-mode-line/][this blog post]].
+#+BEGIN_SRC emacs-lisp
+  (setq mode-line-position
+        '(;; %p print percent of buffer above top of window, o Top, Bot or All
+          ;; (-3 "%p")
+          ;; %I print the size of the buffer, with kmG etc
+          ;; (size-indication-mode ("/" (-4 "%I")))
+          ;; " "
+          ;; %l print the current line number
+          ;; %c print the current column
+          (line-number-mode ("%l" (column-number-mode ":%c")))))
+
+  (defun shorten-directory (dir max-length)
+    "Show up to `max-length' characters of a directory name `dir'."
+    (let ((path (reverse (split-string (abbreviate-file-name dir) "/")))
+          (output ""))
+      (when (and path (equal "" (car path)))
+        (setq path (cdr path)))
+      (while (and path (< (length output) (- max-length 4)))
+        (setq output (concat (car path) "/" output))
+        (setq path (cdr path)))
+      (when path
+        (setq output (concat ".../" output)))
+      output))
+
+  (defvar mode-line-directory
+    '(:propertize
+      (:eval (if (buffer-file-name) (concat " " (shorten-directory default-directory 20)) " "))
+      face mode-line-directory)
+    "Formats the current directory.")
+  (put 'mode-line-directory 'risky-local-variable t)
+
+  (setq-default mode-line-buffer-identification
+                (propertized-buffer-identification "%b "))
+
+  (setq-default mode-line-format
+                '("%e"
+                  mode-line-front-space
+                  ;; mode-line-mule-info -- I'm always on utf-8
+                  mode-line-client
+                  mode-line-modified
+                  ;; mode-line-remote -- no need to indicate this specially
+                  ;; mode-line-frame-identification -- this is for text-mode emacs only
+                  " "
+                  mode-line-directory
+                  mode-line-buffer-identification
+                  " "
+                  mode-line-position
+                  (flycheck-mode flycheck-mode-line)
+                  " "
+                  mode-line-modes
+                  mode-line-misc-info
+                  mode-line-end-spaces))
+#+END_SRC
+*** Vim-like code folding
+#+BEGIN_SRC emacs-lisp
+  (use-package vimish-fold
+    :bind
+    (("C-c v f" . vimish-fold)
+     ("C-c v v" . vimish-fold-delete)))
+#+END_SRC
+** Fonts and stuff
+Prettier Unicode symbols.
+#+BEGIN_SRC emacs-lisp
+  (when (member "Symbola" (font-family-list))
+    (set-fontset-font t 'unicode "Symbola" nil 'prepend))
+#+END_SRC
+
+Ditch monospace fonts if we're reading text.
+#+BEGIN_SRC emacs-lisp
+  (defun use-variable-width-font ()
+    "Set current buffer to use variable-width font."
+    (variable-pitch-mode 1)
+    (text-scale-increase 1))
+
+  (add-hook 'markdown-mode-hook 'use-variable-width-font)
+#+END_SRC
+
+Control font size with the keyboard
+#+BEGIN_SRC emacs-lisp
+  (defun font-size-reset ()
+    "Reset the text-scale to zero."
+    (interactive)
+    (text-scale-set 0))
+
+  (defvar font-size--increment 0.5
+    "The increment value for `font-size-increase' and `font-size-decrease'.")
+
+  (defun font-size-increase ()
+    "Increase the text-scale by `font-size--increment'."
+    (interactive)
+    (text-scale-increase font-size--increment))
+
+  (defun font-size-decrease ()
+    "Decrease the text-scale by `font-size--increment'."
+    (interactive)
+    (text-scale-decrease font-size--increment))
+
+  (global-set-key (kbd "s-0") 'font-size-reset)
+  (global-set-key (kbd "s-=") 'font-size-increase)
+  (global-set-key (kbd "s--") 'font-size-decrease)
+#+END_SRC
 * Editing goodies
 ** Ain't nobody got time for typing "yes"/"no".
 #+BEGIN_SRC emacs-lisp
@@ -160,11 +257,14 @@ don't depend on the OS.
 #+END_SRC
 ** Interactively do things
 #+BEGIN_SRC emacs-lisp
+  (use-package ag)
+
   (use-package ivy
     :bind
     (:map global-map
           ("C-S-s" . swiper)
           ("s-f" . swiper)
+          ("<C-tab>" . ivy-switch-buffer)
           ("s-b" . ivy-switch-buffer)
           ("s-g" . ivy-resume)
           ("M-x" . counsel-M-x)
@@ -206,42 +306,10 @@ don't depend on the OS.
             (setq projectile-keymap-prefix (kbd "C-c p"))
             (projectile-mode))
     :config
-    (setq projectile-completion-system 'ivy)
-
-    (defun npm-start ()
-      "Runs the command \"grunt fwatch\" on the projectile
-        root. Splits the current window and display the output in
-        a new buffer named *grunt*. In the *grunt* buffer, C-c C-c
-        kills the process and closes the window."
-      (interactive)
-      (let ((buffer (get-buffer-create "*npm*"))
-            (height (/ (window-total-height) 3)))
-        (split-window-below (- height))
-        (other-window 1)
-        (switch-to-buffer buffer)
-        (running-grunt-mode)
-        (cd (projectile-project-root))
-        (start-process "npm" buffer "npm" "start")
-        (other-window -1)))
-    (define-key projectile-mode-map (kbd "<C-f5>") 'npm-start))
+    (setq projectile-completion-system 'ivy))
 
   (use-package counsel-projectile
     :bind ("C-S-f" . counsel-projectile-ag))
-
-  (define-minor-mode running-grunt-mode
-    "Minor mode to interact with a running grunt process"
-    :lighter "MeusOvos"
-    :keymap (let ((map (make-sparse-keymap)))
-              (define-key map (kbd "C-c C-k") 'grunt-kill-window)
-              map))
-
-  (add-hook 'running-grunt-mode-hook 'comint-mode)
-
-  (defun grunt-kill-window ()
-    "Kill the current grunt process and close the window."
-    (interactive)
-    (comint-kill-subjob)
-    (kill-buffer-and-window))
 #+END_SRC
 
 ** Moving around
@@ -252,8 +320,8 @@ don't depend on the OS.
     (other-window -1))
 
   (global-set-key (kbd "C-S-w") (lambda () (interactive) (kill-buffer nil)))
-  (global-set-key (kbd "M-o") 'other-window)
-  (global-set-key (kbd "M-O")  'another-window)
+  (global-set-key (kbd "s-]") 'other-window)
+  (global-set-key (kbd "s-[")  'another-window)
 
   (global-set-key (kbd "M-4") 'split-window-below)
   (global-set-key (kbd "M-$") 'split-window-right)
@@ -491,7 +559,14 @@ don't depend on the OS.
     (progn
       (global-company-mode)
       (setq company-tooltip-align-annotations t
-            company-show-numbers t)))
+            company-show-numbers t
+            company-idle-delay .1
+            company-tooltip-idle-delay .1)
+      (add-to-list 'completion-styles 'initials t)))
+
+  (use-package company-quickhelp
+    :config
+    (add-hook 'company-mode-hook 'company-quickhelp-mode))
 
   (use-package yasnippet
     :config
@@ -520,7 +595,6 @@ I got most of these from the excellent [[http://emacsrocks.com/][Emacs Rocks]].
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C--") 'bury-buffer)
-  (global-set-key (kbd "s--") 'bury-buffer)
   (global-set-key (kbd "C-;") 'comment-line)
   (electric-pair-mode)
   (add-hook 'prog-mode-hook 'subword-mode)
@@ -654,6 +728,7 @@ Magit is so awesome, it barely needs any setup at all.
   (use-package magit
     :bind
     (([f8] . magit-status)
+     ("C-x g" . magit-status)
      ("M-s-b" . magit-blame))
     :config
     ;; magit windows should open in the current window
@@ -847,9 +922,7 @@ prompts components and turn off the default one.
           ("M-," . pop-tag-mark))
     :config
     (setq js2-basic-offset 2
-          js2-strict-trailing-comma-warning nil
-          js2-global-externs
-          '("angular" "d3" "require" "karma" "it" "describe" "beforeEach" "module"))
+          js2-strict-trailing-comma-warning nil)
     (add-hook 'js2-mode-hook 'js2-imenu-extras-mode)
     (define-key js2-mode-map (kbd "M-j") nil))
 
@@ -866,6 +939,10 @@ prompts components and turn off the default one.
       (js2r-add-keybindings-with-prefix "C-c C-r"))
     (add-hook 'js2-mode-hook 'setup-js2r-mode))
 
+  (use-package typescript-mode
+    :config
+    (setq typescript-indent-level 2))
+
   (use-package tide
     :config
     (setq tide-completion-detailed t
@@ -875,7 +952,8 @@ prompts components and turn off the default one.
     (defun setup-tide-mode ()
       (tide-setup)
       (eldoc-mode +1)
-      (tide-hl-identifier-mode +1))
+      (tide-hl-identifier-mode +1)
+      (setq-local company-backend 'tide-company))
 
     (add-hook 'typescript-mode-hook 'setup-tide-mode)
     (add-hook 'js2-mode-hook 'setup-tide-mode)
@@ -1026,6 +1104,8 @@ Now, we begin configuring ~org~.
     :config
     (progn
       ;; For some reason, declaring these in `:bind` won't work
+      ;; XXX these commands are global and shouldn't really be under C-c therefore
+      (global-set-key (kbd "C-c l") 'org-store-link)
       (global-set-key (kbd "C-c b") 'org-iswitchb)
       (global-set-key (kbd "C-c j") 'org-clock-goto)
       (global-set-key (kbd "<f2>") 'org-capture)
@@ -1197,7 +1277,24 @@ pipenv install python-language-server[all]
     :config
     (push 'company-lsp company-backends))
 #+END_SRC
+** SQL
+Note that the following depends on ~beautify-sql~:
+#+BEGIN_SRC shell :exports source
+sudo gem install anbt-sql-formatter
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (defun sql-beautify-region (beg end)
+    "Beautify SQL in region between beg and END."
+    (interactive "r")
+    (save-excursion
+      (shell-command-on-region beg end "beautify-sql" nil t)))
+
+  (defun sql-beautify-buffer ()
+   "Beautify SQL in buffer."
+   (interactive)
+   (sql-beautify-region (point-min) (point-max)))
+#+END_SRC
 ** Other
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "M-p") 'compile)
@@ -1226,6 +1323,13 @@ pipenv install python-language-server[all]
 #+BEGIN_SRC emacs-lisp
   (use-package dockerfile-mode)
 #+END_SRC
+
+groovy-mode For ~Jenkinsfiles:~ :/
+#+BEGIN_SRC emacs-lisp
+  (use-package groovy-mode
+    :config
+    (add-to-list 'auto-mode-alist '("Jenkinsfile\\'" . groovy-mode)))
+#+END_SRC
 * OSX-specific
 If we're on MacOS, enable the menu bar (hiding it won't save any space anyway)
 and the fancy transparent window titlebar.
@@ -1237,6 +1341,20 @@ and the fancy transparent window titlebar.
       (add-to-list 'default-frame-alist '(ns-appearance . dark))
       (setq ns-use-proxy-icon  nil)
       (setq frame-title-format nil)))
+#+END_SRC
+
+Map modifier keys.
+#+BEGIN_SRC emacs-lisp
+  (when (string-equal system-type "darwin")
+    (progn
+      (setq mac-command-modifier 'super
+            mac-option-modifier 'meta
+            mac-control-modifier 'control
+            ns-function-modifier 'hyper))
+
+    (global-set-key (kbd "s-s") 'save-buffer)
+    (global-set-key (kbd "s-v") 'yank)
+    (global-set-key (kbd "s-l") 'goto-line))
 #+END_SRC
 * RSS + Pocket
 #+BEGIN_SRC emacs-lisp
