@@ -109,7 +109,7 @@ export VISUAL='emacsclient -a ""'
 export EDITOR="$VISUAL -t"
 export VAGRANT_DEFAULT_PROVIDER=virtualbox
 export PLAN9=/usr/local/plan9
-export PATH=$PATH:$HOME/.local/bin:$HOME/bin:node_modules/.bin:$PLAN9/bin
+export PATH=$PATH:$HOME/.local/bin:$HOME/bin:node_modules/.bin:$PLAN9/bin:$HOME/Library/Python/2.7/bin
 
 # Aliases
 alias e=$VISUAL
@@ -126,6 +126,14 @@ function mcd() { mkdir $1 && cd $1; }
 function sanitize() {
     find $1 -type f -exec chmod 644 {} +
     find $1 -type d -exec chmod 755 {} +
+}
+
+function psql() {
+    docker run -it --rm jbergknoff/postgresql-client $*
+}
+
+function code() {
+    open /Applications/VSCodium.app/ $*
 }
 
 # Important security announcements
