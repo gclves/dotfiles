@@ -115,6 +115,7 @@ Show time and status information on the modeline, so we can go fullscreen and
 don't depend on the OS.
 #+BEGIN_SRC emacs-lisp
   (setq display-time-default-load-average 0) ; 1-minute load average
+  (setq display-time-24hr-format t)
   (display-time-mode)
   (display-battery-mode)
 #+END_SRC
@@ -208,6 +209,11 @@ Some awesome customisations stolen from [[http://www.holgerschurig.de/en/emacs-t
     :bind
     (("C-c v f" . vimish-fold)
      ("C-c v v" . vimish-fold-delete)))
+#+END_SRC
+*** Resizing windows
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "s-{") 'shrink-window-horizontally)
+  (global-set-key (kbd "s-}") 'enlarge-window-horizontally)
 #+END_SRC
 ** Fonts and stuff
 Prettier Unicode symbols.
@@ -944,6 +950,10 @@ prompts components and turn off the default one.
     (setq typescript-indent-level 2))
 
   (use-package tide
+    :bind
+    (:map tide-mode-map
+          ("C-c r" . tide-rename-symbol)
+          ("C-c C-r" . tide-rename-file))
     :config
     (setq tide-completion-detailed t
           tide-completion-enable-autoimport-suggestions t
