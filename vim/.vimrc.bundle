@@ -14,8 +14,6 @@ Bundle 'scrooloose/syntastic'
 Bundle 'kien/ctrlp.vim'
 Bundle 'scrooloose/nerdcommenter'
 Bundle 'spf13/vim-autoclose'
-Bundle 'bling/vim-airline'
-Bundle 'bling/vim-bufferline'
 Bundle 'godlygeek/tabular'
 Bundle 'tpope/vim-markdown'
 Bundle 'spf13/vim-preview'
@@ -28,20 +26,17 @@ Bundle 'majutsushi/tagbar'
 Bundle 'szw/vim-tags'
 Bundle 'dyng/ctrlsf.vim'
 Bundle 'Lokaltog/vim-easymotion'
-Bundle 'jaxbot/browserlink.vim'
 Bundle 'mhinz/vim-startify'
 
 " Tab completion
 Bundle 'ervandew/supertab'
 Bundle 'garbas/vim-snipmate'
 Bundle 'honza/vim-snippets'
-"
+
 " colors
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'tomasr/molokai'
 Bundle 'chriskempson/tomorrow-theme', {'rtp': 'vim/'}
 
-" Clojure
-Bundle 'vim-scripts/VimClojure'
 call vundle#end()
 filetype plugin indent on

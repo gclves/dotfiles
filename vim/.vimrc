@@ -29,8 +29,8 @@ endif
 " Vundle config
 source ~/.vimrc.bundle
 
-set background=dark
-colorscheme solarized
+set background=light
+colorscheme Tomorrow
 
 syntax on
 let mapleader=","
@@ -204,8 +204,8 @@ let g:EasyMotion_startofline = 0 " keep cursor colum when JK motion
 " Emmet
 let g:user_emmet_leader_key='<Leader>.'
 
-" Go straight to ~/www if no directory has been specified
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | cd ~/www
+" Go straight to ~/Code if no directory has been specified
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | cd ~/Code
 
 " a better encryption algorithm
 set cryptmethod=blowfish
