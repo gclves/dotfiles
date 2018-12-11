@@ -127,6 +127,7 @@ function sanitize() {
     find $1 -type f -exec chmod 644 {} +
     find $1 -type d -exec chmod 755 {} +
 }
+alias vi=vim
 
 function psql() {
     docker run -it --rm jbergknoff/postgresql-client $*
