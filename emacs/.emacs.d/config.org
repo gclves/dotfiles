@@ -360,6 +360,7 @@ Control font size with the keyboard
     (setq undo-tree-visualizer-timestamps t
           undo-tree-visualizer-diff t))
 
+  ;;; XXX this is trivial to do myself using winner-mode and `same-window-p'
   (use-package zoom-window
     :bind
     (("M-1" . zoom-window-zoom)))
@@ -1353,42 +1354,6 @@ and the fancy transparent window titlebar.
       (setq frame-title-format nil)))
 #+END_SRC
 
-Map modifier keys.
-#+BEGIN_SRC emacs-lisp
-  (when (string-equal system-type "darwin")
-    (progn
-      (setq mac-command-modifier 'super
-            mac-option-modifier 'meta
-            mac-control-modifier 'control
-            ns-function-modifier 'hyper))
-
-    (global-set-key (kbd "s-s") 'save-buffer)
-    (global-set-key (kbd "s-v") 'yank)
-    (global-set-key (kbd "s-l") 'goto-line))
-#+END_SRC
-* RSS + Pocket
-#+BEGIN_SRC emacs-lisp
-  (use-package elfeed
-    :config
-    (setq elfeed-feeds '("https://jvns.ca/atom.xml"
-                         "http://blog.ricbit.com/feeds/posts/default"
-                         "https://sivers.org/en.atom"
-                         "https://wingolog.org/feed/atom"
-                         "https://lobste.rs/rss"
-                         "https://codewithoutrules.com/atom.xml"
-                         "https://blog.jessfraz.com/index.xml"
-                         "http://feeds.feedburner.com/zenhabits"
-                         "http://lisperator.net/atom"
-                         "http://n-gate.com/index.atom"
-                         "http://emacsrocks.com/atom.xml"
-                         "https://www.destroyallsoftware.com/screencasts/feed"
-                         "https://www.masteringemacs.org/feed"
-                         "https://defn.io/index.xml"
-                         "https://martinfowler.com/feed.atom"
-                         "https://monades.roperzh.com/index.xml")))
-
-  (use-package pocket-reader)
-#+END_SRC
 * Startup
 #+BEGIN_SRC emacs-lisp
     (defun initial-window-setup ()
