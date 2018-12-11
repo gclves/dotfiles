@@ -370,9 +370,15 @@ Control font size with the keyboard
     (switch-to-buffer "*scratch*"))
   (global-set-key (kbd "M--") 'jump-to-scratch)
 
-  (defun edit-init-file ()
+  (defun edit-config-file ()
+    "Edit the Emacs configuration file."
     (interactive)
     (find-file "~/.emacs.d/config.org"))
+
+  (defun reload-emacs-config ()
+    "Reload the Emacs configuration"
+    (interactive)
+    (load user-init-file))
 
   (defun back-to-indentation-or-beginning ()
     "Move point to beginning of line, or to first non-space character"
