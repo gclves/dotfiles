@@ -78,14 +78,12 @@ list of options of fonts to render so we don't end up with garbage.
 * Look and feel
 ** Themes
 #+BEGIN_SRC emacs-lisp
-    ;(use-package nofrils-acme-theme)
   (use-package doom-themes
     :config
     ;; Enable flashing mode-line on errors
     (doom-themes-visual-bell-config)
     ;; Corrects (and improves) org-mode's native fontification.
-    (doom-themes-org-config)
-    (load-theme 'doom-solarized-light t))
+    (doom-themes-org-config))
 #+END_SRC
 ** Other customizations
 This replaces some words with their Math symbols (eg: lambda => λ).
@@ -96,7 +94,6 @@ This replaces some words with their Math symbols (eg: lambda => λ).
 Highlight changes in the gutter
 #+BEGIN_SRC emacs-lisp
   (use-package git-gutter
-    :diminish git-gutter-mode
     :init (global-git-gutter-mode +1)
     :config
     (setq git-gutter:update-interval 2)
@@ -141,12 +138,17 @@ don't depend on the OS.
   (show-paren-mode +1)
   (setq async-shell-command-display-buffer nil)
 #+END_SRC
-*** Cleaner modeline
+*** Pretty modeline
 #+BEGIN_SRC emacs-lisp
-  (use-package rich-minority
+  (use-package moody
     :config
-    (rich-minority-mode 1)
-    (setf rm-blacklist ""))
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
+
+  (use-package minions
+    :config
+    (minions-mode 1))
 #+END_SRC
 
 Some awesome customisations stolen from [[http://www.holgerschurig.de/en/emacs-tayloring-the-built-in-mode-line/][this blog post]].
@@ -344,7 +346,6 @@ Control font size with the keyboard
         scroll-preserve-screen-position 1)
 
   (use-package undo-tree
-    :diminish undo-tree-mode
     :bind
     (("C-z" . undo-tree-undo)
      ("C-S-z" . undo-tree-redo)
@@ -397,13 +398,25 @@ Control font size with the keyboard
           (goto-line (read-number "Goto line: ")))
       (display-line-numbers-mode -1)))
   (global-set-key [remap goto-line] 'goto-line-with-feedback)
+
+  (use-package avy
+    :bind
+    (("s-L" . avy-goto-line)
+     ("C-c C-j" . avy-resume)
+     ("C-S-s" . avy-goto-char-timer)))
+
+  (use-package ace-window
+    :bind
+    (("C-o" . ace-window))
+    :config
+    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
 #+END_SRC
 
 ** Get rid of useless whitespace
 #+BEGIN_SRC emacs-lisp
   (use-package ws-butler
-    :config (ws-butler-global-mode)
-    :diminish ws-butler-mode)
+    :config (ws-butler-global-mode))
 
   (defun cleanup-buffer-safe ()
     "Perform a bunch of safe operations on the whitespace content.
@@ -550,7 +563,6 @@ Control font size with the keyboard
 ** Paredit
 #+BEGIN_SRC emacs-lisp
   (use-package paredit
-    :diminish paredit-mode
     :config
     (progn
       (define-key paredit-mode-map (kbd "C-j") nil)
@@ -721,13 +733,13 @@ on my RSI'd wrists). Translate some of those here.
         version-control t                 ; version numbers for backup files
         delete-old-versions t             ; delete excess backup files silently
         delete-by-moving-to-trash t
+        trash-directory (expand-file-name "~/.Trash")
         kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
         kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
         auto-save-default t               ; auto-save every buffer that visits a file
         auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
         auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
         )
-    (setq delete-by-moving-to-trash t)
 
     (setq backup-directory-alist `(("." . ,(expand-file-name
                                             (concat user-emacs-directory "backups")))))
@@ -960,7 +972,8 @@ prompts components and turn off the default one.
     :bind
     (:map tide-mode-map
           ("C-c r" . tide-rename-symbol)
-          ("C-c C-r" . tide-rename-file))
+          ("C-c C-r" . tide-rename-file)
+          ("M-?" . tide-references))
     :config
     (setq tide-completion-detailed t
           tide-completion-enable-autoimport-suggestions t
@@ -976,15 +989,28 @@ prompts components and turn off the default one.
     (add-hook 'js2-mode-hook 'setup-tide-mode)
     (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append))
 #+END_SRC
-** Common Lisp
-Nothing fancy here, just a regular SLIME installation.
+*** TODO node + ~npm~ utilities
 #+BEGIN_SRC emacs-lisp
-  (use-package slime
+  (defun node-repl ()
+    "Start a NodeJS REPL in comint mode."
+    (interactive)
+    (setenv "NODE_NO_READLINE" "1") ; avoid fancy terminal codes
+    (pop-to-buffer (make-comint "node-repl" "node" nil "--interactive")))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (defun run-npm-script (script-name)
+    "Execute npm run SCRIPT_NAME. If we're in a projectile dir, run it there."
+    (interactive "bScript name: ")
+    (projectile-run-async-shell-command-in-root (concat "npm run " script-name)))
+#+END_SRC
+** Common Lisp
+Nothing fancy here, just a regular +SLIME+ Sly installation.
+#+BEGIN_SRC emacs-lisp
+  (use-package sly
     :config
     (progn
-      (setq inferior-lisp-program "/usr/bin/sbcl"
+      (setq inferior-lisp-program "/usr/local/bin/sbcl"
             slime-net-coding-system 'utf-8-unix)
-      (slime-setup '(slime-fancy))
       (set-language-environment "UTF-8")
       (setenv "LC_LOCALE" "en_US.UTF-8")
       (setenv "LC_CTYPE" "en_US.UTF-8")))
@@ -1052,7 +1078,6 @@ required fonts installed (likely).
 
 #+BEGIN_SRC emacs-lisp
   (use-package all-the-icons-dired
-    :diminish all-the-icons-dired-mode
     :config
     (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
@@ -1278,8 +1303,8 @@ pipenv install python-language-server[all]
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
     :config
-    (require 'lsp-imenu)
-    (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
+    ;(require 'lsp-imenu)
+    ;(add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
 
     (lsp-define-stdio-client lsp-python "python" #'projectile-project-root '("pyls"))
 
@@ -1331,22 +1356,21 @@ sudo gem install anbt-sql-formatter
           ("C-c C-e" . ruby-send-last-sexp)))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-    (use-package puppet-mode
-      :config
-      (setq-default puppet-indent-level 4))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package dockerfile-mode)
-#+END_SRC
-
 groovy-mode For ~Jenkinsfiles:~ :/
 #+BEGIN_SRC emacs-lisp
   (use-package groovy-mode
     :config
     (add-to-list 'auto-mode-alist '("Jenkinsfile\\'" . groovy-mode)))
 #+END_SRC
+** Docker stuff
+#+BEGIN_SRC emacs-lisp
+  (use-package dockerfile-mode)
+  (use-package docker
+    :ensure t
+    :bind ("C-x C-d" . docker))
+  (use-package docker-tramp)
+#+END_SRC
+
 * OSX-specific
 If we're on MacOS, enable the menu bar (hiding it won't save any space anyway)
 and the fancy transparent window titlebar.
@@ -1366,9 +1390,6 @@ and the fancy transparent window titlebar.
       "Initially set up split windows and buffers"
       (interactive)
       (toggle-frame-fullscreen)
-      (org-agenda-list)
-      (other-window +1)
-      (find-file "~/Org/dev-notes.org")
       (split-window-below)
       (other-window +1)
       (eshell)
@@ -1409,4 +1430,86 @@ quite a lot. This is so my =init.el= doesn't get littered by auto-generated stuf
     (org-publish-project "blog" t))
 
   (global-set-key (kbd "C-x p") 'blog-publish)
+#+END_SRC
+* Temp stuff
+#+BEGIN_SRC emacs-lisp
+  ;; GRB: cycle through selective-display levels
+  (setq selective-display-level 0)
+  (setq selective-display-increment 2)
+  (setq max-selective-display-level 6)
+  (defun switch-selective-display ()
+    "Switch to the next selective display level, starting over if appropriate."
+    (if (>= selective-display-level max-selective-display-level)
+        (setq selective-display-level 0)
+      (setq selective-display-level
+            (+ selective-display-increment
+               selective-display-level)))
+    (interactive)
+    (set-selective-display selective-display-level))
+  (global-set-key (kbd "s-,") 'switch-selective-display)
+
+  (defun has-special-buffer (window)
+    "Return non-nil if WINDOW contains a buffer matching `special-display-regexps'."
+    (let ((name (buffer-name(window-buffer window))))
+      (some (lambda (regexp) (string-match-p regexp name)) special-display-regexps)))
+
+  (defun display-special-buffer (buf list-of-what)
+    "put the special buffers in the right spot (top-left)"
+    (let ((target-window (window-at 0 0))
+          (pop-up-windows t))
+      (if (has-special-buffer target-window)
+          (let ((second-window (window-at 0 (- (frame-height) 10))))
+            (message (buffer-name (window-buffer second-window)))
+            (set-window-buffer second-window (window-buffer target-window))))
+      (set-window-buffer target-window buf)
+      target-window))
+
+  (setq special-display-regexps
+        '("^\\*Async Shell Command\\*\\(<[0-9]+>\\)?$"
+          "^\\*webpack\\*$"
+          "^\\*server\\*$"
+          "^\\*Completions\\*$"
+          "^\\*Help\\*$"
+          "^\\*grep\\*$"
+          "^\\*Apropos\\*$"
+          "^\\*elisp macroexpansion\\*$"
+          "^\\*local variables\\*$"
+          "^\\*Compile-Log\\*$"
+          "^\\*Quail Completions\\*$"
+          "^\\*Occur\\*$"
+          "^\\*frequencies\\*$"
+          "^\\*compilation\\*$"
+          "^\\*Locate\\*$"
+          "^\\*Colors\\*$"
+          "^\\*tumme-display-image\\*$"
+          "^\\*SLIME Description\\*$"
+          "^\\*.* output\\*$"             ; tex compilation buffer
+          "^\\*TeX Help\\*$"
+          "^\\*Shell Command Output\\*$"
+          "^\\*Backtrace\\*$"
+          "^\\*helpful .*\\*$"
+          "^\\*tide-.*\\*$"))
+  (setq special-display-function 'display-special-buffer)
+
+  (global-set-key (kbd "C-x C-b") 'ibuffer)
+
+ (use-package taskpaper-mode
+    :bind
+    ("C-c a" . taskpaper-agenda-search)
+    ("C-c s" . taskpaper-agenda-select)
+    :config
+    (setq taskpaper-agenda-files "~/Library/Mobile Documents/com~hogbaysoftware~TaskPaper/Documents"
+          taskpaper-agenda-restore-windows-after-quit t))
+#+END_SRC
+
+** highlighting changes
+Highlight unsaved changes in ~prog-mode~ buffers.
+#+BEGIN_SRC emacs-lisp
+  (defun highlight-changes-remove-after-save ()
+    "Remove previous changes after save."
+    (make-local-variable 'after-save-hook)
+    (add-hook 'after-save-hook (lambda ()
+                                 (highlight-changes-remove-highlight (point-min) (point-max)))))
+
+  (add-hook 'prog-mode-hook 'highlight-changes-remove-after-save)
 #+END_SRC
