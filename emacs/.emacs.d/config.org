@@ -586,6 +586,19 @@ I run many async commands, and not once have I found the confirmation
   (setq async-shell-command-buffer 'rename-buffer)
 #+END_SRC
 
+Unbelievably useful for SQL queries and arrays in code.
+#+BEGIN_SRC emacs-lisp
+  (defun arrayify (start end quote)
+    "Turn strings on newlines into a QUOTEd, comma-separated one-liner."
+    (interactive "r\nMQuote: ")
+    (let ((insertion
+           (mapconcat
+            (lambda (x) (format "%s%s%s" quote x quote))
+            (split-string (buffer-substring start end)) ", ")))
+      (delete-region start end)
+      (insert insertion)))
+#+END_SRC
+
 *** Silliness
 #+BEGIN_SRC emacs-lisp
   ;;; Super important!!
@@ -1149,6 +1162,7 @@ Now, we begin configuring ~org~.
             org-support-shift-select nil
             org-image-actual-width nil
             org-html-doctype "html5"
+            org-startup-folded nil
             org-refile-targets '((nil :maxlevel . 3)
                                  ("~/Org/work.org" :maxlevel . 1)
                                  ("~/Org/personal.org" :maxlevel . 3)
@@ -1288,7 +1302,8 @@ and the fancy transparent window titlebar.
       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
       ;(add-to-list 'default-frame-alist '(ns-appearance . dark))
       (setq ns-use-proxy-icon  nil)
-      (setq frame-title-format nil)))
+      (setq frame-title-format nil)
+      (setq locate-command "mdfind")))
 #+END_SRC
 
 * Startup
