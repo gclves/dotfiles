@@ -72,7 +72,7 @@ list of options of fonts to render so we don't end up with garbage.
     (package-install 'use-package))
 
   (setq use-package-always-ensure t)
-
+  (add-to-list 'load-path (concat user-emacs-directory "elisp"))
 #+END_SRC
 
 * Look and feel
@@ -698,9 +698,6 @@ be different as it turns out that most of his config doesn’t really work for m
 but the ideas are pretty darn good.
 
 First of all, we need a convenient way to spawn shells.
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<f1>") 'eshell)
-#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
   (defun eshell-here ()
@@ -855,6 +852,21 @@ prompts components and turn off the default one.
       (exec-path-from-shell-copy-env "GOPATH")
       (exec-path-from-shell-copy-env "SSH_AUTH_SOCK")))
 #+END_SRC
+** Aweshell
+#+BEGIN_SRC emacs-lisp
+  (require 'aweshell)
+
+  (defun gg-next-aweshell (arg)
+    "Switch to next aweshell.  If called with `ARG', create a new one."
+    (interactive "P")
+    (let ((open-new? (and arg t)))
+      (if open-new? (aweshell-new) (aweshell-next))))
+
+  (global-set-key (kbd "<f12>") 'aweshell-dedicated-toggle)
+  (global-set-key (kbd "<f1>") 'gg-next-aweshell)
+#+END_SRC
+** Multi-term
+
 * Mode-specific
 ** JavaScript
 #+BEGIN_SRC emacs-lisp
@@ -1345,8 +1357,9 @@ quite a lot. This is so my =init.el= doesn't get littered by auto-generated stuf
   (add-hook 'focus-out-hook 'xah-save-all-unsaved)
 #+END_SRC
 ** Windower
-cf. [[file:windower.el][windower.el]].
+cf. [[file:elisp/windower.el][windower.el]].
 #+BEGIN_SRC emacs-lisp
+  (require 'windower)
   (global-set-key (kbd "<M-tab>") 'windower-switch-to-last-buffer)
   (global-set-key (kbd "M-1") 'windower-toggle-single)
   (global-set-key (kbd "s-|") 'windower-toggle-split)
