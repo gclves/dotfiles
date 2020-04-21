@@ -133,11 +133,7 @@ don't depend on the OS.
 #+BEGIN_SRC emacs-lisp
   (use-package minions :config (minions-mode 1))
 #+END_SRC
-*** Resizing windows
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "s-{") 'shrink-window-horizontally)
-  (global-set-key (kbd "s-}") 'enlarge-window-horizontally)
-#+END_SRC
+
 ** Fonts and stuff
 Prettier Unicode symbols.
 #+BEGIN_SRC emacs-lisp
@@ -186,48 +182,49 @@ Control font size with the keyboard
 #+END_SRC
 ** Interactively do things
 #+BEGIN_SRC emacs-lisp
-  (use-package ag)
+    (use-package rg
+      :bind
+      ("M-F" . rg-menu))
 
-  (use-package smex
-    :bind
-    (:map global-map
-          ("M-x" . smex)
-          ("M-X" . smex-major-mode-commands)))
+    (use-package smex
+      :bind
+      (:map global-map
+            ("M-x" . smex)
+            ("M-X" . smex-major-mode-commands)))
 
-  (use-package ido-vertical-mode
-    :config
-    (ido-mode 1)
-    (ido-vertical-mode 1)
-    (setq ido-vertical-define-keys 'C-n-and-C-p-only
-          ido-vertical-show-count t))
+    (use-package ido-vertical-mode
+      :config
+      (ido-mode 1)
+      (ido-vertical-mode 1)
+      (setq ido-vertical-define-keys 'C-n-and-C-p-only
+            ido-vertical-show-count t))
 
-  (ido-everywhere t)
-  (global-set-key (kbd "C-x C-f") 'find-file)
-  (global-set-key (kbd "s-o") 'find-file)
-  (global-set-key (kbd "s-b") 'ido-switch-buffer)
-  (setq ido-use-filename-at-point 'guess
-        ;; fuzzy matching for ido
-        ido-enable-flex-matching t
-        ido-create-new-buffer 'always
-        ido-ignore-extensions t)
+    (ido-everywhere t)
+    (global-set-key (kbd "C-x C-f") 'find-file)
+    (global-set-key (kbd "s-o") 'find-file)
+    (global-set-key (kbd "s-b") 'ido-switch-buffer)
+    (setq ido-use-filename-at-point 'guess
+          ;; fuzzy matching for ido
+          ido-enable-flex-matching t
+          ido-create-new-buffer 'always
+          ido-ignore-extensions t)
 
-  (use-package projectile
-    :bind
-    (("s-&" . projectile-run-async-shell-command-in-root)
-     ("s-!" . projectile-run-eshell)
-     ("C-!" . projectile-run-shell-command-in-root)
-     ("C-c C-e" . projectile-run-eshell)
-     ("C-c C-s" . projectile-run-shell)
-     ("C-\\" . projectile-find-file)
-     ("s-p" . projectile-find-file)
-     ("M-F" . projectile-ag))
-    :init (projectile-mode)
-    :config
-    (setq projectile-completion-system 'ido)
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+    (use-package projectile
+      :bind
+      (("s-&" . projectile-run-async-shell-command-in-root)
+       ("s-!" . projectile-run-eshell)
+       ("C-!" . projectile-run-shell-command-in-root)
+       ("C-c C-e" . projectile-run-eshell)
+       ("C-c C-s" . projectile-run-shell)
+       ("C-\\" . projectile-find-file)
+       ("s-p" . projectile-find-file))
+      :init (projectile-mode)
+      :config
+      (setq projectile-completion-system 'ido)
+      (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
 
-  (use-package counsel-projectile
-    :bind ("C-S-f" . counsel-projectile-ag))
+    (use-package counsel-projectile
+      :bind ("C-S-f" . counsel-projectile-ag))
 #+END_SRC
 
 ** Moving around
@@ -315,9 +312,9 @@ Control font size with the keyboard
 
   (use-package avy
     :bind
-    (("s-L" . avy-goto-line)
-     ("C-c C-j" . avy-resume)
-     ("s-j" . avy-goto-char-timer)))
+    (("s-j" . avy-goto-char-timer))
+    :config
+    (define-key isearch-mode-map (kbd "s-j") 'avy-isearch))
 
   (use-package ace-window
     :bind
@@ -612,16 +609,9 @@ Unbelievably useful for SQL queries and arrays in code.
     (insert "( ͡° ͜ʖ ͡°)"))
 #+END_SRC
 ** Remapping out-of-reach commands
-On the Kinesis Advantage, some key combinations are painful to reach (at least
-on my RSI'd wrists). Translate some of those here.
 #+BEGIN_SRC emacs-lisp
-  (define-key key-translation-map (kbd "s-h") (kbd "C-h"))
   ; mapping <escape> to 'keyboard-escape-quit doesn't seem to work for some reason, so we just translate
   (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
-
-  (define-key key-translation-map (kbd "<s-return>") (kbd "<C-return>"))
-  (define-key key-translation-map (kbd "<s-S-return>") (kbd "<C-S-return>"))
-
   (global-set-key (kbd "s-u") 'revert-buffer)
 #+END_SRC
 
@@ -1164,68 +1154,21 @@ Now, we begin configuring ~org~.
             org-html-doctype "html5"
             org-startup-folded nil
             org-refile-targets '((nil :maxlevel . 3)
-                                 ("~/Org/work.org" :maxlevel . 1)
-                                 ("~/Org/personal.org" :maxlevel . 3)
-                                 ("~/Org/someday.org" :maxlevel . 1)
-                                 ("~/Org/tickler.org" :maxlevel . 2))
+                                 ("~/sync/Notes/work.org" :maxlevel . 1)
+                                 ("~/sync/Notes/personal.org" :maxlevel . 3)
+                                 ("~/sync/Notes/someday.org" :maxlevel . 1)
+                                 ("~/sync/Notes/tickler.org" :maxlevel . 2))
             org-outline-path-complete-in-steps nil ; Refile in a single go
             org-refile-use-outline-path 'file      ; Refile to top-level
             org-todo-keywords
             '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))))
 #+END_SRC
 
-*** Getting Things Done
-This is a new section as I'm experimenting with implementing GTD in org-mode. I'll likely refile it soon.
-
-I want to be able to quickly file new items to my inbox. Let's do so via capture templates.
-#+BEGIN_SRC emacs-lisp
-  (setq org-capture-templates '(("t" "Todo [inbox]" entry
-                                 (file+headline "~/Org/inbox.org" "Inbox")
-                                 "* TODO %i%?")
-                                ("T" "Tickler" entry
-                                 (file+headline "~/Org/tickler.org" "Tickler")
-                                 "* %i%? \n %^t")
-                                ("j" "Journal entry" entry
-                                 (file+datetree "~/Org/journal.org")
-                                 "* %?")
-                                ("L" "Today I Learned" entry
-                                 (file+datetree "~/Org/TIL.org")
-                                 "* %?" :prepend t)))
-#+END_SRC
-
-What I need now are [[http://orgmode.org/worg/org-tutorials/org-custom-agenda-commands.html][custom agenda commands]] to filter my backlog.
-#+BEGIN_SRC emacs-lisp
-  (setq org-agenda-custom-commands
-        '(("n" "Next actions" alltodo nil
-           ((org-agenda-overriding-header "Next actions")
-            (org-agenda-skip-function #'my-org-agenda-skip-all-siblings-but-first)))
-          ("w" "Next actions (work)" tags-todo "WORK"
-           ((org-agenda-overriding-header "Work tasks")
-            (org-agenda-skip-function #'my-org-agenda-skip-all-siblings-but-first)))
-          ("W" "Waiting for..." todo "WAITING")))
-
-  (defun my-org-agenda-skip-all-siblings-but-first ()
-    "Skip all but the first non-done entry."
-    (let (should-skip-entry)
-      (unless (org-current-is-todo)
-        (setq should-skip-entry t))
-      (save-excursion
-        (while (and (not should-skip-entry) (org-goto-sibling t))
-          (when (org-current-is-todo)
-            (setq should-skip-entry t))))
-      (when should-skip-entry
-        (or (outline-next-heading)
-            (goto-char (point-max))))))
-
-  (defun org-current-is-todo ()
-    (string= "TODO" (org-get-todo-state)))
-#+END_SRC
 ** HTTP and REST
 Incredibly useful stuff.
 #+BEGIN_SRC emacs-lisp
   (use-package restclient)
   (use-package company-restclient)
-
 #+END_SRC
 ** Python
 Out-of-the-box Python support for emacs seems remarkably good, at least for my
@@ -1325,21 +1268,6 @@ quite a lot. This is so my =init.el= doesn't get littered by auto-generated stuf
 #+END_SRC
 * Temp stuff
 #+BEGIN_SRC emacs-lisp
-  ;; GRB: cycle through selective-display levels
-  (setq selective-display-level 0)
-  (setq selective-display-increment 2)
-  (setq max-selective-display-level 6)
-  (defun switch-selective-display ()
-    "Switch to the next selective display level, starting over if appropriate."
-    (if (>= selective-display-level max-selective-display-level)
-        (setq selective-display-level 0)
-      (setq selective-display-level
-            (+ selective-display-increment
-               selective-display-level)))
-    (interactive)
-    (set-selective-display selective-display-level))
-  (global-set-key (kbd "s-,") 'switch-selective-display)
-
   (defun has-special-buffer (window)
     "Return non-nil if WINDOW contains a buffer matching `special-display-regexps'."
     (let ((name (buffer-name(window-buffer window))))
@@ -1389,12 +1317,7 @@ quite a lot. This is so my =init.el= doesn't get littered by auto-generated stuf
   (global-unset-key (kbd "s-t"))
   (desktop-save-mode)
 #+END_SRC
-** Launching a shell
-#+BEGIN_SRC emacs-lisp
-  (defun eshell-dwim ()
-    "Launch an Eshell instance.  When in projectile mode, launch in the project root."
-    (projectile-run-eshell))
-#+END_SRC
+
 ** Making new buffers and windows
 #+BEGIN_SRC emacs-lisp
   (defvar gg-scratch-buffer-mode 'org-mode
@@ -1437,15 +1360,6 @@ cf. [[file:windower.el][windower.el]].
   (global-set-key (kbd "<s-S-down>") 'windower-swap-below)
   (global-set-key (kbd "<s-S-up>") 'windower-swap-above)
   (global-set-key (kbd "<s-S-right>") 'windower-swap-right)
-#+END_SRC
-
-** Todo.txt
-#+BEGIN_SRC emacs-lisp
-  (use-package todotxt-mode
-    :config
-    (setq todotxt-default-file (expand-file-name "~/sync/TODO.txt"))
-    (define-key global-map "\C-co" 'todotxt-open-file)
-    (define-key global-map "\C-ct" 'todotxt-add-todo))
 #+END_SRC
 
 ** Deft
