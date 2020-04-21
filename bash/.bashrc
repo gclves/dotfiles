@@ -127,16 +127,7 @@ function sanitize() {
     find $1 -type f -exec chmod 644 {} +
     find $1 -type d -exec chmod 755 {} +
 }
-alias vi=vim
-
-function psql() {
-    docker run -it --rm jbergknoff/postgresql-client $*
-}
-
-function code() {
-    open /Applications/VSCodium.app/ $*
-}
+alias vi=nvim
 
 # Important security announcements
 dig +short txt istheinternetonfire.com
-[ -r /home/ggoncalves/.byobu/prompt ] && . /home/ggoncalves/.byobu/prompt   #byobu-prompt#
