@@ -224,7 +224,7 @@ Control font size with the keyboard
       (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
 
     (use-package counsel-projectile
-      :bind ("C-S-f" . counsel-projectile-ag))
+      :bind ("C-S-f" . counsel-projectile-rg))
 #+END_SRC
 
 ** Moving around
