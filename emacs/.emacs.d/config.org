@@ -11,6 +11,7 @@
         user-email-address "gsg@ggoncalves.me"
         system-time-locale "C")
 #+END_SRC
+
 * Window setup
 I like to set the appearance as early as possible to avoid glitches in
 the loading process. This makes for a cleaner Emacs window.
@@ -72,7 +73,6 @@ list of options of fonts to render so we don't end up with garbage.
     (package-install 'use-package))
 
   (setq use-package-always-ensure t)
-  (add-to-list 'load-path (concat user-emacs-directory "elisp"))
 #+END_SRC
 
 * Look and feel
@@ -80,23 +80,6 @@ list of options of fonts to render so we don't end up with garbage.
 This replaces some words with their Math symbols (eg: lambda => λ).
 #+BEGIN_SRC emacs-lisp
   (global-prettify-symbols-mode 1)
-#+END_SRC
-
-Highlight changes in the gutter
-#+BEGIN_SRC emacs-lisp
-  (use-package git-gutter
-    :init (global-git-gutter-mode +1)
-    :config
-    (setq git-gutter:update-interval 2)
-    (mapc (lambda (pair)
-            (set-face-background (car pair) (cdr pair))
-            (set-face-foreground (car pair) (cdr pair)))
-          '((git-gutter:added . "#8bc34a")
-            (git-gutter:modified . "#b39ddb")
-            (git-gutter:deleted . "#f36c60")))
-    :bind
-    (("C-c C-n" . git-gutter:next-hunk)
-     ("C-c C-p" . git-gutter:previous-hunk)))
 #+END_SRC
 
 Show time and status information on the modeline, so we can go fullscreen and
@@ -122,10 +105,6 @@ don't depend on the OS.
 #+BEGIN_SRC emacs-lisp
   ;;; Display rules at column 80
   (setq-default fill-column 80)
-  (use-package fill-column-indicator
-    :config
-    (add-hook 'prog-mode-hook 'fci-mode))
-
   (show-paren-mode +1)
   (setq async-shell-command-display-buffer nil)
 #+END_SRC
@@ -259,9 +238,7 @@ Control font size with the keyboard
      ("s-z" . undo-tree-undo)
      ("s-S-z" . undo-tree-redo)
      ("s-Z" . undo-tree-redo)
-     ("C-x u" . undo-tree-visualize)
-     ("<S-mouse-4>" . undo-tree-undo)
-     ("<S-mouse-5>" . undo-tree-redo))
+     ("C-x u" . undo-tree-visualize))
     :init
     (global-undo-tree-mode)
     :config
@@ -328,13 +305,6 @@ Control font size with the keyboard
     (("s-j" . avy-goto-char-timer))
     :config
     (define-key isearch-mode-map (kbd "s-j") 'avy-isearch))
-
-  (use-package ace-window
-    :bind
-    (("C-o" . ace-window))
-    :config
-    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
-
 #+END_SRC
 
 ** Get rid of useless whitespace
@@ -524,9 +494,6 @@ Control font size with the keyboard
 
   (setq-default abbrev-mode t)
   (setq save-abbrevs 'silently)
-
-  (use-package angular-snippets)
-  (use-package common-lisp-snippets)
 #+END_SRC
 
 ** Flycheck + Flymake
@@ -674,305 +641,8 @@ Unbelievably useful for SQL queries and arrays in code.
 
   (global-auto-revert-mode)               ; revert a file’s buffer automatically when it’s been changed on disk
 #+END_SRC
-* Git
-Magit is so awesome, it barely needs any setup at all.
-#+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :bind
-    (([f8] . magit-status)
-     ("C-x g" . magit-status)
-     ("M-s-b" . magit-blame))
-    :config
-    ;; magit windows should open in the current window
-    (add-to-list 'same-window-regexps "^magit: "))
-#+END_SRC
-
-Scroll wheel moves through time instead of space ([[https://xkcd.com/1806/][ref.]])
-#+BEGIN_SRC emacs-lisp
-  (defmacro enable-time-machine-and-call (&rest body)
-    `(lambda ()
-       (interactive)
-       (unless (bound-and-true-p git-timemachine-mode)
-         (progn
-           (message "Enabling git-timemachine mode")
-           (git-timemachine)))
-       ,@body))
-
-  (use-package git-timemachine
-    :config
-    (progn
-      (global-set-key (kbd "<M-mouse-5>") (enable-time-machine-and-call (git-timemachine-show-next-revision)))
-      (global-set-key (kbd "<M-mouse-4>") (enable-time-machine-and-call (git-timemachine-show-previous-revision)))))
-#+END_SRC
-
-* Shell
-Based on the excellent config and article from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]]. Code will mostly
-be different as it turns out that most of his config doesn’t really work for me,
-but the ideas are pretty darn good.
-
-First of all, we need a convenient way to spawn shells.
-
-#+BEGIN_SRC emacs-lisp
-  (defun eshell-here ()
-    "Opens up a new shell in the directory associated with the
-  current buffer's file. The eshell is renamed to match that
-  directory to make multiple eshell windows easier."
-    (interactive)
-    (let* ((parent (if (buffer-file-name)
-                       (file-name-directory (buffer-file-name))
-                     default-directory))
-           (height (/ (window-total-height) 3))
-           (name   (car (last (split-string parent "/" t)))))
-      (split-window-vertically (- height))
-      (other-window 1)
-      (eshell "new")
-      (rename-buffer (concat "*eshell: " name "*"))
-
-      (insert "ls")
-      (eshell-send-input)))
-
-  (global-set-key (kbd "C-!") 'eshell-here)
-  (defun eshell/x ()
-    (delete-window)
-    (eshell/exit))
-#+END_SRC
-
-Some executables don’t behave well with Eshell out of the box, so we tweak them a little.
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'eshell-mode-hook (lambda ()
-                                (add-to-list 'eshell-visual-commands "ssh")
-                                (add-to-list 'eshell-visual-commands "tail")))
-#+END_SRC
-
-I can’t believe you can start an Eshell session remotely via Tramp.
-#+BEGIN_SRC emacs-lisp
-  (defun eshell-there (host)
-    (interactive "sHost: ")
-    (let ((default-directory (format "/%s:" host)))
-      (eshell host)))
-#+END_SRC
-
-Really clear the buffer.
-#+BEGIN_SRC emacs-lisp
-  (defun eshell/clear ()
-    "Really clear the eshell buffer, including scrollback."
-    (let ((eshell-buffer-maximum-lines 0)) (eshell-truncate-buffer)))
-#+END_SRC
-** Aliases
-#+BEGIN_SRC emacs-lisp
-  (defun eshell/d (&rest args)
-    (dired (pop args) "."))
-#+END_SRC
-** Prompt
-First, we need a function to tell us the current git branch.
-
-#+BEGIN_SRC emacs-lisp
-  (defun curr-dir-git-branch-string (pwd)
-    "Returns current git branch as a string, or the empty string if
-  PWD is not in a git repo (or the git command is not found)."
-    (interactive)
-    (when (and (eshell-search-path "git")
-               (locate-dominating-file pwd ".git"))
-      (let ((git-output (shell-command-to-string (concat "cd " pwd "; git branch | grep '\\*' | sed -e 's/^\\* //'"))))
-        (if (> (length git-output) 0)
-            (concat " :" (substring git-output 0 -1))
-          "(no branch)"))))
-#+END_SRC
-
-The function takes the current directory passed in via =pwd= and
-replaces the =$HOME= part with a tilde. I’m sure this function already
-exists in the eshell source, but I didn’t find it…
-
-#+BEGIN_SRC emacs-lisp
-  (defun pwd-replace-home (pwd)
-    "Replace home in PWD with tilde (~) character."
-    (interactive)
-    (let* ((home (expand-file-name (getenv "HOME")))
-           (home-len (length home)))
-      (if (and
-           (>= (length pwd) home-len)
-           (equal home (substring pwd 0 home-len)))
-          (concat "~" (substring pwd home-len))
-        pwd)))
-#+END_SRC
-
-Make the directory name be shorter…by replacing all directory names
-with just its first names. However, we leave the last two to be the
-full names. Why yes, I did steal this.
-
-#+BEGIN_SRC emacs-lisp
-  (defun pwd-shorten-dirs (pwd)
-    "Shorten all directory names in PWD except the last two."
-    (let ((p-lst (split-string pwd "/")))
-      (if (> (length p-lst) 2)
-          (concat
-           (mapconcat (lambda (elm) (if (zerop (length elm)) ""
-                                      (substring elm 0 1)))
-                      (butlast p-lst 2)
-                      "/")
-           "/"
-           (mapconcat (lambda (elm) elm)
-                      (last p-lst 2)
-                      "/"))
-        pwd)))  ;; Otherwise, we just return the PWD
-#+END_SRC
-
-Break up the directory into a “parent” and a “base”:
-
-#+BEGIN_SRC emacs-lisp
-  (defun split-directory-prompt (directory)
-    (if (string-match-p ".*/.*" directory)
-        (list (file-name-directory directory) (file-name-base directory))
-      (list "" directory)))
-#+END_SRC
-
-Now tie it all together with a prompt function can color each of the
-prompts components and turn off the default one.
-
-#+BEGIN_SRC emacs-lisp
-  (setq eshell-prompt-function
-        (lambda ()
-          (let* ((directory (split-directory-prompt (pwd-shorten-dirs (pwd-replace-home (eshell/pwd)))))
-                 (parent (car directory))
-                 (name (cadr directory))
-                 (branch (or (curr-dir-git-branch-string (eshell/pwd)) "")))
-
-            (if (eq 'dark (frame-parameter nil 'background-mode))
-                (concat   ;; Prompt for Dark Themes
-                 (propertize parent 'face `(:foreground "#8888FF"))
-                 (propertize name   'face `(:foreground "#8888FF" :weight bold))
-                 (propertize branch 'face `(:foreground "green"))
-                 (propertize " $"   'face `(:weight ultra-bold))
-                 (propertize " "    'face `(:weight bold)))
-
-              (concat    ;; Prompt for Light Themes
-               (propertize parent 'face `(:foreground "blue"))
-               (propertize name   'face `(:foreground "blue" :weight bold))
-               (propertize branch 'face `(:foreground "dark green"))
-               (propertize " $"   'face `(:weight ultra-bold))
-               (propertize " "    'face `(:weight bold)))))))
-
-  (setq eshell-highlight-prompt nil)
-#+END_SRC
-
-** Import some variables from the shell
-#+BEGIN_SRC emacs-lisp
-  (use-package exec-path-from-shell
-    :config
-    (progn
-      (exec-path-from-shell-copy-env "PATH")
-      (exec-path-from-shell-copy-env "SSH_AGENT_PID")
-      (exec-path-from-shell-copy-env "GOPATH")
-      (exec-path-from-shell-copy-env "SSH_AUTH_SOCK")))
-#+END_SRC
-** Aweshell
-#+BEGIN_SRC emacs-lisp
-  (require 'aweshell)
-
-  (defun gg-next-aweshell (arg)
-    "Switch to next aweshell.  If called with `ARG', create a new one."
-    (interactive "P")
-    (let ((open-new? (and arg t)))
-      (if open-new? (aweshell-new) (aweshell-next))))
-
-  (global-set-key (kbd "<f12>") 'aweshell-dedicated-toggle)
-  (global-set-key (kbd "<f1>") 'gg-next-aweshell)
-#+END_SRC
-** Multi-term
 
 * Mode-specific
-** JavaScript
-#+BEGIN_SRC emacs-lisp
-  (use-package js2-mode
-    :mode "\\.jsx?\\'"
-    :bind
-    (:map js2-mode-map
-          ("C-c C-c" . js-send-region)
-          ("M-." . js2-jump-to-definition)
-          ("M-," . pop-tag-mark))
-    :config
-    (setq js2-basic-offset 2
-          js2-strict-trailing-comma-warning nil)
-    (add-hook 'js2-mode-hook 'js2-imenu-extras-mode)
-    (define-key js2-mode-map (kbd "M-j") nil))
-
-  (use-package js2-refactor
-    :bind
-    (:map js2-refactor-mode-map
-          ("C-k" . js2r-kill)
-          ("<M-S-up>" . js2r-move-line-up)
-          ("<M-S-down>" . js2r-move-line-down)
-          ("s-r" . js2r-rename-var))
-    :init
-    (defun setup-js2r-mode ()
-      (js2-refactor-mode +1)
-      (js2r-add-keybindings-with-prefix "C-c C-r"))
-    (add-hook 'js2-mode-hook 'setup-js2r-mode))
-
-  (use-package typescript-mode
-    :mode "\\.js\\'"
-    :config
-    (setq typescript-indent-level 2))
-
-  (use-package prettier-js
-    :config
-    (progn
-      (add-hook 'tide-mode-hook 'prettier-js-mode)))
-
-  (use-package tide
-    :bind
-    (:map tide-mode-map
-          ("C-c r" . tide-rename-symbol)
-          ("C-c C-r" . tide-rename-file)
-          ("M-?" . tide-references))
-    :config
-    (progn
-      (setq tide-completion-detailed t
-            tide-completion-enable-autoimport-suggestions t
-            tide-always-show-documentation t)
-      (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append))
-    :init
-    (progn
-      (defun setup-tide-mode ()
-        (tide-setup)
-        (eldoc-mode +1)
-        (tide-hl-identifier-mode +1)
-        (setq-local company-backend 'tide-company))
-
-      (add-hook 'typescript-mode-hook 'setup-tide-mode)
-      (add-hook 'js2-mode-hook 'setup-tide-mode)))
-
-  (use-package mocha
-    :bind
-    (:map tide-mode-map
-          ("<C-s-268632082>" . mocha-test-definition-nodes)))
-#+END_SRC
-*** TODO node + ~npm~ utilities
-#+BEGIN_SRC emacs-lisp
-  (defun node-repl ()
-    "Start a NodeJS REPL in comint mode."
-    (interactive)
-    (setenv "NODE_NO_READLINE" "1") ; avoid fancy terminal codes
-    (pop-to-buffer (make-comint "node-repl" "node" nil "--interactive")))
-#+END_SRC
-#+BEGIN_SRC emacs-lisp
-  (defun run-npm-script (script-name)
-    "Execute npm run SCRIPT_NAME. If we're in a projectile dir, run it there."
-    (interactive "bScript name: ")
-    (projectile-run-async-shell-command-in-root (concat "npm run " script-name)))
-#+END_SRC
-** Common Lisp
-Nothing fancy here, just a regular +SLIME+ Sly installation.
-#+BEGIN_SRC emacs-lisp
-  (use-package sly
-    :config
-    (progn
-      (setq inferior-lisp-program "/usr/local/bin/sbcl"
-            slime-net-coding-system 'utf-8-unix)
-      (set-language-environment "UTF-8")
-      (setenv "LC_LOCALE" "en_US.UTF-8")
-      (setenv "LC_CTYPE" "en_US.UTF-8")))
-#+END_SRC
 ** Web
 #+BEGIN_SRC emacs-lisp
   (use-package emmet-mode
@@ -1025,11 +695,6 @@ Nothing fancy here, just a regular +SLIME+ Sly installation.
           '(("css" . (ac-source-css-property))
             ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
     (add-hook 'web-mode-hook 'turn-off-fci-mode))
-
-  (use-package less-css-mode
-    :mode ("\\.less$" . less-css-mode))
-
-  (use-package graphql-mode)
 #+END_SRC
 ** Dired
 Note that you'll need to call ~all-the-icons-install-fonts~ if you don't have the
@@ -1044,48 +709,6 @@ required fonts installed (likely).
   (setq dired-dwim-target t)              ; move/copy files across dired buffers
 #+END_SRC
 
-** Go
-Please note that this configuration requires quite a bit of external tools and
-resources. You'll need at least to get the extra tools (~go get -u
-golang.org/x/tools/cmd/...~), but there may be more dependencies missing here.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package go-mode
-    :config
-    (setq gofmt-command "goimports")
-
-    (defun go-compile ()
-      (interactive)
-      (compile "go build"))
-
-    (defun go-test ()
-      (interactive)
-      (compile "go test"))
-
-    (define-key go-mode-map (kbd "C-\\") 'go-compile)
-    (define-key go-mode-map (kbd "M-\\") 'go-test)
-
-    (add-hook 'go-mode-hook (lambda ()
-                              (add-hook 'before-save-hook 'gofmt-before-save))))
-
-  (use-package go-eldoc
-    :config
-    (add-hook 'go-mode-hook 'go-eldoc-setup))
-
-  (use-package company-go
-    :config
-    (add-hook 'go-mode-hook (lambda ()
-                              (set (make-local-variable 'company-backends) '(company-go))
-                              (company-mode))))
-
-  (use-package go-guru
-    :bind
-    (:map go-mode-map
-          ("M-." . go-guru-definition)
-          ("M-," . pop-tag-mark))
-    :config
-    (add-hook 'go-mode-hook 'go-guru-hl-identifier-mode))
-#+END_SRC
 ** Org
 First off, to export to HTML, we need ~htmlize~.
 #+BEGIN_SRC emacs-lisp
@@ -1193,47 +816,8 @@ Now, we begin configuring ~org~.
 Incredibly useful stuff.
 #+BEGIN_SRC emacs-lisp
   (use-package restclient)
-  (use-package company-restclient)
-#+END_SRC
-** Python
-Out-of-the-box Python support for emacs seems remarkably good, at least for my
-(admittedly limited these days) purposes. In any case, I stole most of these
-snippets from [[https://vxlabs.com/2018/06/08/python-language-server-with-emacs-and-lsp-mode/][this article from vxlabs]]. Please note that this requires
-~python-language-server~ to be installed:
-
-#+BEGIN_SRC sh
-  cd ~/Code/python-project
-  pipenv install python-language-server[all]
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  (use-package lsp-ui
-    :config
-    (setq lsp-ui-sideline-ignore-duplicate t)
-    (add-hook 'lsp-mode-hook 'lsp-ui-mode))
-
-  (use-package company-lsp
-    :config
-    (push 'company-lsp company-backends))
-#+END_SRC
-** SQL
-Note that the following depends on ~beautify-sql~:
-#+BEGIN_SRC shell :exports source
-  sudo gem install anbt-sql-formatter
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (defun sql-beautify-region (beg end)
-    "Beautify SQL in region between beg and END."
-    (interactive "r")
-    (save-excursion
-      (shell-command-on-region beg end "beautify-sql" nil t)))
-
-  (defun sql-beautify-buffer ()
-    "Beautify SQL in buffer."
-    (interactive)
-    (sql-beautify-region (point-min) (point-max)))
-#+END_SRC
 ** Other
 Compile
 #+BEGIN_SRC emacs-lisp
@@ -1249,39 +833,12 @@ Compile
   (setq compilation-scroll-output t)
 #+END_SRC
 
-groovy-mode For ~Jenkinsfiles:~ :/
-#+BEGIN_SRC emacs-lisp
-  (use-package groovy-mode
-    :config
-    (add-to-list 'auto-mode-alist '("Jenkinsfile\\'" . groovy-mode)))
-#+END_SRC
-** Docker stuff
-#+BEGIN_SRC emacs-lisp
-  (use-package dockerfile-mode)
-#+END_SRC
-
 * OSX-specific
 If we're on MacOS, enable the menu bar (hiding it won't save any space anyway)
 and the fancy transparent window titlebar.
 #+BEGIN_SRC emacs-lisp
   (when (string-equal system-type "darwin")
-    (progn
-      (menu-bar-mode +1)
-      (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-      ;(add-to-list 'default-frame-alist '(ns-appearance . dark))
-      (setq ns-use-proxy-icon  nil)
-      (setq frame-title-format nil)
-      (setq locate-command "mdfind")))
-#+END_SRC
-
-* Startup
-#+BEGIN_SRC emacs-lisp
-  (defun initial-window-setup ()
-    "Initially set up split windows and buffers"
-    (interactive)
-    (toggle-frame-fullscreen))
-
-  (add-hook 'after-init-hook 'initial-window-setup)
+    (require 'gg-osx-config))
 #+END_SRC
 
 * Custom file
@@ -1340,7 +897,6 @@ quite a lot. This is so my =init.el= doesn't get littered by auto-generated stuf
   (global-set-key (kbd "C-x C-b") 'ibuffer)
 
   (global-unset-key (kbd "s-t"))
-  (desktop-save-mode)
 #+END_SRC
 
 ** Making new buffers and windows
@@ -1396,6 +952,11 @@ cf. [[file:elisp/windower.el][windower.el]].
     :config
     (setq deft-extensions '("org" "md" "txt")
           deft-default-extension "org"
-          deft-directory "~/sync/Notes"
+          deft-directory "~/Sync/zettel"
           deft-new-file-format "%Y%m%d%H%M"))
+#+END_SRC
+
+** Elixir
+#+BEGIN_SRC emacs-lisp
+(use-package elixir-mode)
 #+END_SRC
