@@ -114,6 +114,7 @@ export PATH=$PATH:$HOME/.local/bin:$HOME/bin:node_modules/.bin:$PLAN9/bin:$HOME/
 # Aliases
 alias e=$VISUAL
 alias n='terminal_velocity'     # quick notes
+alias vi=nvim
 
 function lt() { ls -ltrsa "$@" | tail; }
 function psgrep() { ps axuf | grep -v grep | grep "$@" -i --color=auto; }
@@ -127,7 +128,7 @@ function sanitize() {
     find $1 -type f -exec chmod 644 {} +
     find $1 -type d -exec chmod 755 {} +
 }
-alias vi=nvim
+function backlight() { echo $1 | sudo tee /sys/class/backlight/intel_backlight/brightness; }
 
 # Important security announcements
 dig +short txt istheinternetonfire.com
