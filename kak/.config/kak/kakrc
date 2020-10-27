@@ -1,0 +1,14 @@
+colorscheme zenburn
+
+def ide %{
+    rename-client main
+    set global jumpclient main
+    new rename-client aux
+    set global toolsclient aux
+    set global docsclient aux
+}
+
+hook global InsertChar k %{ try %{
+      exec -draft hH <a-k>jk<ret> d
+        exec <esc>
+}}
