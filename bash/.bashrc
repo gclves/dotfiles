@@ -105,16 +105,23 @@ fi
 # Try to keep environment pollution down, EPA loves us.
 unset use_color sh
 
-export VISUAL='emacsclient -a ""'
-export EDITOR="$VISUAL -t"
-export VAGRANT_DEFAULT_PROVIDER=virtualbox
+# kitty (terminal) completions
+if [ "" = "$(which kitty)" ] ; then
+    source <(kitty + complete setup bash)
+fi
+
+export MAIL=/var/mail/gsg
+export EDITOR="nvim"
 export PLAN9=/usr/local/plan9
 export PATH=$PATH:$HOME/.local/bin:$HOME/bin:node_modules/.bin:$PLAN9/bin:$HOME/Library/Python/2.7/bin
 
 # Aliases
-alias e=$VISUAL
-alias n='terminal_velocity'     # quick notes
+alias e=$EDITOR
 alias vi=nvim
+
+function z() {
+    neuron -d $HOME/sync/zettelkasten $@
+}
 
 function lt() { ls -ltrsa "$@" | tail; }
 function psgrep() { ps axuf | grep -v grep | grep "$@" -i --color=auto; }
