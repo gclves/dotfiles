@@ -1,0 +1,30 @@
+[general]
+accounts = gclv, ggoncalves
+maxsyncaccounts = 3
+
+[Account gclv]
+localrepository = Local
+remoterepository = gclv
+
+[Account ggoncalves]
+localrepository = Local
+remoterepository = ggoncalves
+
+[Repository Local]
+type = Maildir
+localfolders = /home/gsg/Mail
+
+[Repository gclv]
+type = IMAP
+remotehost = imap.migadu.com
+remoteuser = admin@gclv.es
+sslcacertfile = OS-DEFAULT
+remotepassfile = ~/.mail.pwd
+
+[Repository ggoncalves]
+type = IMAP
+remotehost = imap.migadu.com
+remoteuser = admin@ggoncalves.me
+sslcacertfile = OS-DEFAULT
+remotepassfile = ~/.mail.pwd
+
