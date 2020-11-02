@@ -106,7 +106,7 @@ fi
 unset use_color sh
 
 # kitty (terminal) completions
-if [ "" = "$(which kitty)" ] ; then
+if [ -n "$(which kitty)" ] ; then
     source <(kitty + complete setup bash)
 fi
 
@@ -137,5 +137,9 @@ function sanitize() {
 }
 function backlight() { echo $1 | sudo tee /sys/class/backlight/intel_backlight/brightness; }
 
-# Important security announcements
-dig +short txt istheinternetonfire.com
+if [ -n "$(which verse)" ]; then
+    verse
+else
+    dig +short txt istheinternetonfire.com
+fi
+
