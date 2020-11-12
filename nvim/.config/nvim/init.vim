@@ -35,15 +35,19 @@ set notimeout
 set t_Co=256
 
 nmap <C-s> :w<cr>
+let mapleader = ","
 
 set termguicolors
 colorscheme desert
+
+" Golang
+autocmd FileType go map <Leader>r :w<cr>:!go build && ./$(basename $PWD)<cr>
+autocmd FileType go map <Leader>t :w<cr>:!go test ./...<cr>
+autocmd FileType go map <Leader>f :w<cr>:!gofmt -w %<cr>:e! %<cr>
 
 call plug#begin('~/.config/nvim/autoload/plugged')
     Plug 'sheerun/vim-polyglot'
     Plug 'scrooloose/NERDTree'
     Plug 'jiangmiao/auto-pairs'
     Plug 'fiatjaf/neuron.vim'
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-    Plug 'junegunn/fzf.vim'
 call plug#end()
