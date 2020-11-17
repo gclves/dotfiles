@@ -1,0 +1,12 @@
+#!/bin/sh
+
+JRNL_FILE=$HOME/jrnl.txt
+NOW=`date +"%Y-%m-%d %H:%M"`
+if [[ "$@" = "" || "$@" = "-" ]]; then
+				MSG=`cat`
+else
+				MSG=$@
+fi
+
+printf "[$NOW]\n$MSG\n\n" >> $JRNL_FILE
+
