@@ -1,0 +1,18 @@
+#!/bin/sh
+
+LENGTH=$1
+
+usage() {
+				echo "Usage: $0 password_length" >&2
+}
+
+if [ "$LENGTH" = "" ]; then
+				usage
+				exit 2
+fi
+
+tr -cd '[:alnum:].' < /dev/urandom | fold -w $LENGTH | head -1
+# Alternative:
+# openssl rand -base64 $LENGTH
+# See also: diceware(4)
+
