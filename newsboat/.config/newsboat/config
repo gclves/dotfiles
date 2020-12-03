@@ -1,0 +1,6 @@
+urls-source "miniflux"
+miniflux-url "https://rss.gclv.es"
+
+miniflux-login "gg"
+miniflux-passwordfile "~/.config/newsboat/miniflux-pw"
+
