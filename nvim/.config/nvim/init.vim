@@ -34,6 +34,8 @@ set notimeout
 
 set t_Co=256
 
+nmap <backspace> %
+
 nmap <C-s> :w<cr>
 let mapleader = ","
 
@@ -44,6 +46,7 @@ colorscheme desert
 autocmd FileType go map <Leader>r :w<cr>:!go build && ./$(basename $PWD)<cr>
 autocmd FileType go map <Leader>t :w<cr>:!go test ./...<cr>
 autocmd FileType go map <Leader>f :w<cr>:!gofmt -w %<cr>:e! %<cr>
+autocmd FileType go map <Leader>b :w<cr>:!go build<cr>
 
 call plug#begin('~/.config/nvim/autoload/plugged')
     Plug 'sheerun/vim-polyglot'
