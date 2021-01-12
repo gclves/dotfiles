@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# This is a simple pipe to display HTML emails from aerc on the browser
+
+B64_CONTENT=$(b64encode - | egrep -v '^(begin-base64|====)')
+
+qutebrowser "data:text/html;base64,$B64_CONTENT"
