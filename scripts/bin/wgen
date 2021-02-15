@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# wgen: generate passphrases using words from the system dictionary
+
+WORDS_FILE=/usr/share/dict/words
+SIZE=`wc -l < $WORDS_FILE | tr -d ' '`
+WORD_SEPARATOR="-"
+
+usage() {
+	cat > /dev/stderr <<EOF
+	Usage:
+			$0 <passphrase_size>
+EOF
+	exit 2
+}
+
+if [ $# -lt 1 ]; then usage; fi
+PHRASE_SIZE=$1
+
+pick_word() {
+	PICKED=`jot -r 1 1 $SIZE`
+	WORD=`head -$PICKED $WORDS_FILE | tail -1`
+	echo $WORD
+}
+
+
+OUTPUT=""
+for i in `seq 1 $PHRASE_SIZE`; do
+	if [ "$OUTPUT" = ""  ]; then
+		OUTPUT=`pick_word`
+	else
+		OUTPUT=$OUTPUT$WORD_SEPARATOR`pick_word`
+	fi
+done
+echo $OUTPUT
+
