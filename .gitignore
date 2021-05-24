@@ -9,3 +9,11 @@ emacs/.emacs.d/recentf
 emacs/.emacs.d/config.el
 emacs/.emacs.d/eshell/history
 emacs/.emacs.d/eshell/lastdir
+emacs/.emacs.d/request
+emacs/.emacs.d/transient
+emacs/.emacs.d/bookmarks
+emacs/.emacs.d/ido.last
+emacs/.emacs.d/session.*
+smex-items
+org-roam.db
+*.eld
