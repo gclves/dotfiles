@@ -56,25 +56,6 @@ list of options of fonts to render so we don't end up with garbage.
             font-list)))
 #+END_SRC
 
-* Package setup
-#+BEGIN_SRC emacs-lisp
-  (require 'package)
-  (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                           ("org" . "http://orgmode.org/elpa/")
-                           ("marmalade" . "https://marmalade-repo.org/packages/")
-                           ("melpa" . "http://melpa.org/packages/")))
-  (package-initialize)
-
-  (unless package-archive-contents
-    (package-refresh-contents))
-
-  (unless (package-installed-p 'use-package)
-    (package-initialize)
-    (package-install 'use-package))
-
-  (setq use-package-always-ensure t)
-#+END_SRC
-
 * Look and feel
 ** Other customizations
 This replaces some words with their Math symbols (eg: lambda => λ).
@@ -693,8 +674,7 @@ Unbelievably useful for SQL queries and arrays in code.
     (flycheck-add-mode 'typescript-tslint 'tide-mode)
     (setq web-mode-ac-sources-alist
           '(("css" . (ac-source-css-property))
-            ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
-    (add-hook 'web-mode-hook 'turn-off-fci-mode))
+            ("html" . (ac-source-words-in-buffer ac-source-abbrev)))))
 #+END_SRC
 ** Dired
 Note that you'll need to call ~all-the-icons-install-fonts~ if you don't have the
@@ -747,8 +727,6 @@ Now, we begin configuring ~org~.
 
       ;; display/update images in the buffer after I evaluate
       (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
-
-      (add-hook 'org-mode-hook 'auto-fill-mode)
 
       ;; Link to manpages from org
       (org-add-link-type "man" 'org-man-open)

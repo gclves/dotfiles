@@ -1,31 +1,5 @@
 (require 'use-package)
 
-(use-package js2-mode
-  :mode "\\.jsx?\\'"
-  :bind
-  (:map js2-mode-map
-        ("C-c C-c" . js-send-region)
-        ("M-." . js2-jump-to-definition)
-        ("M-," . pop-tag-mark))
-  :config
-  (setq js2-basic-offset 2
-        js2-strict-trailing-comma-warning nil)
-  (add-hook 'js2-mode-hook 'js2-imenu-extras-mode)
-  (define-key js2-mode-map (kbd "M-j") nil))
-
-(use-package js2-refactor
-  :bind
-  (:map js2-refactor-mode-map
-        ("C-k" . js2r-kill)
-        ("<M-S-up>" . js2r-move-line-up)
-        ("<M-S-down>" . js2r-move-line-down)
-        ("s-r" . js2r-rename-var))
-  :init
-  (defun setup-js2r-mode ()
-    (js2-refactor-mode +1)
-    (js2r-add-keybindings-with-prefix "C-c C-r"))
-  (add-hook 'js2-mode-hook 'setup-js2r-mode))
-
 (use-package typescript-mode
   :mode "\\.js\\'"
   :config
