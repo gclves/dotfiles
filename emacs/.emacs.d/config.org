@@ -22,7 +22,7 @@ the loading process. This makes for a cleaner Emacs window.
   (global-hl-line-mode t)
   (fringe-mode 1) ; 1px fringe
   (column-number-mode)
-  (blink-cursor-mode 0)
+  (blink-cursor-mode +1)
   (tooltip-mode -1)
   (menu-bar-mode -1)
   (setq inhibit-startup-message t
@@ -101,16 +101,6 @@ Prettier Unicode symbols.
     (set-fontset-font t 'unicode "Symbola" nil 'prepend))
 #+END_SRC
 
-Ditch monospace fonts if we're reading text.
-#+BEGIN_SRC emacs-lisp
-  (defun use-variable-width-font ()
-    "Set current buffer to use variable-width font."
-    (variable-pitch-mode 1)
-    (text-scale-increase 1))
-
-  (add-hook 'markdown-mode-hook 'use-variable-width-font)
-#+END_SRC
-
 Control font size with the keyboard
 #+BEGIN_SRC emacs-lisp
   (defun font-size-reset ()
@@ -173,10 +163,8 @@ Control font size with the keyboard
       :bind
       (("s-&" . projectile-run-async-shell-command-in-root)
        ("s-!" . projectile-run-eshell)
-       ("C-!" . projectile-run-shell-command-in-root)
        ("C-c C-e" . projectile-run-eshell)
        ("C-c C-s" . projectile-run-shell)
-       ("C-\\" . projectile-find-file)
        ("s-p" . projectile-find-file))
       :init (projectile-mode)
       :config
@@ -249,7 +237,7 @@ Control font size with the keyboard
     (interactive)
     (find-file "~/.emacs.d/config.org"))
 
-  (defvar gg-todo-file (expand-file-name "~/TODO")
+  (defvar gg-todo-file (expand-file-name "~/TODO.org")
     "Location of my TODO file.")
 
   (defun gg-todo ()
@@ -268,6 +256,7 @@ Control font size with the keyboard
     (interactive)
     (if (= (point) (progn (back-to-indentation) (point)))
         (beginning-of-line)))
+
   (global-set-key (kbd "<home>") 'back-to-indentation-or-beginning)
   (global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
 
@@ -372,7 +361,6 @@ Control font size with the keyboard
       (end-of-line)
       (forward-char)))
 
-  (global-set-key (kbd "C-w") 'backward-kill-word)
   (global-set-key (kbd "C-x C-k") 'xah-cut-line-or-region)
   (global-set-key (kbd "s-x") 'xah-cut-line-or-region)
   (global-set-key (kbd "M-w") 'xah-copy-line-or-region)
@@ -604,8 +592,7 @@ Unbelievably useful for SQL queries and arrays in code.
   (if (not (file-exists-p --backup-directory))
       (make-directory --backup-directory t))
 
-  (setq backup-directory-alist `(("." . ,--backup-directory)))
-  (setq make-backup-files t               ; backup of a file the first time it is saved.
+  (setq make-backup-files t               ; back up a file the first time it is saved
         backup-by-copying t               ; don't clobber symlinks
         version-control t                 ; version numbers for backup files
         delete-old-versions t             ; delete excess backup files silently
@@ -616,9 +603,11 @@ Unbelievably useful for SQL queries and arrays in code.
         auto-save-default nil             ; don't auto-save every buffer that visits a file
         auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
         auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
-        )
 
-  (setq backup-directory-alist `(("." . ,(expand-file-name --backup-directory))))
+        backup-directory-alist `((".*" . ,(expand-file-name --backup-directory)))
+        auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
+
+        create-lockfiles nil)
 
   (global-auto-revert-mode)               ; revert a file’s buffer automatically when it’s been changed on disk
 #+END_SRC
@@ -788,6 +777,8 @@ Now, we begin configuring ~org~.
             org-refile-use-outline-path 'file      ; Refile to top-level
             org-todo-keywords
             '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))))
+
+  (setq org-highlight-latex-and-related '(latex script))
 #+END_SRC
 
 ** HTTP and REST
@@ -920,18 +911,6 @@ cf. [[file:elisp/windower.el][windower.el]].
   (global-set-key (kbd "<s-S-down>") 'windower-swap-below)
   (global-set-key (kbd "<s-S-up>") 'windower-swap-above)
   (global-set-key (kbd "<s-S-right>") 'windower-swap-right)
-#+END_SRC
-
-** Deft
-#+BEGIN_SRC emacs-lisp
-  (use-package deft
-    :bind
-    (([f3] . deft))
-    :config
-    (setq deft-extensions '("org" "md" "txt")
-          deft-default-extension "org"
-          deft-directory "~/Sync/zettel"
-          deft-new-file-format "%Y%m%d%H%M"))
 #+END_SRC
 
 ** Elixir
