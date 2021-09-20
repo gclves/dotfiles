@@ -45,9 +45,9 @@
 (add-hook 'text-mode-hook 'setup-text-mode)
 
 ;;; Set up the typography
-(set-face-attribute 'variable-pitch nil :font "iA Writer Quattro V-14")
+(set-face-attribute 'variable-pitch nil :font "iA Writer Quattro S-17")
 (set-face-attribute 'fixed-pitch nil :font "Go Mono-13")
-(set-face-attribute 'org-quote nil :font "iA Writer Duo V-14" :slant 'italic)
+(set-face-attribute 'org-quote nil :font "iA Writer Quattro S-17" :slant 'italic)
 
 (provide 'gg-notes)
 ;;; gg-notes.el ends here

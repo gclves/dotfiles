@@ -718,7 +718,7 @@ Now, we begin configuring ~org~.
       (define-key org-mode-map (kbd "M-s-o") 'org-clock-out)
 
       ;; run shell commands from org-babel
-      (defvar -org-babel-langs '((shell . t) (python . t)))
+      (defvar -org-babel-langs '((shell . t) (python . t) (ruby . t)))
       (setq org-babel-python-command "python3")
       (org-babel-do-load-languages 'org-babel-load-languages -org-babel-langs)
 
@@ -925,3 +925,9 @@ cf. [[file:elisp/windower.el][windower.el]].
 #+BEGIN_SRC emacs-lisp
 (use-package elixir-mode)
 #+END_SRC
+** ESS (R language)
+#+begin_src emacs-lisp
+  (use-package ess
+    :config
+    (setq ess-indent-offset 2))
+#+end_src
