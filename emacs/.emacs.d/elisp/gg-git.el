@@ -23,4 +23,7 @@
     ;; magit windows should open in the current window
     (add-to-list 'same-window-regexps "^magit: "))
 
+(use-package forge
+  :after magit)
+
 (provide 'gg-git)

@@ -936,3 +936,13 @@ cf. [[file:elisp/windower.el][windower.el]].
     :config
     (setq ess-indent-offset 2))
 #+end_src
+** Shell
+#+begin_src emacs-lisp
+(setq explicit-shell-file-name "/bin/zsh")
+#+end_src
+
+** Terraform
+#+begin_src emacs-lisp
+  (use-package terraform-mode)
+  (use-package terraform-doc)
+#+end_src

@@ -9,5 +9,6 @@
 (require 'gg-web-dev)
 (require 'gg-eshell)
 (require 'gg-notes)
+(require 'gg-ruby)
 
 (org-babel-load-file (expand-file-name "config.org" user-emacs-directory))
