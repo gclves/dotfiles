@@ -93,7 +93,12 @@ don't depend on the OS.
 #+BEGIN_SRC emacs-lisp
   (use-package minions :config (minions-mode 1))
 #+END_SRC
-
+** Theme
+#+begin_src emacs-lisp
+  (use-package parchment-theme
+    :ensure t
+    :config (load-theme 'parchment t))
+#+end_src
 ** Fonts and stuff
 Prettier Unicode symbols.
 #+BEGIN_SRC emacs-lisp
