@@ -45,9 +45,21 @@
 (add-hook 'text-mode-hook 'setup-text-mode)
 
 ;;; Set up the typography
-(set-face-attribute 'variable-pitch nil :font "iA Writer Quattro S-17")
-(set-face-attribute 'fixed-pitch nil :font "Go Mono-13")
-(set-face-attribute 'org-quote nil :font "iA Writer Quattro S-17" :slant 'italic)
+(defvar gg--monospace-font "Go Mono-18"
+  "The font used for Monospace text within prose.")
+(defvar gg--body-font "Go-18"
+  "The font used for body text within prose.")
+
+(cl-loop for face in '(fixed-pitch org-code org-block)
+         do (set-face-attribute face nil :font gg--monospace-font))
+
+(set-face-attribute 'variable-pitch nil :font gg--body-font)
+(set-face-attribute 'org-quote nil :font gg--body-font :slant 'italic)
+;; org-table needs to be monospaced to be aligned
+(set-face-attribute 'org-table nil :font "Monaco-19")
+
+;; Org-powered presentations
+(require 'epresent)
 
 (provide 'gg-notes)
 ;;; gg-notes.el ends here
