@@ -106,7 +106,7 @@ fi
 unset use_color sh
 
 # kitty (terminal) completions
-if [ -n "$(which kitty)" ] ; then
+if [ "" = "$(which kitty)" ] ; then
     source <(kitty + complete setup bash)
 fi
 

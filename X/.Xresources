@@ -7,6 +7,22 @@ Xft.hintstyle: hintslight
 Xft.rgba: rgb
 Xcursor.theme: neutral
 
+! ===== xlock
+! actually turn the backlight off
+XLock.dpmsoff     : 1
+! plain white-on-black lock screen
+XLock.description : off
+XLock.echokeys    : off
+XLock.info        :
+XLock.background  : black
+XLock.foreground  : white
+XLock.mode        : blank
+XLock.username    : username: 
+XLock.password    : password: 
+XLock.font        : -misc-fixed-medium-r-normal-*-15-*-*-*-*-*-iso10646-1
+XLock.planfont    : -misc-fixed-medium-r-normal-*-13-*-*-*-*-*-iso10646-1
+
+
 !-------------------------------------------------------------------------------
 !
 !
@@ -26,7 +42,8 @@ XTerm*charClass:     33:48,35-38:48,39:43,42-47:48,58-59:48,61:48,63-64:48,126:4
 ! Appearance
 XTerm*utf8:          2
 XTerm*eightBitInput: true
-XTerm*faceName:      Cascadia Code:pixelsize=16
+! XTerm*faceName:      Cascadia Code:pixelsize=16
+XTerm*faceName:			Go Mono:pixelsize=16
 
 XTerm*foreground:   #e6d4c3
 XTerm*background:   #282222

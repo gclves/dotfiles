@@ -1,8 +1,10 @@
 #!/bin/sh
 
-xwallpaper --center pic/puffy.jpg &
+xwallpaper --center pic/puffy2.jpg &
 xsetroot -cursor_name left_ptr &
 slstatus &
+
+xset b off
 
 # Desktop locking
 xidle &
