@@ -67,9 +67,11 @@ call plug#begin('~/.config/nvim/autoload/plugged')
     Plug 'scrooloose/NERDTree'
     Plug 'jiangmiao/auto-pairs'
     Plug 'fiatjaf/neuron.vim'
+    Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-bundler'
     Plug 'tpope/vim-rails'
+    Plug 'airblade/vim-gitgutter'
     Plug 'wellle/targets.vim'
     Plug 'vim-ruby/vim-ruby'
 call plug#end()
