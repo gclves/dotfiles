@@ -3,7 +3,9 @@
 (defvar gg--rbenv-path (concat (getenv "HOME") "/.rbenv")
   "Path to the rbenv installation.")
 
-(use-package rspec-mode)
+(use-package rspec-mode
+  :config
+  (define-key rspec-mode-map (kbd "<f9>") 'rspec-verify-matching))
 
 (use-package dumb-jump
   :config
