@@ -33,7 +33,7 @@ the loading process. This makes for a cleaner Emacs window.
         cursor-in-non-selected-windows t
         highlight-nonselected-windows nil
         bidi-display-reordering nil
-        blink-matching-paren nil
+        blink-matching-paren 'jump
         help-window-select t)
 #+END_SRC
 
