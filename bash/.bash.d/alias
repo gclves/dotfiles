@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+alias pp="ps axuf | pager"
+alias sum="xargs | tr ' ' '+' | bc" ## Usage: echo 1 2 3 | sum
+alias lz='ls -ltsraZ'
+alias e=$EDITOR
+alias vi=nvim

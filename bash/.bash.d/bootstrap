@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+. $BASHRC_D/boilerplate
+. $BASHRC_D/prompt
+. $BASHRC_D/fortune
+. $BASHRC_D/alias
+# . $BASHRC_D/rbenv
+. $BASHRC_D/nix
+. $BASHRC_D/notes
+

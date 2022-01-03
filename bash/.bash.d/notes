@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+NOTES_FILE=$HOME/sync/life.txt
+
+lf() {
+    $EDITOR $NOTES_FILE
+}
+
+nt() {
+    $PAGER $NOTES_FILE
+}
+

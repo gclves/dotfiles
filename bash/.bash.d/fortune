@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ -n "$(which verse)" ]; then
+    verse
+else
+    dig +short txt istheinternetonfire.com
+fi

@@ -926,16 +926,6 @@ cf. [[file:elisp/windower.el][windower.el]].
   (global-set-key (kbd "<s-S-right>") 'windower-swap-right)
 #+END_SRC
 
-** Elixir
-#+BEGIN_SRC emacs-lisp
-(use-package elixir-mode)
-#+END_SRC
-** ESS (R language)
-#+begin_src emacs-lisp
-  (use-package ess
-    :config
-    (setq ess-indent-offset 2))
-#+end_src
 ** Shell
 #+begin_src emacs-lisp
 (setq explicit-shell-file-name "/bin/zsh")
@@ -946,3 +936,4 @@ cf. [[file:elisp/windower.el][windower.el]].
   (use-package terraform-mode)
   (use-package terraform-doc)
 #+end_src
+

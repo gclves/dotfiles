@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+eval "$(rbenv init -)"
+export GEM_HOME=$HOME/.local/gems
+export PATH=$GEM_HOME/bin:$PATH
