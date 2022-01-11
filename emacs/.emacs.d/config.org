@@ -151,7 +151,7 @@ Control font size with the keyboard
       :config
       (ido-mode 1)
       (ido-vertical-mode 1)
-      (setq ido-vertical-define-keys 'C-n-and-C-p-only
+      (setq ido-vertical-define-keys 'C-n-C-p-up-and-down
             ido-vertical-show-count t))
 
     (ido-everywhere t)
@@ -188,6 +188,7 @@ Control font size with the keyboard
     (other-window -1))
 
   (global-set-key (kbd "C-S-w") (lambda () (interactive) (kill-buffer nil)))
+  (global-set-key (kbd "s-w") (lambda () (interactive) (kill-buffer nil)))
   (global-set-key (kbd "s-]") 'other-window)
   (global-set-key (kbd "s-[")  'another-window)
 
