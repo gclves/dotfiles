@@ -574,7 +574,7 @@ Unbelievably useful for SQL queries and arrays in code.
 ** Remapping out-of-reach commands
 #+BEGIN_SRC emacs-lisp
   ; mapping <escape> to 'keyboard-escape-quit doesn't seem to work for some reason, so we just translate
-  (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
+  ; (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
   (global-set-key (kbd "s-u") 'revert-buffer)
 #+END_SRC
 

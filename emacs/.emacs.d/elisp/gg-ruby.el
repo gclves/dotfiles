@@ -7,7 +7,9 @@
   :config
   (define-key rspec-mode-map (kbd "<f9>") 'rspec-verify-matching)
   (define-key rspec-mode-map (kbd "s-t") 'rspec-toggle-spec-and-target)
-  (define-key rspec-mode-keymap (kbd "s-t") 'rspec-toggle-spec-and-target))
+  (define-key rspec-mode-keymap (kbd "s-t") 'rspec-toggle-spec-and-target)
+
+  (evil-global-set-key 'normal (kbd "<leader>tm") 'rspec-verify-matching))
 
 (use-package dumb-jump
   :config
