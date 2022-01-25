@@ -39,9 +39,19 @@ nmap <backspace> %
 nmap <C-s> :w<cr>
 let mapleader = ","
 
+" fzf config
+map <Leader>. :Files<cr>
+if exists('$TMUX')
+  let g:fzf_layout = { 'tmux': '-p90%,60%' }
+else
+  let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
+endif
+autocmd! FileType fzf
+autocmd  FileType fzf set laststatus=0 noshowmode noruler
+  \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+
+set background=dark
 set termguicolors
-" colorscheme desert
-colorscheme morning
 
 set relativenumber
 
@@ -74,5 +84,17 @@ call plug#begin('~/.config/nvim/autoload/plugged')
     Plug 'airblade/vim-gitgutter'
     Plug 'wellle/targets.vim'
     Plug 'vim-ruby/vim-ruby'
+    Plug 'junegunn/fzf'
+    Plug 'junegunn/fzf.vim'
 call plug#end()
+
+if has('nvim')
+  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+
+  " Fix vim-tmux-navigator <C-h> https://git.io/viGRU
+  nmap <BS> <C-W>h
+
+  " Fix vim-tmux-navigator <C-h> https://git.io/vS5QH
+  nmap <BS> :<C-u>TmuxNavigateLeft<CR>
+endif
 
