@@ -1,0 +1,5 @@
+#!/bin/zsh
+
+eval $(ssh-agent)
+ssh-add -q --apple-load-keychain
+

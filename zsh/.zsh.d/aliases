@@ -1,0 +1,15 @@
+#!/bin/zsh
+
+
+alias vi=nvim
+alias v='nvim `git ls-files | fzf-tmux --preview "bat --style=numbers --color=always {}"`'
+alias bxr='bundle exec rspec'
+alias gs='git status'
+alias ll='ls -lha'
+
+mob-start() {
+  git checkout -b "$@" && \
+    git push origin "$@" --set-upstream && \
+    mob start --include-uncommitted-changes
+}
+
