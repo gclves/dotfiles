@@ -1,0 +1,7 @@
+#!/bin/sh
+
+TARGET="${1:-.}"
+
+cp $HOME/dotfiles/skel/shell.nix $TARGET
+echo 'use nix' > $TARGET/.envrc && direnv allow $TARGET
+

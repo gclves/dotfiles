@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-if [ -e /home/gg/.nix-profile/etc/profile.d/nix.sh ]; then 
-	. /home/gg/.nix-profile/etc/profile.d/nix.sh
+eval "$(direnv hook bash)"
+
+if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then 
+	. $HOME/.nix-profile/etc/profile.d/nix.sh
 fi
 
