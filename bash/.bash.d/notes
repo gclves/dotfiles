@@ -10,3 +10,8 @@ nt() {
     $PAGER $NOTES_FILE
 }
 
+TWTXT_FILE=$HOME/src/gclv.es/static/twtxt.txt
+twt() {
+    echo -e "`date +%FT%T%:z`\t$*" >> $TWTXT_FILE
+}
+
