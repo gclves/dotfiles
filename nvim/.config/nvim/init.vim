@@ -72,6 +72,16 @@ augroup rubypath
     autocmd FileType ruby setlocal suffixesadd+=.rb
 augroup END
 
+" Terminal
+tnoremap <Esc> <C-\><C-n>
+tnoremap <A-[> <Esc>
+tnoremap <a-h> <c-\><c-n><c-w>h
+tnoremap <a-j> <c-\><c-n><c-w>j
+tnoremap <a-k> <c-\><c-n><c-w>k
+tnoremap <a-l> <c-\><c-n><c-w>l
+" No line numbers on terminals
+autocmd TermOpen * setlocal nonumber norelativenumber
+
 call plug#begin('~/.config/nvim/autoload/plugged')
     Plug 'sheerun/vim-polyglot'
     Plug 'scrooloose/NERDTree'
