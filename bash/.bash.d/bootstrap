@@ -7,4 +7,5 @@
 # . $BASHRC_D/rbenv
 . $BASHRC_D/nix
 . $BASHRC_D/notes
+. $BASHRC_D/doing
 

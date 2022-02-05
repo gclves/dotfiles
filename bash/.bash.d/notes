@@ -13,5 +13,8 @@ nt() {
 TWTXT_FILE=$HOME/src/gclv.es/static/twtxt.txt
 twt() {
     echo -e "`date +%FT%T%:z`\t$*" >> $TWTXT_FILE
+    cd `dirname $TWTXT_FILE`
+    # FIXME: this has bad consequences in case I have a dirty worktree
+    git add $TWTXT_FILE && git commit -m "Bump twtxt" && git push
 }
 

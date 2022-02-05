@@ -1,1 +1,14 @@
-export PS1='\t % '
+#!/bin/bash
+
+_prompt_cmd() {
+	LAST=$?
+	if [ "$LAST" != "0" ]; then
+		STATUS="($LAST) "
+	else
+		STATUS=""
+	fi
+	PS1="$STATUS\\A \\w % "
+}
+
+export PROMPT_COMMAND=_prompt_cmd
+
