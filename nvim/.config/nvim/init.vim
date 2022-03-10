@@ -1,5 +1,30 @@
 set nocompatible
 
+call plug#begin('~/.config/nvim/autoload/plugged')
+    Plug 'sheerun/vim-polyglot'
+    Plug 'scrooloose/NERDTree'
+    Plug 'jiangmiao/auto-pairs'
+    Plug 'fiatjaf/neuron.vim'
+    Plug 'tpope/vim-fugitive'
+    Plug 'tpope/vim-surround'
+    Plug 'tpope/vim-bundler'
+    Plug 'tpope/vim-rails'
+    Plug 'tpope/vim-rbenv'
+    Plug 'airblade/vim-gitgutter'
+    Plug 'wellle/targets.vim'
+    Plug 'vim-ruby/vim-ruby'
+    Plug 'junegunn/fzf'
+    Plug 'junegunn/fzf.vim'
+    Plug 'preservim/vimux'
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'nvim-lua/popup.nvim'
+    Plug 'nvim-telescope/telescope.nvim'
+    Plug 'pyrho/nerveux.nvim'
+
+    " Optional but recommended for better markdown syntax
+    Plug 'plasticboy/vim-markdown'
+call plug#end()
+
 set ignorecase
 set smartcase
 
@@ -38,9 +63,15 @@ nmap <backspace> %
 
 nmap <C-s> :w<cr>
 let mapleader = ","
+map <Leader>b :w<cr>:make<cr>
+
+command JsonPrettyPrint %!jq .
 
 " fzf config
 map <Leader>. :Files<cr>
+map <Leader>F :Rg<cr>
+map <Leader>^ :Buffers<cr>
+
 if exists('$TMUX')
   let g:fzf_layout = { 'tmux': '-p90%,60%' }
 else
@@ -50,26 +81,38 @@ autocmd! FileType fzf
 autocmd  FileType fzf set laststatus=0 noshowmode noruler
   \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
 
-set background=dark
+set background=light
 set termguicolors
 
 set relativenumber
 
-" FIXME the below should be different
-" We should unconditionally set <Leader>r to run some `run` cmd
-" `run` should then check the FileType and dispatch to runners accordingly
-
 " Golang
-autocmd FileType go map <Leader>r :w<cr>:!go build && ./$(basename $PWD)<cr>
-autocmd FileType go map <Leader>t :w<cr>:!go test ./...<cr>
-autocmd FileType go map <Leader>f :w<cr>:!gofmt -w %<cr>:e! %<cr>
-autocmd FileType go map <Leader>b :w<cr>:!go build<cr>
+augroup gopath
+    autocmd!
+
+    autocmd FileType go setlocal suffixesadd+=.go
+
+    autocmd FileType go nnoremap <buffer> <Leader>r :w<cr>:!go build && ./$(basename $PWD)<cr>
+    autocmd FileType go nnoremap <buffer> <Leader>t :w<cr>:!go test ./...<cr>
+    autocmd FileType go nnoremap <buffer> <Leader>f :w<cr>:!gofmt -w %<cr>:e! %<cr>
+
+    autocmd FileType go 
+      \ compiler go | setl makeprg=go\ build
+augroup END
 
 " Ruby
+command RSpec !bundle exec rspec %
 augroup rubypath
     autocmd!
 
     autocmd FileType ruby setlocal suffixesadd+=.rb
+    autocmd FileType ruby nnoremap <buffer> <Leader>r :w<cr>:!ruby %<cr>
+    autocmd FileType ruby
+      \ if expand("%") =~# '_spec\.rb$' |
+      \   compiler rspec | setl makeprg=bundle\ exec\ rspec\ $*
+      \ else |
+      \   compiler ruby | setl makeprg=ruby\ -wc\ \"%:p\" 
+      \ endif
 augroup END
 
 " Terminal
@@ -82,21 +125,11 @@ tnoremap <a-l> <c-\><c-n><c-w>l
 " No line numbers on terminals
 autocmd TermOpen * setlocal nonumber norelativenumber
 
-call plug#begin('~/.config/nvim/autoload/plugged')
-    Plug 'sheerun/vim-polyglot'
-    Plug 'scrooloose/NERDTree'
-    Plug 'jiangmiao/auto-pairs'
-    Plug 'fiatjaf/neuron.vim'
-    Plug 'tpope/vim-fugitive'
-    Plug 'tpope/vim-surround'
-    Plug 'tpope/vim-bundler'
-    Plug 'tpope/vim-rails'
-    Plug 'airblade/vim-gitgutter'
-    Plug 'wellle/targets.vim'
-    Plug 'vim-ruby/vim-ruby'
-    Plug 'junegunn/fzf'
-    Plug 'junegunn/fzf.vim'
-call plug#end()
+autocmd FileType javascript setlocal sw=2 sta
+autocmd FileType typescript setlocal sw=2 sta
+
+" Vim
+autocmd FileType vim nnoremap <buffer> <Leader>b :w<cr>:source %<cr>
 
 if has('nvim')
   let $NVIM_TUI_ENABLE_TRUE_COLOR=1
@@ -107,4 +140,7 @@ if has('nvim')
   " Fix vim-tmux-navigator <C-h> https://git.io/vS5QH
   nmap <BS> :<C-u>TmuxNavigateLeft<CR>
 endif
+
+map <Leader>vp :VimuxPromptCommand<cr>
+map <Leader>vl :VimuxRunLastCommand<cr>
 
