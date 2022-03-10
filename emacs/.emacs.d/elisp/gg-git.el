@@ -3,7 +3,9 @@
 (use-package git-gutter
     :init (global-git-gutter-mode +1)
     :config
-    (setq git-gutter:update-interval 2)
+    (setq git-gutter:update-interval 2
+          git-gutter:hide-gutter t
+          git-gutter:linum-enabled nil)
     (mapc (lambda (pair)
             (set-face-background (car pair) (cdr pair))
             (set-face-foreground (car pair) (cdr pair)))
@@ -23,7 +25,9 @@
     ;; magit windows should open in the current window
     (add-to-list 'same-window-regexps "^magit: "))
 
-(use-package forge
-  :after magit)
+(use-package browse-at-remote
+  :config
+  (setq browse-at-remote-add-line-number-if-no-region-selected nil)
+  (global-set-key (kbd "C-c g g") 'browse-at-remote))
 
 (provide 'gg-git)

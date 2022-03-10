@@ -5,7 +5,7 @@
 
 (require 'gg-vendor)
 (require 'gg-use-package)
-(require 'gg-evil)
+; (require 'gg-evil)
 (require 'gg-git)
 (require 'gg-web-dev)
 (require 'gg-eshell)

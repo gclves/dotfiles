@@ -33,7 +33,16 @@
 
   (add-hook 'text-mode-hook 'setup-olivetti-mode))
 
-(use-package modus-themes)
+(use-package modus-themes
+  :init
+  (setq modus-themes-hl-line 'underline-accented
+        modus-themes-italic-constructs t
+        modus-themes-region 'no-extend
+        modus-themes-variable-pitch-ui t
+        modus-themes-subtle-line-numbers t)
+  (modus-themes-load-themes)
+  :config
+  (modus-themes-load-operandi))
 
 (defun setup-text-mode ()
   "Set up aesthetic adaptations for dealing with text.  This includes `variable-pitch-mode' and a bar cursor."
@@ -63,6 +72,11 @@
 
 ;; XXX: Do we really need to run all that as a hook?!
 (add-hook 'org-mode-hook 'setup-org)
+
+(use-package neuron-mode
+  :config
+  (setq neuron-executable "~/.nix-profile/bin/neuron"
+        neuron-default-zettelkasten-directory "~/src/neuron-site"))
 
 ;; Org-powered presentations
 (require 'epresent)
