@@ -20,7 +20,7 @@
     :bind
     (([f8] . magit-status)
      ("C-x g" . magit-status)
-     ("C-M-s-b" . magit-blame))
+     ("C-M-s-b" . magit-blame-addition))
     :config
     ;; magit windows should open in the current window
     (add-to-list 'same-window-regexps "^magit: "))
