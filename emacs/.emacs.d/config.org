@@ -95,9 +95,9 @@ don't depend on the OS.
 #+END_SRC
 ** Theme
 #+begin_src emacs-lisp
-  (use-package parchment-theme
-    :ensure t
-    :config (load-theme 'parchment t))
+  ;; (use-package parchment-theme
+  ;;   :ensure t
+  ;;   :config (load-theme 'parchment t))
 #+end_src
 ** Fonts and stuff
 Prettier Unicode symbols.
@@ -244,6 +244,7 @@ Control font size with the keyboard
     (interactive)
     (setq gg--scratch-buffer (buffer-name (current-buffer))))
 
+  (global-set-key (kbd "M-_") 'gg-mark-buffer-as-scratch)
   (global-set-key (kbd "M--") 'gg-quick-switch-to-scratch)
 
   (defun edit-config-file ()
@@ -272,6 +273,7 @@ Control font size with the keyboard
         (beginning-of-line)))
 
   (global-set-key (kbd "<home>") 'back-to-indentation-or-beginning)
+  (global-set-key (kbd "<end>") 'move-end-of-line)
   (global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
 
   (defun goto-line-with-feedback ()

@@ -16,7 +16,9 @@
   :config
   (setq org-roam-directory "~/Notes"
         org-roam-db-update-method 'immediate)
-  (add-hook 'after-init-hook 'org-roam-mode))
+  (add-hook 'after-init-hook 'org-roam-mode)
+  (global-set-key (kbd "C-c t") 'org-roam-dailies-find-today)
+  (global-set-key (kbd "C-'") 'org-roam-dailies-find-today))
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
@@ -39,7 +41,8 @@
         modus-themes-italic-constructs t
         modus-themes-region 'no-extend
         modus-themes-variable-pitch-ui t
-        modus-themes-subtle-line-numbers t)
+        modus-themes-subtle-line-numbers t
+        modus-themes-org-blocks 'gray-background)
   (modus-themes-load-themes)
   :config
   (modus-themes-load-operandi))
@@ -61,14 +64,13 @@
   (defvar gg--body-font "Go-18"
     "The font used for body text within prose.")
 
-  (cl-loop for face in '(fixed-pitch org-code org-block)
+  (cl-loop for face in '(org-code org-block org-table org-checkbox)
            do (set-face-attribute face nil :font gg--monospace-font))
 
+  ;; set the `fixed-pitch' to be the same family as the default
+  (set-face-attribute 'fixed-pitch nil :family (face-attribute 'default :family))
   (set-face-attribute 'variable-pitch nil :font gg--body-font)
-  (set-face-attribute 'org-quote nil :font gg--body-font :slant 'italic)
-  ;; org-table needs to be monospaced to be aligned
-  (set-face-attribute 'org-table nil :font "Monaco-19")
-  (set-face-attribute 'org-checkbox nil :font "Monaco-19"))
+  (set-face-attribute 'org-quote nil :font gg--body-font :slant 'italic))
 
 ;; XXX: Do we really need to run all that as a hook?!
 (add-hook 'org-mode-hook 'setup-org)
