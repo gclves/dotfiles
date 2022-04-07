@@ -11,7 +11,8 @@
 
 (use-package dumb-jump
   :config
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+  (setq xref-file-name-display 'project-relative))
 
 (use-package inf-ruby)
 (use-package ruby-test-mode)

@@ -1,3 +1,96 @@
+;;; Org-mode
+(use-package htmlize)
+
+(with-eval-after-load 'org
+  (define-key org-mode-map (kbd "M-[") 'org-set-tags)
+  (define-key org-mode-map (kbd "M-s-i") 'org-clock-in)
+  (define-key org-mode-map (kbd "M-s-o") 'org-clock-out)
+
+  (define-key org-mode-map (kbd "M-[") 'org-set-tags)
+  (define-key org-mode-map (kbd "C-c s") 'org-sort)
+  (define-key org-mode-map (kbd "<C-up>") 'org-up-element)
+  (define-key org-mode-map (kbd "<C-down>") 'org-down-element)
+  (define-key org-mode-map (kbd "s-t") 'org-todo)
+
+  ;; XXX these commands are global and shouldn't really be under C-c therefore
+  (global-set-key (kbd "C-c l") 'org-store-link)
+  (global-set-key (kbd "C-c b") 'org-switchb)
+  (global-set-key (kbd "C-c j") 'org-clock-goto)
+  (global-set-key (kbd "<f2>") 'org-capture)
+  (global-set-key (kbd "<f3>") 'org-agenda)
+  (global-set-key (kbd "C-c c") 'org-capture)
+  (global-set-key (kbd "C-c a") 'org-agenda)
+
+  (setq org-agenda-include-diary t
+        org-log-reschedule 'note
+        org-log-done 'time
+        org-enforce-todo-dependencies t
+        org-enforce-todo-checkbox-dependencies t
+        org-fontify-whole-heading-line t
+        org-fontify-done-headline t
+        org-fontify-quote-and-verse-blocks t
+        org-hide-emphasis-markers t
+        org-agenda-restore-windows-after-quit t
+        org-src-fontify-natively t     ; syntax highlight in code blocks
+        org-return-follows-link t      ; return opens links
+        org-confirm-babel-evaluate nil ; stop prompting for confirmation on eval
+        org-src-tab-acts-natively t    ; make TAB behave as expected in src blocks
+        org-support-shift-select nil
+        org-image-actual-width nil
+        org-html-doctype "html5"
+        org-startup-folded nil
+        org-refile-targets '((nil :maxlevel . 3)
+                             ("~/sync/Notes/work.org" :maxlevel . 1)
+                             ("~/sync/Notes/personal.org" :maxlevel . 3)
+                             ("~/sync/Notes/someday.org" :maxlevel . 1)
+                             ("~/sync/Notes/tickler.org" :maxlevel . 2))
+        org-outline-path-complete-in-steps nil ; Refile in a single go
+        org-refile-use-outline-path 'file      ; Refile to top-level
+        org-todo-keywords
+        '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)"))
+        org-highlight-latex-and-related '(latex script))
+
+  ;; run shell commands from org-babel
+  (defvar -org-babel-langs '((shell . t) (python . t) (ruby . t)))
+  (setq org-babel-python-command "python3")
+  (org-babel-do-load-languages 'org-babel-load-languages -org-babel-langs)
+
+  ;; display/update images in the buffer after I evaluate
+  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+
+  ;; Link to manpages from org
+  (org-add-link-type "man" 'org-man-open)
+  (add-hook 'org-store-link-functions 'org-man-store-link)
+
+  (defcustom org-man-command 'man
+    "The Emacs command to be used to display a man page."
+    :group 'org-link
+    :type '(choice (const man) (const woman)))
+
+  (defun org-man-open (path)
+    "Visit the manpage on PATH.
+PATH should be a topic that can be thrown at the man command."
+    (funcall org-man-command path))
+
+  (defun org-man-store-link ()
+    "Store a link to a manpage."
+    (when (memq major-mode '(Man-mode woman-mode))
+      ;; This is a man page, we do make this link
+      (let* ((page (org-man-get-page-name))
+             (link (concat "man:" page))
+             (description (format "Manpage for %s" page)))
+        (org-store-link-props
+         :type "man"
+         :link link
+         :description description))))
+
+  (defun org-man-get-page-name ()
+    "Extract the page name from the buffer name."
+    ;; This works for both `Man-mode' and `woman-mode'.
+    (if (string-match " \\(\\S-+\\)\\*" (buffer-name))
+        (match-string 1 (buffer-name))
+      (error "Cannot create link to this man page"))))
+
 (use-package deft
   :bind
   (([f5] . deft)
@@ -25,56 +118,6 @@
   :mode (("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode)))
 
-;; Look & Feel for long-form writing
-(use-package olivetti
-  :config
-  (defun setup-olivetti-mode ()
-    (interactive)
-    (olivetti-mode +1)
-    (olivetti-set-width 80))
-
-  (add-hook 'text-mode-hook 'setup-olivetti-mode))
-
-(use-package modus-themes
-  :init
-  (setq modus-themes-hl-line 'underline-accented
-        modus-themes-italic-constructs t
-        modus-themes-region 'no-extend
-        modus-themes-variable-pitch-ui t
-        modus-themes-subtle-line-numbers t
-        modus-themes-org-blocks 'gray-background)
-  (modus-themes-load-themes)
-  :config
-  (modus-themes-load-operandi))
-
-(defun setup-text-mode ()
-  "Set up aesthetic adaptations for dealing with text.  This includes `variable-pitch-mode' and a bar cursor."
-  (interactive)
-  (variable-pitch-mode +1)
-  (setq cursor-type 'bar)
-  (company-mode -1))
-
-(add-hook 'text-mode-hook 'setup-text-mode)
-
-(defun setup-org ()
-  "Set up typography for Org-mode."
-;;; Set up the typography
-  (defvar gg--monospace-font "Go Mono-18"
-    "The font used for Monospace text within prose.")
-  (defvar gg--body-font "Go-18"
-    "The font used for body text within prose.")
-
-  (cl-loop for face in '(org-code org-block org-table org-checkbox)
-           do (set-face-attribute face nil :font gg--monospace-font))
-
-  ;; set the `fixed-pitch' to be the same family as the default
-  (set-face-attribute 'fixed-pitch nil :family (face-attribute 'default :family))
-  (set-face-attribute 'variable-pitch nil :font gg--body-font)
-  (set-face-attribute 'org-quote nil :font gg--body-font :slant 'italic))
-
-;; XXX: Do we really need to run all that as a hook?!
-(add-hook 'org-mode-hook 'setup-org)
-
 (use-package neuron-mode
   :config
   (setq neuron-executable "~/.nix-profile/bin/neuron"
@@ -82,6 +125,10 @@
 
 ;; Org-powered presentations
 (require 'epresent)
+
+;; hugo and org-mode
+(use-package ox-hugo
+  :after ox)
 
 (provide 'gg-notes)
 ;;; gg-notes.el ends here

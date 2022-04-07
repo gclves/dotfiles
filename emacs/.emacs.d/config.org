@@ -13,30 +13,6 @@
 #+END_SRC
 
 * Window setup
-I like to set the appearance as early as possible to avoid glitches in
-the loading process. This makes for a cleaner Emacs window.
-
-#+BEGIN_SRC emacs-lisp
-  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-  (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-  (global-hl-line-mode t)
-  (fringe-mode 1) ; 1px fringe
-  (column-number-mode)
-  (blink-cursor-mode +1)
-  (tooltip-mode -1)
-  (menu-bar-mode -1)
-  (setq inhibit-startup-message t
-        initial-scratch-message ""
-        mode-line-default-help-echo nil
-        indicate-buffer-boundaries nil
-        indicate-empty-lines nil
-        cursor-in-non-selected-windows t
-        highlight-nonselected-windows nil
-        bidi-display-reordering nil
-        blink-matching-paren 'jump
-        help-window-select t)
-#+END_SRC
-
 This config file is used across multiple computers and different OSes, which
 render fonts quite differently. This might be overkill, but I want to have a
 list of options of fonts to render so we don't end up with garbage.
@@ -57,48 +33,6 @@ list of options of fonts to render so we don't end up with garbage.
 #+END_SRC
 
 * Look and feel
-** Other customizations
-This replaces some words with their Math symbols (eg: lambda => λ).
-#+BEGIN_SRC emacs-lisp
-  (global-prettify-symbols-mode 1)
-#+END_SRC
-
-Show time and status information on the modeline, so we can go fullscreen and
-don't depend on the OS.
-#+BEGIN_SRC emacs-lisp
-  (setq display-time-default-load-average 0) ; 1-minute load average
-  (setq display-time-24hr-format t)
-  (display-time-mode)
-  (display-battery-mode)
-#+END_SRC
-
-*** Highlight TODO entries
-#+BEGIN_SRC emacs-lisp
-  (use-package hl-todo
-    :init (global-hl-todo-mode)
-    :bind
-    (:map hl-todo-mode-map
-          ("C-c <up>" . hl-todo-previous)
-          ("C-c <down>" . hl-todo-next)
-          ("C-c T" . hl-todo-occur)))
-#+END_SRC
-*** Miscellaneous
-#+BEGIN_SRC emacs-lisp
-  ;;; Display rules at column 80
-  (setq-default fill-column 80)
-  (show-paren-mode +1)
-  (setq async-shell-command-display-buffer nil)
-#+END_SRC
-*** Pretty modeline
-#+BEGIN_SRC emacs-lisp
-  (use-package minions :config (minions-mode 1))
-#+END_SRC
-** Theme
-#+begin_src emacs-lisp
-  ;; (use-package parchment-theme
-  ;;   :ensure t
-  ;;   :config (load-theme 'parchment t))
-#+end_src
 ** Fonts and stuff
 Prettier Unicode symbols.
 #+BEGIN_SRC emacs-lisp
@@ -133,7 +67,7 @@ Control font size with the keyboard
 * Editing goodies
 ** Ain't nobody got time for typing "yes"/"no".
 #+BEGIN_SRC emacs-lisp
-  (defalias 'yes-or-no-p 'y-or-n-p)
+  (setq use-short-answers t)
 #+END_SRC
 ** Interactively do things
 #+BEGIN_SRC emacs-lisp
@@ -218,7 +152,8 @@ Control font size with the keyboard
     (global-undo-tree-mode)
     :config
     (setq undo-tree-visualizer-timestamps t
-          undo-tree-visualizer-diff t))
+          undo-tree-visualizer-diff t
+          undo-tree-history-directory-alist `(("." . ,(concat user-emacs-directory "undo-tree")))))
 
   (defvar gg--scratch-buffer "*scratch*"
     "The buffer currently marked as scratch.  Used by `gg-quick-switch-to-scratch'.")
@@ -694,109 +629,6 @@ required fonts installed (likely).
   (setq dired-dwim-target t)              ; move/copy files across dired buffers
 #+END_SRC
 
-** Org
-First off, to export to HTML, we need ~htmlize~.
-#+BEGIN_SRC emacs-lisp
-  (use-package htmlize)
-#+END_SRC
-
-Now, we begin configuring ~org~.
-#+BEGIN_SRC emacs-lisp
-  (use-package org
-    :bind
-    (:map org-mode-map
-          ("M-[" . org-set-tags)
-          ("C-c s" . org-sort)
-          ("<C-up>" . org-up-element)
-          ("<C-down>" . org-down-element)
-          ("s-t" . org-todo))
-    :config
-    (progn
-      ;; For some reason, declaring these in `:bind` won't work
-      ;; XXX these commands are global and shouldn't really be under C-c therefore
-      (global-set-key (kbd "C-c l") 'org-store-link)
-      (global-set-key (kbd "C-c b") 'org-switchb)
-      (global-set-key (kbd "C-c j") 'org-clock-goto)
-      (global-set-key (kbd "<f2>") 'org-capture)
-      (global-set-key (kbd "<f3>") 'org-agenda)
-      (global-set-key (kbd "C-c c") 'org-capture)
-      (global-set-key (kbd "C-c a") 'org-agenda)
-
-      (define-key org-mode-map (kbd "M-s-i") 'org-clock-in)
-      (define-key org-mode-map (kbd "M-s-o") 'org-clock-out)
-
-      ;; run shell commands from org-babel
-      (defvar -org-babel-langs '((shell . t) (python . t) (ruby . t)))
-      (setq org-babel-python-command "python3")
-      (org-babel-do-load-languages 'org-babel-load-languages -org-babel-langs)
-
-      ;; display/update images in the buffer after I evaluate
-      (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
-
-      ;; Link to manpages from org
-      (org-add-link-type "man" 'org-man-open)
-      (add-hook 'org-store-link-functions 'org-man-store-link)
-
-      (defcustom org-man-command 'man
-        "The Emacs command to be used to display a man page."
-        :group 'org-link
-        :type '(choice (const man) (const woman)))
-
-      (defun org-man-open (path)
-        "Visit the manpage on PATH.
-  PATH should be a topic that can be thrown at the man command."
-        (funcall org-man-command path))
-
-      (defun org-man-store-link ()
-        "Store a link to a manpage."
-        (when (memq major-mode '(Man-mode woman-mode))
-          ;; This is a man page, we do make this link
-          (let* ((page (org-man-get-page-name))
-                 (link (concat "man:" page))
-                 (description (format "Manpage for %s" page)))
-            (org-store-link-props
-             :type "man"
-             :link link
-             :description description))))
-
-      (defun org-man-get-page-name ()
-        "Extract the page name from the buffer name."
-        ;; This works for both `Man-mode' and `woman-mode'.
-        (if (string-match " \\(\\S-+\\)\\*" (buffer-name))
-            (match-string 1 (buffer-name))
-          (error "Cannot create link to this man page")))
-
-      (setq org-agenda-include-diary t
-            org-log-reschedule 'note
-            org-log-done 'time
-            org-enforce-todo-dependencies t
-            org-enforce-todo-checkbox-dependencies t
-            org-fontify-whole-heading-line t
-            org-fontify-done-headline t
-            org-fontify-quote-and-verse-blocks t
-            org-hide-emphasis-markers t
-            org-agenda-restore-windows-after-quit t
-            org-src-fontify-natively t     ; syntax highlight in code blocks
-            org-return-follows-link t      ; return opens links
-            org-confirm-babel-evaluate nil ; stop prompting for confirmation on eval
-            org-src-tab-acts-natively t    ; make TAB behave as expected in src blocks
-            org-support-shift-select nil
-            org-image-actual-width nil
-            org-html-doctype "html5"
-            org-startup-folded nil
-            org-refile-targets '((nil :maxlevel . 3)
-                                 ("~/sync/Notes/work.org" :maxlevel . 1)
-                                 ("~/sync/Notes/personal.org" :maxlevel . 3)
-                                 ("~/sync/Notes/someday.org" :maxlevel . 1)
-                                 ("~/sync/Notes/tickler.org" :maxlevel . 2))
-            org-outline-path-complete-in-steps nil ; Refile in a single go
-            org-refile-use-outline-path 'file      ; Refile to top-level
-            org-todo-keywords
-            '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))))
-
-  (setq org-highlight-latex-and-related '(latex script))
-#+END_SRC
-
 ** HTTP and REST
 Incredibly useful stuff.
 #+BEGIN_SRC emacs-lisp
@@ -815,7 +647,8 @@ Compile
     (ansi-color-apply-on-region compilation-filter-start (point))
     (toggle-read-only))
   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
-  (setq compilation-scroll-output t)
+  (setq compilation-scroll-output t
+        next-error-message-highlight t)
 #+END_SRC
 
 * OSX-specific
@@ -882,6 +715,8 @@ quite a lot. This is so my =init.el= doesn't get littered by auto-generated stuf
   (global-set-key (kbd "C-x C-b") 'ibuffer)
 
   (global-unset-key (kbd "s-t"))
+
+  (setq mode-line-compact t)
 #+END_SRC
 
 ** Making new buffers and windows
@@ -939,4 +774,3 @@ cf. [[file:elisp/windower.el][windower.el]].
   (use-package terraform-mode)
   (use-package terraform-doc)
 #+end_src
-
