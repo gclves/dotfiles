@@ -98,20 +98,9 @@ PATH should be a topic that can be thrown at the man command."
   :config
   (setq deft-extensions '("org" "md" "txt")
         deft-recursive t
-        deft-default-extension "org"
+        deft-default-extension "md"
         deft-directory "~/Notes"
         deft-new-file-format "%Y%m%d%H%M"))
-
-(use-package org-roam
-  :bind
-  (:map org-mode-map
-        ("C-c i" . org-roam-insert))
-  :config
-  (setq org-roam-directory "~/Notes"
-        org-roam-db-update-method 'immediate)
-  (add-hook 'after-init-hook 'org-roam-mode)
-  (global-set-key (kbd "C-c t") 'org-roam-dailies-find-today)
-  (global-set-key (kbd "C-'") 'org-roam-dailies-find-today))
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)

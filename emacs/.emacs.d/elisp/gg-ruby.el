@@ -5,7 +5,7 @@
 
 (use-package rspec-mode
   :config
-  (define-key rspec-mode-map (kbd "<f9>") 'rspec-verify-matching)
+  (global-set-key (kbd "<f6>") 'rspec-rerun)
   (define-key rspec-mode-map (kbd "s-t") 'rspec-toggle-spec-and-target)
   (define-key rspec-mode-keymap (kbd "s-t") 'rspec-toggle-spec-and-target))
 

@@ -41,4 +41,7 @@
   (setenv "NODE_NO_READLINE" "1")       ; avoid fancy terminal codes
   (pop-to-buffer (make-comint "node-repl" "node" nil "--interactive")))
 
+(with-eval-after-load 'js
+  (setq js-indent-level 2))
+
 (provide 'gg-web-dev)

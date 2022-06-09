@@ -49,7 +49,7 @@
 
   (add-hook 'text-mode-hook 'setup-olivetti-mode))
 
-;;; Modus themes
+;; Modus themes
 ;; Tweak the themes
 (setq modus-themes-hl-line '(underline accented)
       modus-themes-italic-constructs t

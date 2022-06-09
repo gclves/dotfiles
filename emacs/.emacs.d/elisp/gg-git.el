@@ -28,6 +28,7 @@
 (use-package browse-at-remote
   :config
   (setq browse-at-remote-add-line-number-if-no-region-selected nil)
-  (global-set-key (kbd "C-c g g") 'browse-at-remote))
+  (global-set-key (kbd "C-c g g") 'browse-at-remote)
+  (global-set-key (kbd "C-c g G") 'browse-at-remote-kill))
 
 (provide 'gg-git)

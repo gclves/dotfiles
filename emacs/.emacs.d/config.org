@@ -578,7 +578,7 @@ Unbelievably useful for SQL queries and arrays in code.
     (define-key emmet-mode-keymap (kbd "<C-return>") nil))
 
   (use-package web-mode
-    :mode ("\\.html\\'" "\\.tsx\\'" "\\.jsx\\'" "\\.php\\'" "\\.css\\'" "\\.tpl\\'" "\\.less\\'")
+    :mode ("\\.html\\'" "\\.html\\.erb\\'" "\\.tsx\\'" "\\.jsx\\'" "\\.php\\'" "\\.css\\'" "\\.tpl\\'" "\\.less\\'")
     :bind
     (:map web-mode-map
           ("C-M-u" . web-mode-element-parent)
