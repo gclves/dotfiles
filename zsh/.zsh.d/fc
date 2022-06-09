@@ -14,3 +14,5 @@ alias ssh-us-prd='ssh "$(mesosslave-admin us-east-1-production)"'
 alias rstaging='bin/remote staging || (bin/remote-kill staging && bin/remote staging)'
 alias rprod='bin/remote production || (bin/remote-kill production && bin/remote production)'
 
+alias jira="open 'https://jira.fundingcircle.com/secure/RapidBoard.jspa?rapidView=962'"
+
