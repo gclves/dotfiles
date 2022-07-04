@@ -187,7 +187,7 @@ Control font size with the keyboard
     (interactive)
     (find-file "~/.emacs.d/config.org"))
 
-  (defvar gg-todo-file (expand-file-name "~/TODO.org")
+  (defvar gg-todo-file (expand-file-name "~/TODO")
     "Location of my TODO file.")
 
   (defun gg-todo ()
@@ -226,6 +226,9 @@ Control font size with the keyboard
     (("s-j" . avy-goto-char-timer))
     :config
     (define-key isearch-mode-map (kbd "s-j") 'avy-isearch))
+
+  (global-set-key (kbd "M-<up>") 'backward-paragraph)
+  (global-set-key (kbd "M-<down>") 'forward-paragraph)
 #+END_SRC
 
 ** Get rid of useless whitespace
