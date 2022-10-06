@@ -49,23 +49,17 @@
 
   (add-hook 'text-mode-hook 'setup-olivetti-mode))
 
-;; Modus themes
-;; Tweak the themes
-(setq modus-themes-hl-line '(underline accented)
-      modus-themes-italic-constructs t
-      modus-themes-region '(no-extend)
-      modus-themes-variable-pitch-ui t
-      modus-themes-subtle-line-numbers t
-      modus-themes-org-blocks 'gray-background
-      modus-themes-subtle-line-numbers nil)
-
-;; Load the themes
-(modus-themes-load-themes)
-(modus-themes-load-operandi)
-
 ;; Switch between light and dark themes
-(run-at-time "07:00" (* 60 60 24) (lambda () (modus-themes-load-operandi)))
-(run-at-time "18:00" (* 60 60 24) (lambda () (modus-themes-load-vivendi)))
+(run-at-time "07:00" (* 60 60 24) (lambda ()
+                                    (disable-theme 'twilight)
+                                    (load-theme 'parchment t)))
+(run-at-time "18:00" (* 60 60 24) (lambda ()
+                                    (disable-theme 'parchment)
+                                    (load-theme 'twilight t)))
+
+(use-package parchment-theme
+  :config
+  (load-theme 'parchment t))
 
 (defun setup-text-mode ()
   "Set up aesthetic adaptations for dealing with text.  This includes `variable-pitch-mode' and a bar cursor."
@@ -96,6 +90,20 @@
 (with-eval-after-load 'org
   (setq org-startup-indented t) ; Enable `org-indent-mode' by default
   (add-hook 'org-mode-hook 'setup-org-typography))
+
+(defun load-font-from-options (font-list)
+  "Set the default font to the first available from FONT-LIST.
+Given a list of cons cells containing font name and font size,
+call `set-default-font' on the first one that's available"
+  (let ((supported-fonts (font-family-list))
+        (format-font-name (lambda (font)
+                            (destructuring-bind (font-name . font-size) font
+                              (concat font-name "-" (number-to-string font-size))))))
+    (some (lambda (font) (when (member (car font) supported-fonts)
+                           (set-frame-font (funcall format-font-name font))
+                           t))
+          font-list)))
+
 
 (provide 'gg-ui)
 ;;; gg-ui.el ends here

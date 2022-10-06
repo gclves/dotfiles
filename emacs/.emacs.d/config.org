@@ -17,21 +17,6 @@ This config file is used across multiple computers and different OSes, which
 render fonts quite differently. This might be overkill, but I want to have a
 list of options of fonts to render so we don't end up with garbage.
 
-#+BEGIN_SRC emacs-lisp
-  (defun load-font-from-options (font-list)
-    "Set the default font to the first available from FONT-LIST.
-  Given a list of cons cells containing font name and font size,
-  call `set-default-font' on the first one that's available"
-    (let ((supported-fonts (font-family-list))
-          (format-font-name (lambda (font)
-                              (destructuring-bind (font-name . font-size) font
-                                (concat font-name "-" (number-to-string font-size))))))
-      (some (lambda (font) (when (member (car font) supported-fonts)
-                             (set-frame-font (funcall format-font-name font))
-                             t))
-            font-list)))
-#+END_SRC
-
 * Look and feel
 ** Fonts and stuff
 Prettier Unicode symbols.
@@ -125,6 +110,7 @@ Control font size with the keyboard
   (global-set-key (kbd "s-w") (lambda () (interactive) (kill-buffer nil)))
   (global-set-key (kbd "s-]") 'other-window)
   (global-set-key (kbd "s-[")  'another-window)
+  (global-set-key (kbd "M-.") 'xref-find-definitions-other-window)
 
   (global-set-key (kbd "M-4") 'split-window-below)
   (global-set-key (kbd "M-$") 'split-window-right)
