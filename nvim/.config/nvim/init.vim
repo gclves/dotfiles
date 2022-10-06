@@ -20,6 +20,8 @@ call plug#begin('~/.config/nvim/autoload/plugged')
     Plug 'nvim-lua/popup.nvim'
     Plug 'nvim-telescope/telescope.nvim'
     Plug 'pyrho/nerveux.nvim'
+    Plug 'thoughtbot/vim-rspec'
+    Plug 'tpope/vim-dispatch'
 
     " Optional but recommended for better markdown syntax
     Plug 'plasticboy/vim-markdown'
@@ -81,7 +83,7 @@ autocmd! FileType fzf
 autocmd  FileType fzf set laststatus=0 noshowmode noruler
   \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
 
-set background=light
+set background=dark
 set termguicolors
 
 set relativenumber
@@ -101,7 +103,7 @@ augroup gopath
 augroup END
 
 " Ruby
-command RSpec !bundle exec rspec %
+" command RSpec !bundle exec rspec %
 augroup rubypath
     autocmd!
 
@@ -113,6 +115,21 @@ augroup rubypath
       \ else |
       \   compiler ruby | setl makeprg=ruby\ -wc\ \"%:p\" 
       \ endif
+
+    "let g:rspec_command = "Dispatch rspec {spec}"
+
+    " RSpec.vim mappings
+    map <Leader>t :call RunCurrentSpecFile()<CR>
+    map <Leader>s :call RunNearestSpec()<CR>
+    map <Leader>l :call RunLastSpec()<CR>
+    map <Leader>a :call RunAllSpecs()<CR>
+augroup END
+
+augroup pythonpath
+	autocmd!
+
+	autocmd FileType python setlocal suffixesadd+=.py
+	autocmd FileType python nnoremap <buffer> <Leader>r :w<cr>:!python %<cr>
 augroup END
 
 " Terminal
