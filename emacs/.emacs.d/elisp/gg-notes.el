@@ -1,6 +1,7 @@
 ;;; Org-mode
 (use-package htmlize)
 
+;; FIXME: I don't use org-mode anymore --> get rid of all of this
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "M-[") 'org-set-tags)
   (define-key org-mode-map (kbd "M-s-i") 'org-clock-in)
@@ -96,7 +97,7 @@ PATH should be a topic that can be thrown at the man command."
   (([f5] . deft)
    ("C-x C-g" . deft-find-file))
   :config
-  (setq deft-extensions '("org" "md" "txt")
+  (setq deft-extensions '("md" "org" "txt")
         deft-recursive t
         deft-default-extension "md"
         deft-directory "~/Notes"
@@ -107,17 +108,8 @@ PATH should be a topic that can be thrown at the man command."
   :mode (("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode)))
 
-(use-package neuron-mode
-  :config
-  (setq neuron-executable "~/.nix-profile/bin/neuron"
-        neuron-default-zettelkasten-directory "~/src/neuron-site"))
-
 ;; Org-powered presentations
 (require 'epresent)
-
-;; hugo and org-mode
-(use-package ox-hugo
-  :after ox)
 
 (provide 'gg-notes)
 ;;; gg-notes.el ends here

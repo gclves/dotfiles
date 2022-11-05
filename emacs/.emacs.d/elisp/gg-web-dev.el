@@ -33,8 +33,6 @@
     (add-hook 'typescript-mode-hook 'setup-tide-mode)
     (add-hook 'js2-mode-hook 'setup-tide-mode)))
 
-(use-package mocha)
-
 (defun gg-node-repl ()
   "Start a NodeJS REPL in comint mode."
   (interactive)

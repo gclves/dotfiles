@@ -49,6 +49,9 @@
 
   (add-hook 'text-mode-hook 'setup-olivetti-mode))
 
+(use-package twilight-theme)
+(use-package parchment-theme)
+
 ;; Switch between light and dark themes
 (run-at-time "07:00" (* 60 60 24) (lambda ()
                                     (disable-theme 'twilight)
@@ -56,10 +59,6 @@
 (run-at-time "18:00" (* 60 60 24) (lambda ()
                                     (disable-theme 'parchment)
                                     (load-theme 'twilight t)))
-
-(use-package parchment-theme
-  :config
-  (load-theme 'parchment t))
 
 (defun setup-text-mode ()
   "Set up aesthetic adaptations for dealing with text.  This includes `variable-pitch-mode' and a bar cursor."
