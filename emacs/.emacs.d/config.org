@@ -12,11 +12,6 @@
         system-time-locale "C")
 #+END_SRC
 
-* Window setup
-This config file is used across multiple computers and different OSes, which
-render fonts quite differently. This might be overkill, but I want to have a
-list of options of fonts to render so we don't end up with garbage.
-
 * Look and feel
 ** Fonts and stuff
 Prettier Unicode symbols.
@@ -406,12 +401,6 @@ Control font size with the keyboard
 #+END_SRC
 
 ** Flycheck + Flymake
-All the cool kids seem to be using it.
-#+BEGIN_SRC emacs-lisp
-  (use-package flycheck)
-#+END_SRC
-
-Emacs 26.1 introduced a completely redesigned Flymake mode, which I'm testing now!
 #+BEGIN_SRC emacs-lisp
   (add-hook 'prog-mode-hook 'flymake-mode)
 #+END_SRC

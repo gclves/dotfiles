@@ -5,11 +5,6 @@
   :config
   (setq typescript-indent-level 2))
 
-(use-package prettier-js
-  :config
-  (progn
-    (add-hook 'tide-mode-hook 'prettier-js-mode)))
-
 (use-package tide
   :bind
   (:map tide-mode-map

@@ -90,6 +90,26 @@
   (setq org-startup-indented t) ; Enable `org-indent-mode' by default
   (add-hook 'org-mode-hook 'setup-org-typography))
 
+(defvar gg--font-list
+  '(("Fantasque Sans Mono" . 16)
+    ("Go Mono" . 17)
+    ("PT Mono" . 17)
+    ("Cascadia Code" . 15)
+    ("Fira Mono" . 16)
+    ("Monaco" . 15)
+    ("Inconsolata" . 19))
+  "List (Font_Family . Font_Size) pairs to use, in order of preference.")
+
+(defun load-fonts-for-frame (frame)
+  "Set the preferred fonts for a newly-created frame.  Actually disregards FRAME."
+  (load-font-from-options gg--font-list))
+
+;; TODO: figure out why the hook doesn't get invoked on initialization
+(load-font-from-options gg--font-list)
+
+(add-to-list 'after-make-frame-functions 'gg--load-fonts-for-frame t)
+
+;; TODO: receive the FRAME as a parameter here
 (defun load-font-from-options (font-list)
   "Set the default font to the first available from FONT-LIST.
 Given a list of cons cells containing font name and font size,
@@ -99,8 +119,8 @@ call `set-default-font' on the first one that's available"
                             (destructuring-bind (font-name . font-size) font
                               (concat font-name "-" (number-to-string font-size))))))
     (some (lambda (font) (when (member (car font) supported-fonts)
-                           (set-frame-font (funcall format-font-name font))
-                           t))
+                      (set-frame-font (funcall format-font-name font))
+                      t))
           font-list)))
 
 

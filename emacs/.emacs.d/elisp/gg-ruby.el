@@ -18,7 +18,10 @@
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
   (setq xref-file-name-display 'project-relative))
 
-(use-package inf-ruby)
+(use-package inf-ruby
+  :config
+  (add-hook 'after-init-hook 'inf-ruby-switch-setup))
+
 (use-package ruby-test-mode)
 (use-package ruby-electric
   :config
