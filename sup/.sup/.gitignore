@@ -1,0 +1,8 @@
+*.bak
+exception-log.txt
+*.mbox
+# This one contains filters and people's email addresses -- TODO source it
+hooks/before-add-message.rb
+xapian/*
+log
+lock
