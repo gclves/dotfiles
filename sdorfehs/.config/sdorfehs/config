@@ -1,0 +1,42 @@
+set onlyborder 0
+set padding 10 5 10 5
+set barpadding 14 3
+set gap 2
+set barinpadding 0
+set ignoreresizehints 1
+
+# Function keys
+definekey top XF86MonBrightnessUp exec light -A 10
+definekey top XF86MonBrightnessDown exec light -U 10
+
+definekey top F3 focus
+definekey top F4 next
+definekey top S-F4 prev
+definekey top F6 delete
+definekey top S-F6 kill
+
+definekey top F10 exec kitty
+definekey top F12 exec rofi -modi drun,run -show drun
+definekey top S-F12 exec
+
+# Quickly switch vdesktops
+definekey top M-F1 vselect 0
+definekey top M-F2 vselect 1
+definekey top M-F3 vselect 2
+definekey top M-F4 vselect 3
+
+definekey top M-S-F1 vmove 0
+definekey top M-S-F2 vmove 1
+definekey top M-S-F3 vmove 2
+definekey top M-S-F4 vmove 3
+
+# Override terminal
+bind c exec kitty
+bind C-c exec kitty
+
+exec kitty sup
+hsplit
+# TODO: Set the proportions
+focusright
+exec kitty
+
