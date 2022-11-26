@@ -96,7 +96,7 @@ augroup gopath
 
     autocmd FileType go nnoremap <buffer> <Leader>r :w<cr>:!go build && ./$(basename $PWD)<cr>
     autocmd FileType go nnoremap <buffer> <Leader>t :w<cr>:!go test ./...<cr>
-    autocmd FileType go nnoremap <buffer> <Leader>f :w<cr>:!gofmt -w %<cr>:e! %<cr>
+    autocmd FileType go nnoremap <buffer> <Leader>f :w<cr>:!goimports -w %<cr>:e! %<cr>
 
     autocmd FileType go 
       \ compiler go | setl makeprg=go\ build
