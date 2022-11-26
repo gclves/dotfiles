@@ -8,4 +8,5 @@
 . $BASHRC_D/nix
 . $BASHRC_D/notes
 . $BASHRC_D/doing
-
+. $BASHRC_D/scala
+. $BASHRC_D/golang

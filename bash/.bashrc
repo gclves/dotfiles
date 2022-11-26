@@ -105,22 +105,16 @@ fi
 unset use_color sh
 
 # kitty (terminal) completions
-if [ "" = "$(which kitty)" ] ; then
-    source <(kitty + complete setup bash)
-fi
+# if [ "" = "$(which kitty 2> /dev/null)" ] ; then
+#     source <(kitty + complete setup bash)
+# fi
 
 export MAIL=/var/mail/gsg
 export EDITOR="nvim"
-export PLAN9=/usr/local/plan9
-export PATH=$PATH:$HOME/.local/bin:$HOME/bin:node_modules/.bin:$PLAN9/bin:$HOME/Library/Python/2.7/bin
 
 # Aliases
 alias e=$EDITOR
 alias vi=nvim
-
-function z() {
-    neuron -d $HOME/sync/zettelkasten $@
-}
 
 function lt() { ls -ltrsa "$@" | tail; }
 function psgrep() { ps axuf | grep -v grep | grep "$@" -i --color=auto; }
