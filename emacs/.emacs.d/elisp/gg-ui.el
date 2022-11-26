@@ -1,3 +1,5 @@
+(require 'cl)
+
 ;; Window setup
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -100,15 +102,6 @@
     ("Inconsolata" . 19))
   "List (Font_Family . Font_Size) pairs to use, in order of preference.")
 
-(defun load-fonts-for-frame (frame)
-  "Set the preferred fonts for a newly-created frame.  Actually disregards FRAME."
-  (load-font-from-options gg--font-list))
-
-;; TODO: figure out why the hook doesn't get invoked on initialization
-(load-font-from-options gg--font-list)
-
-(add-to-list 'after-make-frame-functions 'gg--load-fonts-for-frame t)
-
 ;; TODO: receive the FRAME as a parameter here
 (defun load-font-from-options (font-list)
   "Set the default font to the first available from FONT-LIST.
@@ -122,6 +115,16 @@ call `set-default-font' on the first one that's available"
                       (set-frame-font (funcall format-font-name font))
                       t))
           font-list)))
+
+(defun load-fonts-for-frame (frame)
+  "Set the preferred fonts for a newly-created frame.  Actually disregards FRAME."
+  (load-font-from-options gg--font-list))
+
+;; TODO: figure out why the hook doesn't get invoked on initialization
+(load-font-from-options gg--font-list)
+
+(add-to-list 'after-make-frame-functions 'gg--load-fonts-for-frame t)
+
 
 
 (provide 'gg-ui)

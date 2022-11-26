@@ -100,7 +100,7 @@ PATH should be a topic that can be thrown at the man command."
   (setq deft-extensions '("md" "org" "txt")
         deft-recursive t
         deft-default-extension "md"
-        deft-directory "~/Notes"
+        deft-directory "~/sync/Notes"
         deft-new-file-format "%Y%m%d%H%M"))
 
 (use-package markdown-mode

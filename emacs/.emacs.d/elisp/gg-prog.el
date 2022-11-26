@@ -46,4 +46,12 @@
   (lsp-mode . dap-mode)
   (lsp-mode . dap-ui-mode))
 
+;; Golang
+(use-package go-mode
+  :config
+  (add-hook 'go-mode-hook 'lsp-deferred)
+  (add-hook 'before-save-hook 'gofmt-before-save))
+
+(use-package go-playground)
+
 (provide 'gg-prog)
