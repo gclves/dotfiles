@@ -54,4 +54,16 @@
 
 (use-package go-playground)
 
+;; Racket
+(use-package racket-mode
+  :config
+  ;; Configuration for Pie (for The Little Typer)
+  (put 'claim 'racket-indent-function 2)
+  (put '-> 'racket-indent-function 2)
+  (put 'Pi 'racket-indent-function 2)
+
+  (add-hook 'racket-mode-hook 'paredit-mode))
+
+(setq-default tab-width 4)
+
 (provide 'gg-prog)
