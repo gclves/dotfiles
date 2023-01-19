@@ -15,5 +15,6 @@
 (require 'gg-ruby)
 (require 'gg-help)
 (require 'gg-scala)
+(require 'gg-mail)
 
 (org-babel-load-file (expand-file-name "config.org" user-emacs-directory))

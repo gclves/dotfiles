@@ -44,12 +44,12 @@
 ;; Look & Feel for long-form writing
 (use-package olivetti
   :config
-  (defun setup-olivetti-mode ()
+  (defun gg--setup-olivetti-mode ()
     (interactive)
     (olivetti-mode +1)
-    (olivetti-set-width 80))
+    (olivetti-set-width 80)))
 
-  (add-hook 'text-mode-hook 'setup-olivetti-mode))
+;;   (add-hook 'text-mode-hook 'gg--setup-olivetti-mode))
 
 (use-package twilight-theme)
 (use-package parchment-theme)
@@ -63,7 +63,8 @@
                                     (load-theme 'twilight t)))
 
 (defun setup-text-mode ()
-  "Set up aesthetic adaptations for dealing with text.  This includes `variable-pitch-mode' and a bar cursor."
+  "Set up aesthetic adaptations for dealing with text.
+This includes `variable-pitch-mode' and a bar cursor."
   (interactive)
   (variable-pitch-mode +1)
   (setq cursor-type 'bar)
@@ -73,7 +74,7 @@
 
 (defun setup-org-typography ()
   "Set up typography for Org-mode."
-;;; Set up the typography
+  ;; Set up the typography
   (defvar gg--monospace-font "Go Mono-18"
     "The font used for Monospace text within prose.")
   (defvar gg--body-font "Go-18"
@@ -93,11 +94,12 @@
   (add-hook 'org-mode-hook 'setup-org-typography))
 
 (defvar gg--font-list
-  '(("Fantasque Sans Mono" . 16)
+  '(
+    ("Fira Mono" . 14)
+    ("Fantasque Sans Mono" . 17)
     ("Go Mono" . 17)
     ("PT Mono" . 17)
     ("Cascadia Code" . 15)
-    ("Fira Mono" . 16)
     ("Monaco" . 15)
     ("Inconsolata" . 19))
   "List (Font_Family . Font_Size) pairs to use, in order of preference.")
@@ -109,14 +111,14 @@ Given a list of cons cells containing font name and font size,
 call `set-default-font' on the first one that's available"
   (let ((supported-fonts (font-family-list))
         (format-font-name (lambda (font)
-                            (destructuring-bind (font-name . font-size) font
+                            (cl-destructuring-bind (font-name . font-size) font
                               (concat font-name "-" (number-to-string font-size))))))
-    (some (lambda (font) (when (member (car font) supported-fonts)
+    (cl-some (lambda (font) (when (member (car font) supported-fonts)
                       (set-frame-font (funcall format-font-name font))
                       t))
           font-list)))
 
-(defun load-fonts-for-frame (frame)
+(defun gg--load-fonts-for-frame (frame)
   "Set the preferred fonts for a newly-created frame.  Actually disregards FRAME."
   (load-font-from-options gg--font-list))
 
@@ -124,8 +126,6 @@ call `set-default-font' on the first one that's available"
 (load-font-from-options gg--font-list)
 
 (add-to-list 'after-make-frame-functions 'gg--load-fonts-for-frame t)
-
-
 
 (provide 'gg-ui)
 ;;; gg-ui.el ends here

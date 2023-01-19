@@ -65,14 +65,17 @@ nmap <backspace> %
 
 nmap <C-s> :w<cr>
 let mapleader = ","
-map <Leader>b :w<cr>:make<cr>
+map <Leader>B :w<cr>:make<cr>
 
 command JsonPrettyPrint %!jq .
 
 " fzf config
 map <Leader>. :Files<cr>
 map <Leader>F :Rg<cr>
-map <Leader>^ :Buffers<cr>
+map <Leader>b :Buffers<cr>
+
+" Close buffer without closing the split
+nmap ,d :b#<bar>bd#<CR>
 
 if exists('$TMUX')
   let g:fzf_layout = { 'tmux': '-p90%,60%' }
@@ -116,7 +119,7 @@ augroup rubypath
       \   compiler ruby | setl makeprg=ruby\ -wc\ \"%:p\" 
       \ endif
 
-    "let g:rspec_command = "Dispatch rspec {spec}"
+    let g:rspec_command = "Dispatch RUBYOPT='-W0' bundle exec rspec {spec}"
 
     " RSpec.vim mappings
     map <Leader>t :call RunCurrentSpecFile()<CR>

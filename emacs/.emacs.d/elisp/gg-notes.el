@@ -3,6 +3,7 @@
 
 ;; FIXME: I don't use org-mode anymore --> get rid of all of this
 (with-eval-after-load 'org
+  (require 'ox-md)
   (define-key org-mode-map (kbd "M-[") 'org-set-tags)
   (define-key org-mode-map (kbd "M-s-i") 'org-clock-in)
   (define-key org-mode-map (kbd "M-s-o") 'org-clock-out)
