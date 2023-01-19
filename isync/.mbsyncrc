@@ -1,0 +1,28 @@
+IMAPAccount Migadu
+Host imap.migadu.com
+User admin@gclv.es
+PassCmd "security find-generic-password -s migadu -a admin@gclv.es -w"
+Port 993
+SSLType IMAPS
+SSLVersions TLSv1.2
+AuthMechs PLAIN
+SystemCertificates yes
+# CertificateFile ~/.mail/certificates/root-certificates.pem
+
+IMAPStore migadu-remote
+Account Migadu
+
+MaildirStore migadu-local
+SubFolders Verbatim
+Path ~/.mail/p/
+Inbox ~/.mail/p/INBOX
+
+Channel migadu
+Far :migadu-remote:
+Near :migadu-local:
+Patterns *
+Create Near
+Sync All
+Expunge Both
+SyncState *
+
