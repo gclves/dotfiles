@@ -4,10 +4,19 @@ set barpadding 14 3
 set gap 2
 set barinpadding 0
 set ignoreresizehints 1
+set barborder 1
+set barbordercolor white
 
 # Function keys
-definekey top XF86MonBrightnessUp exec light -A 10
-definekey top XF86MonBrightnessDown exec light -U 10
+definekey top XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+definekey top XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+definekey top XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+definekey top XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+definekey top XF86MonBrightnessUp exec brightnessctl set 5%+
+definekey top XF86MonBrightnessDown exec brightnessctl set 5%-
+definekey top XF86AudioPlay exec playerctl play-pause
+definekey top XF86AudioNext exec playerctl next
+definekey top XF86AudioPrev exec playerctl previous
 
 definekey top F3 focus
 definekey top F4 next
@@ -34,9 +43,12 @@ definekey top M-S-F4 vmove 3
 bind c exec kitty
 bind C-c exec kitty
 
-exec kitty sup
+exec $HOME/bin/sdorfehs-session
+
 hsplit
+exec kitty sup
 # TODO: Set the proportions
 focusright
 exec kitty
+
 

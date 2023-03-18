@@ -102,7 +102,7 @@ require('lazy').setup({
     'navarasu/onedark.nvim',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'onedark'
+      -- vim.cmd.colorscheme 'onedark'
     end
   },
 
@@ -133,13 +133,6 @@ require('lazy').setup({
     config = function()
       vim.g["test#strategy"] = "kitty"
       -- vim.g["test#strategy"] = "neovim"
-    end,
-  },
-
-  {
-    url = 'git@gitlab.com:ajgrf/parchment.git',
-    config = function()
-      -- vim.cmd.colorscheme 'parchment'
     end,
   },
 
