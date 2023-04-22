@@ -24,10 +24,11 @@
 ;;   (See: https://emacs-lsp.github.io/lsp-mode/page/performance/)
 ;;   In that case you have to not only disable this but also remove from the packages since
 ;;   lsp-mode can activate it automatically.
-(use-package lsp-ui)
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode))
 
 ;; Posframe is a pop-up tool that must be manually installed for dap-mode
-(use-package posframe)
+(use-package posframe :defer t)
 
 ;; Use the Debug Adapter Protocol for running tests and debugging
 (use-package dap-mode

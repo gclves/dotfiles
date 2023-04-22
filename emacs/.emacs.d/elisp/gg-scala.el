@@ -2,7 +2,7 @@
   :interpreter ("scala" . scala-mode))
 
 (use-package sbt-mode
-  :commands sbt-start sbt-command
+  :commands (sbt-start sbt-command)
   :config
   ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
   ;; allows using SPACE when in the minibuffer
@@ -14,6 +14,6 @@
    (setq sbt:program-options '("-Dsbt.supershell=false")))
 
 ;; Add metals backend for lsp-mode
-(use-package lsp-metals)
+(use-package lsp-metals :defer t)
 
 (provide 'gg-scala)

@@ -33,8 +33,8 @@
    ("s-!" . projectile-run-eshell)
    ("C-c C-e" . projectile-run-eshell)
    ("C-c C-s" . projectile-run-shell)
-   ("s-p" . projectile-find-file))
-  :init (projectile-mode)
+   ("s-p" . projectile-find-file)
+   ("C-c p p" . projectile-switch-project))
   :config
   (setq projectile-completion-system 'ido)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
@@ -485,3 +485,7 @@ Version 2019-11-05"
 
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode))
+
+(use-package esup
+  :commands (esup)
+  :pin melpa)

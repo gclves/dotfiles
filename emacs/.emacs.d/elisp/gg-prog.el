@@ -14,6 +14,7 @@
 
 ;; Racket
 (use-package racket-mode
+  :mode ("\\.pie\\'" "\\.rkt\\'")
   :config
   ;; Configuration for Pie (for The Little Typer)
   (put 'claim 'racket-indent-function 2)

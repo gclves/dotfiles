@@ -11,16 +11,13 @@
   (add-to-list 'completion-styles 'initials t))
 
 (use-package company-quickhelp
-  :config
-  (add-hook 'company-mode-hook 'company-quickhelp-mode))
+  :hook (company-mode . company-quickhelp-mode))
 
 (use-package yasnippet
-  :config
-  (yas-global-mode)
-  (add-hook 'prog-mode-hook 'yas-minor-mode))
+  :hook (prog-mode . yas-minor-mode))
 
 (use-package flycheck
-  :init (global-flycheck-mode))
+  :hook (prog-mode . flycheck-mode))
 
 (setq-default abbrev-mode t)
 (setq save-abbrevs 'silently)
