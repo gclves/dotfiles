@@ -150,5 +150,44 @@ call `set-default-font' on the first one that's available"
 
 (add-to-list 'after-make-frame-functions 'gg--load-fonts-for-frame t)
 
+(when (member "Symbola" (font-family-list))
+  (set-fontset-font t 'unicode "Symbola" nil 'prepend))
+
+(defun font-size-reset ()
+  "Reset the text-scale to zero."
+  (interactive)
+  (text-scale-set 0))
+
+(defvar font-size--increment 0.5
+  "The increment value for `font-size-increase' and `font-size-decrease'.")
+
+(defun font-size-increase ()
+  "Increase the text-scale by `font-size--increment'."
+  (interactive)
+  (text-scale-increase font-size--increment))
+
+(defun font-size-decrease ()
+  "Decrease the text-scale by `font-size--increment'."
+  (interactive)
+  (text-scale-decrease font-size--increment))
+
+(global-set-key (kbd "s-0") 'font-size-reset)
+(global-set-key (kbd "s-=") 'font-size-increase)
+(global-set-key (kbd "s--") 'font-size-decrease)
+
+(setq fill-column 80)
+(setq-default indent-tabs-mode nil)
+
+;;; Whitespace
+;; Render all whitespace: useful, but busy
+;; (setq whitespace-style '(face trailing tabs newline tab-mark space-mark))
+(setq whitespace-style '(face trailing tabs newline)
+      whitespace-display-mappings
+      '((tab-mark 9 [8594 9])
+        (space-mark 32 [183] [46])
+        (space-mark 160 [164])
+        (newline-mark 10 [8617 10])))
+(add-hook 'prog-mode-hook 'whitespace-mode)
+
 (provide 'gg-ui)
 ;;; gg-ui.el ends here

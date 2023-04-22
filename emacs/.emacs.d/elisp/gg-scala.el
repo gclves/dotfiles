@@ -1,5 +1,3 @@
-(require 'gg-prog)
-
 (use-package scala-mode
   :interpreter ("scala" . scala-mode))
 

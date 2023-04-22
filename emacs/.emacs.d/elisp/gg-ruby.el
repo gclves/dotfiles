@@ -1,5 +1,3 @@
-(require 'gg-prog)
-
 (setq exec-path (cons "~/.rbenv/shims" exec-path))
 
 (defvar gg--rbenv-path (concat (getenv "HOME") "/.rbenv")

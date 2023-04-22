@@ -1,5 +1,6 @@
-(require 'org)
-(require 'ob-tangle)
+(setq user-full-name "Guilherme Goncalves"
+      user-email-address "gsg@ggoncalves.me"
+      system-time-locale "C")
 
 (add-to-list 'load-path (concat user-emacs-directory "elisp"))
 
@@ -9,12 +10,15 @@
 (require 'gg-ui)
 (require 'gg-git)
 (require 'gg-prog)
-(require 'gg-web-dev)
 (require 'gg-eshell)
 (require 'gg-notes)
-(require 'gg-ruby)
 (require 'gg-help)
-(require 'gg-scala)
 (require 'gg-mail)
 
-(org-babel-load-file (expand-file-name "config.org" user-emacs-directory))
+(when (string-equal system-type "darwin")
+  (require 'gg-osx-config))
+
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file :noerror)
+
+(load-file (expand-file-name "config.el" user-emacs-directory))
