@@ -752,3 +752,10 @@ cf. [[file:elisp/windower.el][windower.el]].
   (use-package terraform-mode)
   (use-package terraform-doc)
 #+end_src
+
+** Epub reader
+#+begin_src emacs-lisp
+  (use-package nov
+  :config
+  (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
+#+end_src
