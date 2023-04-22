@@ -117,9 +117,10 @@ This includes `variable-pitch-mode' and a bar cursor."
 
 (defvar gg--font-list
   '(
-    ("Fira Mono" . 14)
+    ("JetBrains Mono" . 14)
+    ("Fira Code" . 14)
+    ("Go Mono" . 14)
     ("Fantasque Sans Mono" . 17)
-    ("Go Mono" . 17)
     ("PT Mono" . 17)
     ("Cascadia Code" . 15)
     ("Monaco" . 15)
