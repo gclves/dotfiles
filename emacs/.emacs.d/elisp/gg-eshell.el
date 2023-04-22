@@ -2,15 +2,14 @@
 (autoload 'aweshell-next "aweshell")
 (autoload 'aweshell-dedicated-toggle "aweshell")
 
-(with-eval-after-load 'aweshell
-  (defun gg-next-aweshell (arg)
-    "Switch to next aweshell.  If called with `ARG', create a new one."
-    (interactive "P")
-    (let ((open-new? (and arg t)))
-      (if open-new? (aweshell-new) (aweshell-next))))
+(defun gg-next-aweshell (arg)
+  "Switch to next aweshell.  If called with `ARG', create a new one."
+  (interactive "P")
+  (let ((open-new? (and arg t)))
+    (if open-new? (aweshell-new) (aweshell-next))))
 
-  (global-set-key (kbd "<f12>") 'aweshell-dedicated-toggle)
-  (global-set-key (kbd "<f1>") 'gg-next-aweshell))
+(global-set-key (kbd "<f12>") 'aweshell-dedicated-toggle)
+(global-set-key (kbd "<f1>") 'gg-next-aweshell)
 
 (with-eval-after-load 'eshell
   (defun eshell/d (&rest args)
