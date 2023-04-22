@@ -2,7 +2,7 @@
       user-email-address "gsg@ggoncalves.me"
       system-time-locale "C")
 
-(add-to-list 'load-path (concat user-emacs-directory "elisp"))
+(add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
 
 (require 'gg-vendor)
 (require 'gg-use-package)
@@ -13,7 +13,7 @@
 (require 'gg-eshell)
 (require 'gg-notes)
 (require 'gg-help)
-(require 'gg-mail)
+; (require 'gg-mail)
 
 (when (string-equal system-type "darwin")
   (require 'gg-osx-config))
@@ -21,4 +21,5 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file :noerror)
 
+;; TODO: move all of these into the "modules" above
 (load-file (expand-file-name "config.el" user-emacs-directory))

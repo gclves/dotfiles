@@ -6,7 +6,6 @@ emacs/.emacs.d/tramp
 emacs/.emacs.d/url
 emacs/.emacs.d/network-security.data
 emacs/.emacs.d/recentf
-emacs/.emacs.d/config.el
 emacs/.emacs.d/eshell/history
 emacs/.emacs.d/eshell/lastdir
 emacs/.emacs.d/request

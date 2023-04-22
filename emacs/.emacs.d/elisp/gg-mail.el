@@ -1,7 +1,6 @@
 (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
 (require 'mu4e)
 
-
 ;; Largely based on the following MacOS guide:
 ;; https://macowners.club/posts/email-emacs-mu4e-macos/
 (setq mu4e-mu-binary (executable-find "mu")

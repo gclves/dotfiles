@@ -43,13 +43,13 @@
 
 ;; Look & Feel for long-form writing
 (use-package olivetti
+  :hook text-mode
   :config
   (defun gg--setup-olivetti-mode ()
     (interactive)
     (olivetti-mode +1)
     (olivetti-set-width 80)))
 
-;;   (add-hook 'text-mode-hook 'gg--setup-olivetti-mode))
 ;; Modus themes
 ;; Tweak the themes
 (setq modus-themes-hl-line '(underline accented)
@@ -79,10 +79,7 @@
 (run-at-time "18:00" (* 60 60 24) (lambda () (gg--load-dark-theme)))
 
 (use-package hide-mode-line
-  :config
-  (add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
-  (add-hook 'shell-mode-hook #'hide-mode-line-mode)
-  (add-hook 'eshell-mode-hook #'hide-mode-line-mode))
+  :hook ((completion-list-mode shell-mode eshell-mode) . hide-mode-line-mode))
 
 (defun setup-text-mode ()
   "Set up aesthetic adaptations for dealing with text.

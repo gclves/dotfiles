@@ -26,9 +26,10 @@
     (add-to-list 'same-window-regexps "^magit: "))
 
 (use-package browse-at-remote
+  :bind
+  (("C-c g g" . browse-at-remote)
+   ("C-c g G" . browse-at-remote-kill))
   :config
-  (setq browse-at-remote-add-line-number-if-no-region-selected nil)
-  (global-set-key (kbd "C-c g g") 'browse-at-remote)
-  (global-set-key (kbd "C-c g G") 'browse-at-remote-kill))
+  (setq browse-at-remote-add-line-number-if-no-region-selected nil))
 
 (provide 'gg-git)

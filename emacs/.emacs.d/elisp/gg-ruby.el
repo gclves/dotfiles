@@ -4,6 +4,7 @@
   "Path to the rbenv installation.")
 
 (use-package rspec-mode
+  :mode "\\.rb\\'"
   :config
   (global-set-key (kbd "<f6>") 'rspec-rerun)
   (define-key rspec-verifiable-mode-map (kbd "s-t") 'rspec-verify)
@@ -12,18 +13,21 @@
   (define-key rspec-mode-map (kbd "s-T") 'rspec-toggle-spec-and-target))
 
 (use-package dumb-jump
+  :hook prog-mode
   :config
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
   (setq xref-file-name-display 'project-relative))
 
 (use-package inf-ruby
+  :hook ruby-mode
   :config
   (add-hook 'after-init-hook 'inf-ruby-switch-setup))
 
-(use-package ruby-test-mode)
+(use-package ruby-test-mode
+  :hook ruby-mode)
+
 (use-package ruby-electric
-  :config
-  (add-hook 'ruby-mode-hook 'ruby-electric-mode))
+  :hook ruby-mode)
 
 (use-package rbenv
   :init

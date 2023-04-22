@@ -1,18 +1,10 @@
 ;;; Org-mode
-(use-package htmlize)
+(use-package htmlize
+  :hook org-mode)
 
 ;; FIXME: I don't use org-mode anymore --> get rid of all of this
 (with-eval-after-load 'org
   (require 'ox-md)
-  (define-key org-mode-map (kbd "M-[") 'org-set-tags)
-  (define-key org-mode-map (kbd "M-s-i") 'org-clock-in)
-  (define-key org-mode-map (kbd "M-s-o") 'org-clock-out)
-
-  (define-key org-mode-map (kbd "M-[") 'org-set-tags)
-  (define-key org-mode-map (kbd "C-c s") 'org-sort)
-  (define-key org-mode-map (kbd "<C-up>") 'org-up-element)
-  (define-key org-mode-map (kbd "<C-down>") 'org-down-element)
-  (define-key org-mode-map (kbd "s-t") 'org-todo)
 
   ;; XXX these commands are global and shouldn't really be under C-c therefore
   (global-set-key (kbd "C-c l") 'org-store-link)
@@ -110,7 +102,8 @@ PATH should be a topic that can be thrown at the man command."
          ("\\.markdown\\'" . markdown-mode)))
 
 ;; Org-powered presentations
-(require 'epresent)
+(with-eval-after-load 'org
+  (require 'epresent))
 
 (provide 'gg-notes)
 ;;; gg-notes.el ends here
