@@ -50,17 +50,39 @@
     (olivetti-set-width 80)))
 
 ;;   (add-hook 'text-mode-hook 'gg--setup-olivetti-mode))
+;; Modus themes
+;; Tweak the themes
+(setq modus-themes-hl-line '(underline accented)
+      modus-themes-italic-constructs t
+      modus-themes-region '(no-extend)
+      modus-themes-variable-pitch-ui t
+      modus-themes-subtle-line-numbers t
+      modus-themes-org-blocks 'gray-background
+      modus-themes-subtle-line-numbers nil)
 
-(use-package twilight-theme)
-(use-package parchment-theme)
+;; Load the themes
+(defvar gg--dark-theme 'modus-vivendi)
+(defvar gg--light-theme 'modus-operandi)
 
-;; Switch between light and dark themes
-(run-at-time "07:00" (* 60 60 24) (lambda ()
-                                    (disable-theme 'twilight)
-                                    (load-theme 'parchment t)))
-(run-at-time "18:00" (* 60 60 24) (lambda ()
-                                    (disable-theme 'parchment)
-                                    (load-theme 'twilight t)))
+(defun gg--load-dark-theme ()
+  "Load the configured dark theme."
+  (disable-theme gg--light-theme)
+  (load-theme gg--dark-theme t))
+
+(defun gg--load-light-theme ()
+  "Load the configured light theme."
+  (disable-theme gg--dark-theme)
+  (load-theme gg--light-theme t))
+
+ ;; Switch between light and dark themes
+(run-at-time "07:00" (* 60 60 24) (lambda () (gg--load-light-theme)))
+(run-at-time "18:00" (* 60 60 24) (lambda () (gg--load-dark-theme)))
+
+(use-package hide-mode-line
+  :config
+  (add-hook 'completion-list-mode-hook #'hide-mode-line-mode)
+  (add-hook 'shell-mode-hook #'hide-mode-line-mode)
+  (add-hook 'eshell-mode-hook #'hide-mode-line-mode))
 
 (defun setup-text-mode ()
   "Set up aesthetic adaptations for dealing with text.
