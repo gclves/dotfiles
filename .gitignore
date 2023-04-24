@@ -16,3 +16,4 @@ emacs/.emacs.d/session.*
 smex-items
 org-roam.db
 *.eld
+.DS_Store

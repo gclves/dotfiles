@@ -19,7 +19,7 @@
   (setq xref-file-name-display 'project-relative))
 
 (use-package inf-ruby
-  :hook ruby-mode
+  :hook (ruby-mode . inf-ruby-minor-mode)
   :config
   (add-hook 'after-init-hook 'inf-ruby-switch-setup))
 
@@ -39,5 +39,7 @@
   (global-rbenv-mode))
 
 ;; TODO sort out rubocop integration
+
+(add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
 
 (provide 'gg-ruby)

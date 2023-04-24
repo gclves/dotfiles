@@ -29,6 +29,24 @@
 (display-battery-mode)
 (use-package minions :config (minions-mode 1))
 
+(defvar gg--modeline-font "Roboto-15"
+  "The font face used for the modeline.")
+
+(set-face-attribute 'mode-line-inactive nil :font gg--modeline-font)
+(set-face-attribute 'mode-line nil :font gg--modeline-font)
+
+(use-package hide-mode-line
+  :config
+  (setq-local hide-mode-line-hooks '(completion-list-mode-hook
+                                     neotree-mode-hook
+                                     eshell-mode-hook))
+  (dolist (hook hide-mode-line-hooks)
+    (add-hook hook #'hide-mode-line-mode)))
+
+(require 'zone)
+(with-eval-after-load 'zone
+  (zone-when-idle 60))
+
 ;; Highlight todo entries
 (use-package hl-todo
   :init (global-hl-todo-mode)
@@ -66,11 +84,13 @@
 
 (defun gg--load-dark-theme ()
   "Load the configured dark theme."
+  (interactive)
   (disable-theme gg--light-theme)
   (load-theme gg--dark-theme t))
 
 (defun gg--load-light-theme ()
   "Load the configured light theme."
+  (interactive)
   (disable-theme gg--dark-theme)
   (load-theme gg--light-theme t))
 
@@ -109,15 +129,14 @@ This includes `variable-pitch-mode' and a bar cursor."
 
 ;; XXX: Do we really need to run all that as a hook?!
 (with-eval-after-load 'org
-  (setq org-startup-indented t) ; Enable `org-indent-mode' by default
+  (setq org-startup-indented t)         ; Enable `org-indent-mode' by default
   (add-hook 'org-mode-hook 'setup-org-typography))
 
 (defvar gg--font-list
   '(
-    ("JetBrains Mono" . 14)
-    ("Fira Code" . 14)
-    ("Go Mono" . 14)
-    ("Fantasque Sans Mono" . 17)
+    ("Fira Code" . 16)
+    ("Fantasque Sans Mono" . 19)
+    ("Go Mono" . 17)
     ("PT Mono" . 17)
     ("Cascadia Code" . 15)
     ("Monaco" . 15)
