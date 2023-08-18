@@ -12,12 +12,6 @@
   (define-key rspec-mode-map (kbd "s-t") 'rspec-verify)
   (define-key rspec-mode-map (kbd "s-T") 'rspec-toggle-spec-and-target))
 
-(use-package dumb-jump
-  :hook prog-mode
-  :config
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-  (setq xref-file-name-display 'project-relative))
-
 (use-package inf-ruby
   :hook (ruby-mode . inf-ruby-minor-mode)
   :config
