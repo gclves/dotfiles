@@ -6,11 +6,11 @@
 
 ;; Golang
 (use-package go-mode
-  :hook ((go-mode . lsp-deferred)
+  :mode "\\.go\\'"
+  :hook ((go-mode . eglot-ensure)
          (before-save . gofmt-before-save)))
 
-(use-package go-playground
-  :mode "\\.go\\'")
+(use-package go-playground)
 
 ;; Racket
 (use-package racket-mode
