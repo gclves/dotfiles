@@ -4,6 +4,8 @@
 
 (add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
 
+(setq ring-bell-function 'ignore)
+
 (require 'gg-vendor)
 (require 'gg-use-package)
 ; (require 'gg-evil)
