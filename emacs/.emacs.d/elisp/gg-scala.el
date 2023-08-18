@@ -14,6 +14,6 @@
    (setq sbt:program-options '("-Dsbt.supershell=false")))
 
 ;; Add metals backend for lsp-mode
-(use-package lsp-metals :defer t)
+;; (use-package lsp-metals :defer t)
 
 (provide 'gg-scala)
