@@ -49,7 +49,7 @@
 
 ;; Highlight todo entries
 (use-package hl-todo
-  :init (global-hl-todo-mode)
+  :config (global-hl-todo-mode)
   :bind
   (:map hl-todo-mode-map
         ("C-c <up>" . hl-todo-previous)

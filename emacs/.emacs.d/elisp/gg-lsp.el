@@ -1,7 +1,6 @@
 (use-package lsp-mode
   :bind
-  (("M-." . lsp-ui-peek-find-definitions)
-   ("C-c r" . lsp-rename)
+  (("C-c r" . lsp-rename)
    ("C-c n" . lsp-format-buffer))
   ;; You could also swap out lsp for lsp-deffered in order to defer loading
   :hook  (scala-mode . lsp)
@@ -25,6 +24,9 @@
 ;;   In that case you have to not only disable this but also remove from the packages since
 ;;   lsp-mode can activate it automatically.
 (use-package lsp-ui
+  :bind (:map lsp-mode
+              ("M-." . lsp-ui-peek-find-definitions))
+
   :hook (lsp-mode . lsp-ui-mode))
 
 ;; Posframe is a pop-up tool that must be manually installed for dap-mode
