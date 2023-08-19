@@ -45,7 +45,7 @@
 
 (require 'zone)
 (with-eval-after-load 'zone
-  (zone-when-idle 60))
+  (zone-when-idle 300))
 
 ;; Highlight todo entries
 (use-package hl-todo
