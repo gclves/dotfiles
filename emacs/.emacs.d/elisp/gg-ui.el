@@ -21,6 +21,7 @@
       help-window-select t)
 
 (global-prettify-symbols-mode 1)
+(pixel-scroll-precision-mode +1)
 
 ;; Modeline
 (setq display-time-default-load-average 0 ; 1-minute load average
@@ -82,16 +83,21 @@
 (defvar gg--dark-theme 'modus-vivendi)
 (defvar gg--light-theme 'modus-operandi)
 
+(defun gg--reset-themes ()
+  "Disable all currently enabled themes."
+  (dolist (theme custom-enabled-themes)
+    (disable-theme theme)))
+
 (defun gg--load-dark-theme ()
   "Load the configured dark theme."
   (interactive)
-  (disable-theme gg--light-theme)
+  (gg--reset-themes)
   (load-theme gg--dark-theme t))
 
 (defun gg--load-light-theme ()
   "Load the configured light theme."
   (interactive)
-  (disable-theme gg--dark-theme)
+  (gg--reset-themes)
   (load-theme gg--light-theme t))
 
  ;; Switch between light and dark themes

@@ -35,6 +35,8 @@
    ("C-c C-s" . projectile-run-shell)
    ("s-p" . projectile-find-file)
    ("C-c p p" . projectile-switch-project))
+  :init
+  (projectile-mode)
   :config
   (setq projectile-completion-system 'ido)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
