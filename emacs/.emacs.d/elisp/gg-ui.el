@@ -44,10 +44,6 @@
   (dolist (hook hide-mode-line-hooks)
     (add-hook hook #'hide-mode-line-mode)))
 
-(require 'zone)
-(with-eval-after-load 'zone
-  (zone-when-idle 300))
-
 ;; Highlight todo entries
 (use-package hl-todo
   :config (global-hl-todo-mode)
