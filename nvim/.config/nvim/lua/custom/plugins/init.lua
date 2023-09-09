@@ -1,4 +1,5 @@
 vim.keymap.set('i', 'jk', '<Esc>', {})
+vim.keymap.set('n', '<BS>', '%', {})
 
 -- See the kickstart.nvim README for more information
 return {
