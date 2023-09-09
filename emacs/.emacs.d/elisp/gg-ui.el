@@ -3,7 +3,6 @@
 ;; Window setup
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(global-hl-line-mode t)
 (fringe-mode 1) ; 1px fringe
 (column-number-mode)
 (blink-cursor-mode +1)
@@ -18,12 +17,22 @@
       highlight-nonselected-windows nil
       bidi-display-reordering nil
       blink-matching-paren 'jump
-      help-window-select t)
+      help-window-select t
+      x-underline-at-descent-line t
+      switch-to-buffer-obey-display-actions t)
 
-(global-prettify-symbols-mode 1)
 (pixel-scroll-precision-mode +1)
 
-;; Modeline
+;; Highlight current line, but only in text or prog modes
+(let ((hl-line-hooks '(text-mode-hook prog-mode-hook)))
+  (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
+
+;;  __  __           _      _ _
+;; |  \/  | ___   __| | ___| |_)_ __   ___
+;; | |\/| |/ _ \ / _` |/ _ \ | | '_ \ / _ \
+;; | |  | | (_) | (_| |  __/ | | | | |  __/
+;; |_|  |_|\___/ \__,_|\___|_|_|_| |_|\___|
+
 (setq display-time-default-load-average 0 ; 1-minute load average
       display-time-24hr-format t)
 (display-time-mode)
@@ -37,33 +46,31 @@
 (set-face-attribute 'mode-line nil :font gg--modeline-font)
 
 (use-package hide-mode-line
-  :config
-  (setq-local hide-mode-line-hooks '(completion-list-mode-hook
-                                     neotree-mode-hook
-                                     eshell-mode-hook))
-  (dolist (hook hide-mode-line-hooks)
-    (add-hook hook #'hide-mode-line-mode)))
+  :hook ((completion-list-mode shell-mode eshell-mode) . hide-mode-line-mode))
 
-;; Highlight todo entries
-(use-package hl-todo
-  :config (global-hl-todo-mode)
-  :bind
-  (:map hl-todo-mode-map
-        ("C-c <up>" . hl-todo-previous)
-        ("C-c <down>" . hl-todo-next)
-        ("C-c T" . hl-todo-occur)))
+;;  __  __ _       _ _            __  __
+;; |  \/  (_)_ __ (_) |__  _   _ / _|/ _| ___ _ __
+;; | |\/| | | '_ \| | '_ \| | | | |_| |_ / _ \ '__|
+;; | |  | | | | | | | |_) | |_| |  _|  _|  __/ |
+;; |_|  |_|_|_| |_|_|_.__/ \__,_|_| |_|  \___|_|
+(setq completion-cycle-threshold 1
+      completions-detailed 1
+      tab-always-indent 'complete
+      completion-styles '(basic initials substring)
 
-(setq-default fill-column 80)
-(setq async-shell-command-display-buffer nil)
+      completion-auto-help 'always
+      completions-format 'one-column
+      completions-group t
+      completion-auto-select 'second-tab)
+(keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete)
 
-;; Look & Feel for long-form writing
-(use-package olivetti
-  :hook text-mode
-  :config
-  (defun gg--setup-olivetti-mode ()
-    (interactive)
-    (olivetti-mode +1)
-    (olivetti-set-width 80)))
+
+;;   ____      _                     _
+;;  / ___|___ | | ___  _ __ ___  ___| |__   ___ _ __ ___   ___
+;; | |   / _ \| |/ _ \| '__/ __|/ __| '_ \ / _ \ '_ ` _ \ / _ \
+;; | |__| (_) | | (_) | |  \__ \ (__| | | |  __/ | | | | |  __/
+;;  \____\___/|_|\___/|_|  |___/\___|_| |_|\___|_| |_| |_|\___|
+
 
 ;; Modus themes
 ;; Tweak the themes
@@ -100,8 +107,24 @@
 (run-at-time "07:00" (* 60 60 24) (lambda () (gg--load-light-theme)))
 (run-at-time "18:00" (* 60 60 24) (lambda () (gg--load-dark-theme)))
 
-(use-package hide-mode-line
-  :hook ((completion-list-mode shell-mode eshell-mode) . hide-mode-line-mode))
+;;  _____                                        _
+;; |_   _|   _ _ __   ___   __ _ _ __ __ _ _ __ | |__  _   _
+;;   | || | | | '_ \ / _ \ / _` | '__/ _` | '_ \| '_ \| | | |
+;;   | || |_| | |_) | (_) | (_| | | | (_| | |_) | | | | |_| |
+;;   |_| \__, | .__/ \___/ \__, |_|  \__,_| .__/|_| |_|\__, |
+;;       |___/|_|          |___/          |_|          |___/
+
+(global-prettify-symbols-mode 1)
+
+;; Look & Feel for long-form writing
+(use-package olivetti
+  :ensure t
+  :hook text-mode
+  :config
+  (defun gg--setup-olivetti-mode ()
+    (interactive)
+    (olivetti-mode +1)
+    (olivetti-set-width 80)))
 
 (defun setup-text-mode ()
   "Set up aesthetic adaptations for dealing with text.
@@ -136,7 +159,7 @@ This includes `variable-pitch-mode' and a bar cursor."
 
 (defvar gg--font-list
   '(
-    ("Fira Code" . 16)
+    ("Fira Code" . 13)
     ("Fantasque Sans Mono" . 19)
     ("Go Mono" . 17)
     ("PT Mono" . 17)
@@ -193,7 +216,6 @@ call `set-default-font' on the first one that's available"
 (global-set-key (kbd "s-=") 'font-size-increase)
 (global-set-key (kbd "s--") 'font-size-decrease)
 
-(setq fill-column 80)
 (setq-default indent-tabs-mode nil)
 
 ;;; Whitespace
@@ -206,6 +228,27 @@ call `set-default-font' on the first one that's available"
         (space-mark 160 [164])
         (newline-mark 10 [8617 10])))
 (add-hook 'prog-mode-hook 'whitespace-mode)
+
+;;   ___  _   _                     _          __  __
+;;  / _ \| |_| |__   ___ _ __   ___| |_ _   _ / _|/ _|
+;; | | | | __| '_ \ / _ \ '__| / __| __| | | | |_| |_
+;; | |_| | |_| | | |  __/ |    \__ \ |_| |_| |  _|  _|
+;;  \___/ \__|_| |_|\___|_|    |___/\__|\__,_|_| |_|
+
+(when (display-graphic-p)
+  (context-menu-mode))
+
+;; Highlight todo entries
+(use-package hl-todo
+  :config (global-hl-todo-mode)
+  :bind
+  (:map hl-todo-mode-map
+        ("C-c <up>" . hl-todo-previous)
+        ("C-c <down>" . hl-todo-next)
+        ("C-c T" . hl-todo-occur)))
+
+(setq-default fill-column 80)
+(setq async-shell-command-display-buffer nil)
 
 (provide 'gg-ui)
 ;;; gg-ui.el ends here

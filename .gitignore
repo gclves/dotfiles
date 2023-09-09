@@ -17,3 +17,4 @@ smex-items
 org-roam.db
 *.eld
 .DS_Store
+/emacs/.emacs.d/nov-places

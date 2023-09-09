@@ -1,51 +1,27 @@
 (setq use-short-answers t)
 
+(setq sentence-end-double-space nil)
+
 (use-package rg
   :bind
   ("M-F" . rg-menu))
 
-(use-package smex
-  :bind
-  (:map global-map
-        ("M-x" . smex)
-        ("M-X" . smex-major-mode-commands)))
+;; (use-package ido-vertical-mode
+;;   :config
+;;   (ido-mode 1)
+;;   (ido-vertical-mode 1)
+;;   (setq ido-vertical-define-keys 'C-n-C-p-up-and-down
+;;         ido-vertical-show-count t))
 
-(use-package ido-vertical-mode
-  :config
-  (ido-mode 1)
-  (ido-vertical-mode 1)
-  (setq ido-vertical-define-keys 'C-n-C-p-up-and-down
-        ido-vertical-show-count t))
-
+(fido-vertical-mode)
 (ido-everywhere t)
 (global-set-key (kbd "C-x C-f") 'find-file)
 (global-set-key (kbd "s-o") 'find-file)
 (global-set-key (kbd "s-b") 'ido-switch-buffer)
 (setq ido-use-filename-at-point 'guess
-      ;; fuzzy matching for ido
-      ido-enable-flex-matching t
-      ido-create-new-buffer 'always
-      ido-ignore-extensions t)
-
-(use-package projectile
-  :bind
-  (("s-&" . projectile-run-async-shell-command-in-root)
-   ("s-!" . projectile-run-eshell)
-   ("C-c C-e" . projectile-run-eshell)
-   ("C-c C-s" . projectile-run-shell)
-   ("s-p" . projectile-find-file)
-   ("C-c p p" . projectile-switch-project))
-  :init
-  (projectile-mode)
-  :config
-  (setq projectile-completion-system 'ido)
-  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
-
-(use-package counsel-projectile
-  :bind ("C-S-f" . counsel-projectile-rg))
-
-(defun another-window ()
-  "Select the previous window in the current frame.  Use `other-window' with an argument -1."
+      ;; fuzzy matching for (defun another-window ()
+  "Select the previous window in the current frame.
+Uses `other-window' with an argument -1."
   (interactive)
   (other-window -1))
 
@@ -68,6 +44,14 @@
       scroll-step 1
       scroll-conservatively 100
       scroll-preserve-screen-position 1)
+
+(use-package consult
+  :bind (("C-x b" . consult-buffer)
+         ("M-y" . consult-yank-pop)
+         ("C-s" . consult-line)
+         ("C-S-f" . consult-ripgrep))
+  :config
+  (setq consult-narrow-key "<"))
 
 (use-package undo-tree
   :bind
@@ -483,11 +467,11 @@ Version 2019-11-05"
 (global-set-key (kbd "<s-S-up>") 'windower-swap-above)
 (global-set-key (kbd "<s-S-right>") 'windower-swap-right)
 
-(setq explicit-shell-file-name "/bin/zsh")
-
+;; epub reader on emacs!
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode))
 
+;; Very useful for profiling the init script
 (use-package esup
   :commands (esup)
   :pin melpa)
