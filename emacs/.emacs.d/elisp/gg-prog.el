@@ -8,7 +8,12 @@
 (use-package go-mode
   :mode "\\.go\\'"
   :hook ((go-mode . eglot-ensure)
-         (before-save . gofmt-before-save)))
+         (before-save . gofmt-before-save))
+  :bind (:map go-mode-map
+              ("C-\\" . go-test-current-project))
+  :config
+  ;; Make sure you have "goimports installed!"
+  (setq gofmt-command "goimports"))
 
 (use-package go-playground)
 
