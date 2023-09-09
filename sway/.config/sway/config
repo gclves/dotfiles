@@ -16,8 +16,20 @@ exec rm -f $WOBSOCK && mkfifo $WOBSOCK && tail -f $WOBSOCK | wob
 # output * bg /usr/share/wallpapers/Flores/contents/images/1920x1278.jpg fill
 
 # NOTE: You can get the names of your outputs by running: swaymsg -t get_outputs
-output eDP-1 scale 1.25
-output DP-3 scale 1.5
+set $laptop eDP-1
+set $external DP-3
+
+# Clamshell mode
+bindswitch --reload --locked lid:on output $laptop disable
+bindswitch --reload --locked lid:off output $laptop enable
+
+exec_always ~/bin/sway_clamshell
+
+output $laptop scale 1.25
+output $external scale 1.5
+
+# Start focusing on the external monitor
+exec swaymsg focus output $external
 
 # output HDMI-A-1 resolution 1920x1080 position 0,1080
 
