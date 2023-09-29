@@ -48,5 +48,9 @@
 (use-package terraform-doc
   :mode "\\.tf\\'")
 
+;; Python
+(use-package pyvenv
+  :hook (python-mode . pyvenv-mode))
+
 (provide 'gg-prog)
 ;;; gg-prog.el ends here

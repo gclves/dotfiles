@@ -119,7 +119,7 @@
 ;; Look & Feel for long-form writing
 (use-package olivetti
   :ensure t
-  :hook text-mode
+  :hook (text-mode . gg--setup-olivetti-mode)
   :config
   (defun gg--setup-olivetti-mode ()
     (interactive)
@@ -159,6 +159,7 @@ This includes `variable-pitch-mode' and a bar cursor."
 
 (defvar gg--font-list
   '(
+    ("CodeNewRoman Nerd Font Propo" . 16)
     ("Fira Code" . 13)
     ("Fantasque Sans Mono" . 19)
     ("Go Mono" . 17)
