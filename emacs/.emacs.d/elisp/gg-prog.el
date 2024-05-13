@@ -7,27 +7,15 @@
 ;; Golang
 (use-package go-mode
   :mode "\\.go\\'"
-  :hook ((go-mode . eglot-ensure)
-         (before-save . gofmt-before-save))
+  :hook ((before-save . gofmt-before-save))
   :bind (:map go-mode-map
               ("C-\\" . go-test-current-project))
+  :ensure-system-package (goimports . "go install golang.org/x/tools/cmd/goimports@latest")
+  :init (add-to-list 'exec-path "~/go/bin")
   :config
-  ;; Make sure you have "goimports installed!"
   (setq gofmt-command "goimports"))
 
-(use-package go-playground)
 
-;; Racket
-(use-package racket-mode
-  :mode ("\\.pie\\'" "\\.rkt\\'")
-  :hook (racket-mode . paredit-mode)
-  :config
-  ;; Configuration for Pie (for The Little Typer)
-  (put 'claim 'racket-indent-function 2)
-  (put '-> 'racket-indent-function 2)
-  (put 'Pi 'racket-indent-function 2))
-
-;; Lisp
 (use-package paredit
   :hook ((emacs-lisp-mode
           eval-expression-minibuffer-setup
@@ -41,12 +29,6 @@
   (define-key lisp-interaction-mode-map (kbd "C-j") 'eval-print-last-sexp))
 
 (setq-default tab-width 4)
-
-;; Terraform
-(use-package terraform-mode
-  :mode "\\.tf\\'")
-(use-package terraform-doc
-  :mode "\\.tf\\'")
 
 ;; Python
 (use-package pyvenv
