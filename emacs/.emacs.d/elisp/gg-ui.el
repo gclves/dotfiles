@@ -69,20 +69,11 @@
 ;; | |__| (_) | | (_) | |  \__ \ (__| | | |  __/ | | | | |  __/
 ;;  \____\___/|_|\___/|_|  |___/\___|_| |_|\___|_| |_| |_|\___|
 
-
-;; Modus themes
-;; Tweak the themes
-(setq modus-themes-hl-line '(underline accented)
-      modus-themes-italic-constructs t
-      modus-themes-region '(no-extend)
-      modus-themes-variable-pitch-ui t
-      modus-themes-subtle-line-numbers t
-      modus-themes-org-blocks 'gray-background
-      modus-themes-subtle-line-numbers nil)
+(use-package parchment-theme)
 
 ;; Load the themes
-(defvar gg--dark-theme 'modus-vivendi)
-(defvar gg--light-theme 'modus-operandi)
+(defvar gg--dark-theme 'parchment)
+(defvar gg--light-theme 'parchment)
 
 (defun gg--reset-themes ()
   "Disable all currently enabled themes."
@@ -185,10 +176,12 @@ call `set-default-font' on the first one that's available."
 
 (defun gg--load-fonts-for-frame (frame)
   "Set the preferred fonts for a newly-created frame.  Actually disregards FRAME."
+  (set-face-attribute 'mode-line-inactive frame :font gg--modeline-font)
+  (set-face-attribute 'mode-line frame :font gg--modeline-font)
   (load-font-from-options gg--font-list))
 
 ;; TODO: figure out why the hook doesn't get invoked on initialization
-(load-font-from-options gg--font-list)
+(gg--load-fonts-for-frame nil)
 
 (add-to-list 'after-make-frame-functions 'gg--load-fonts-for-frame t)
 
