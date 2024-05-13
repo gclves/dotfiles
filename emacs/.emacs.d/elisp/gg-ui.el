@@ -1,5 +1,3 @@
-(require 'cl)
-
 ;; Window setup
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -144,8 +142,8 @@ This includes `variable-pitch-mode' and a bar cursor."
   (defvar gg--body-font "Go-18"
     "The font used for body text within prose.")
 
-  (cl-loop for face in '(org-code org-block org-table org-checkbox)
-           do (set-face-attribute face nil :font gg--monospace-font))
+  (dolist (face '(org-code org-block org-table org-checkbox))
+    (set-face-attribute face nil :font gg--monospace-font))
 
   ;; set the `fixed-pitch' to be the same family as the default
   (set-face-attribute 'fixed-pitch nil :family (face-attribute 'default :family))
@@ -173,15 +171,17 @@ This includes `variable-pitch-mode' and a bar cursor."
 (defun load-font-from-options (font-list)
   "Set the default font to the first available from FONT-LIST.
 Given a list of cons cells containing font name and font size,
-call `set-default-font' on the first one that's available"
+call `set-default-font' on the first one that's available."
   (let ((supported-fonts (font-family-list))
         (format-font-name (lambda (font)
-                            (cl-destructuring-bind (font-name . font-size) font
+                            (let ((font-name (car font))
+                                  (font-size (cdr font)))
                               (concat font-name "-" (number-to-string font-size))))))
-    (cl-some (lambda (font) (when (member (car font) supported-fonts)
-                      (set-frame-font (funcall format-font-name font))
-                      t))
-          font-list)))
+    (seq-some (lambda (font)
+                (when (member (car font) supported-fonts)
+                  (set-frame-font (funcall format-font-name font))
+                  t))
+              font-list)))
 
 (defun gg--load-fonts-for-frame (frame)
   "Set the preferred fonts for a newly-created frame.  Actually disregards FRAME."

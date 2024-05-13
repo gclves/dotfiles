@@ -2,10 +2,6 @@
 
 (setq sentence-end-double-space nil)
 
-(use-package rg
-  :bind
-  ("M-F" . rg-menu))
-
 ;; (use-package ido-vertical-mode
 ;;   :config
 ;;   (ido-mode 1)
@@ -14,12 +10,12 @@
 ;;         ido-vertical-show-count t))
 
 (fido-vertical-mode)
-(ido-everywhere t)
 (global-set-key (kbd "C-x C-f") 'find-file)
 (global-set-key (kbd "s-o") 'find-file)
 (global-set-key (kbd "s-b") 'ido-switch-buffer)
-(setq ido-use-filename-at-point 'guess
-      ;; fuzzy matching for (defun another-window ()
+(setq ido-use-filename-at-point 'guess)
+
+(defun another-window ()
   "Select the previous window in the current frame.
 Uses `other-window' with an argument -1."
   (interactive)
@@ -45,14 +41,6 @@ Uses `other-window' with an argument -1."
       scroll-conservatively 100
       scroll-preserve-screen-position 1)
 
-(use-package consult
-  :bind (("C-x b" . consult-buffer)
-         ("M-y" . consult-yank-pop)
-         ("C-s" . consult-line)
-         ("C-S-f" . consult-ripgrep))
-  :config
-  (setq consult-narrow-key "<"))
-
 (use-package undo-tree
   :bind
   (("C-z" . undo-tree-undo)
@@ -61,12 +49,11 @@ Uses `other-window' with an argument -1."
    ("s-S-z" . undo-tree-redo)
    ("s-Z" . undo-tree-redo)
    ("C-x u" . undo-tree-visualize))
-  :init
-  (global-undo-tree-mode)
   :config
   (setq undo-tree-visualizer-timestamps t
         undo-tree-visualizer-diff t
-        undo-tree-history-directory-alist `(("." . ,(concat user-emacs-directory "undo-tree")))))
+        undo-tree-history-directory-alist `(("." . ,(concat user-emacs-directory "undo-tree"))))
+  (global-undo-tree-mode))
 
 (defvar gg--scratch-buffer "*scratch*"
   "The buffer currently marked as scratch.  Used by `gg-quick-switch-to-scratch'.")

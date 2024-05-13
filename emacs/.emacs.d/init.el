@@ -1,21 +1,17 @@
-(setq user-full-name "Guilherme Goncalves"
-      user-email-address "gsg@ggoncalves.me"
-      system-time-locale "C")
-
 (add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
 
-(setq ring-bell-function 'ignore)
+;; Sane defaults
+(setq ring-bell-function 'ignore
+      use-short-answers t)
 
-(require 'gg-vendor)
-(require 'gg-use-package)
-; (require 'gg-evil)
+(require 'gg-packages)
+
 (require 'gg-ui)
 (require 'gg-git)
 (require 'gg-prog)
 (require 'gg-eshell)
 (require 'gg-notes)
 (require 'gg-help)
-; (require 'gg-mail)
 
 (when (string-equal system-type "darwin")
   (require 'gg-osx-config))
