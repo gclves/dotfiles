@@ -1,17 +1,22 @@
 #!/bin/zsh
 
-# Load Nix
-if [ -e /Users/Gui.Goncalves/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/Gui.Goncalves/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
-
 eval "$(direnv hook zsh)"
 
+eval "$(/opt/homebrew/bin/brew shellenv)"
 export HOMEBREW_NO_ANALYTICS=1
 # This is used by ruby-build
 export RUBY_CONFIGURE_OPTS="--with-zlib-dir=$(brew --prefix zlib) --with-openssl-dir=$(brew --prefix openssl@1.1)"
 
 export NVM_DIR="$HOME/.nvm"
-# [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-# [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
 export NODE_VERSIONS=$NVM_DIR/versions/node
 export NODE_VERSION_PREFIX=v
+
+# JVM + Coursier
+
+export JAVA_HOME="/Users/gui.goncalves/Library/Caches/Coursier/arc/https/github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jdk_x64_mac_hotspot_8u292b10.tar.gz/jdk8u292-b10/Contents/Home"
+export PATH="$PATH:/Users/gui.goncalves/Library/Application Support/Coursier/bin"
+export PATH="/opt/homebrew/opt/postgresql@14/bin:$PATH"
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# pipx
+export PATH="$PATH:$HOME/.local/bin"

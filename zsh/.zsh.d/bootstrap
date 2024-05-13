@@ -5,11 +5,11 @@
 . $ZSH_D/aws_assume_role
 . $ZSH_D/completion
 . $ZSH_D/fc
-. $ZSH_D/pack
 . $ZSH_D/prompt
+. $ZSH_D/pack
 
 AUTH_FILE=$HOME/.zsh_auth
-if [ -n "$AUTH_FILE" ]; then
+if [ -e "$AUTH_FILE" ]; then
 	. $AUTH_FILE
 fi
 
