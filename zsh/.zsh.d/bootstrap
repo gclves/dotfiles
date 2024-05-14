@@ -7,9 +7,3 @@
 . $ZSH_D/fc
 . $ZSH_D/prompt
 . $ZSH_D/pack
-
-AUTH_FILE=$HOME/.zsh_auth
-if [ -e "$AUTH_FILE" ]; then
-	. $AUTH_FILE
-fi
-

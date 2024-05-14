@@ -1,7 +1,11 @@
 #!/bin/zsh
 
 if [ -z "$SSH_AGENT_PID" ]; then
-	eval $(ssh-agent)
+    eval $(ssh-agent)
 fi
 ssh-add -q --apple-load-keychain
 
+AUTH_FILE=$HOME/.zsh_auth
+if [ -e "$AUTH_FILE" ]; then
+    . $AUTH_FILE
+fi
