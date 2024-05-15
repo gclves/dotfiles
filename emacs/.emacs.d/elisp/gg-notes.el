@@ -1,3 +1,5 @@
+(require 'gg-scratch)
+
 ;;; Org-mode
 (use-package htmlize
   :hook org-mode)

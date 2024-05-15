@@ -12,6 +12,7 @@
 (require 'gg-eshell)
 (require 'gg-notes)
 (require 'gg-help)
+(require 'gg-project)
 
 (when (string-equal system-type "darwin")
   (require 'gg-osx-config))
