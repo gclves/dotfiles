@@ -1,4 +1,4 @@
-(setq exec-path (cons "~/.rbenv/shims" exec-path))
+(add-to-list 'exec-path "~/.rbenv/shims")
 
 (defvar gg--rbenv-path (concat (getenv "HOME") "/.rbenv")
   "Path to the rbenv installation.")

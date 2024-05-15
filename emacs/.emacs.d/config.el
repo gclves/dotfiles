@@ -1,13 +1,5 @@
-(setq use-short-answers t)
-
-(setq sentence-end-double-space nil)
-
-;; (use-package ido-vertical-mode
-;;   :config
-;;   (ido-mode 1)
-;;   (ido-vertical-mode 1)
-;;   (setq ido-vertical-define-keys 'C-n-C-p-up-and-down
-;;         ido-vertical-show-count t))
+(setq use-short-answers t
+      sentence-end-double-space nil)
 
 (fido-vertical-mode)
 (global-set-key (kbd "C-x C-f") 'find-file)
@@ -55,54 +47,19 @@ Uses `other-window' with an argument -1."
         undo-tree-history-directory-alist `(("." . ,(concat user-emacs-directory "undo-tree"))))
   (global-undo-tree-mode))
 
-(defvar gg--scratch-buffer "*scratch*"
-  "The buffer currently marked as scratch.  Used by `gg-quick-switch-to-scratch'.")
-
-(defvar gg--last-visited-buffer nil
-  "Last visited buffer before jumping to *scratch*. Used by `gg-quick-switch-to-scratch'.")
-
-(defun gg-quick-switch-to-scratch ()
-  "Quickly jump to the *scratch* buffer and back."
-  (interactive)
-  (let ((buf (current-buffer)))
-    (if (string= (buffer-name buf) gg--scratch-buffer)
-        (when gg--last-visited-buffer
-            (progn
-              (switch-to-buffer gg--last-visited-buffer)
-              (setq gg--last-visited-buffer nil)))
-      (progn
-        (switch-to-buffer gg--scratch-buffer)
-        (setq gg--last-visited-buffer buf)))))
-
-(defun gg-mark-buffer-as-scratch ()
-  "Mark the currently visited buffer as the scratch one."
-  (interactive)
-  (setq gg--scratch-buffer (buffer-name (current-buffer))))
-
-(global-set-key (kbd "M-_") 'gg-mark-buffer-as-scratch)
-(global-set-key (kbd "M--") 'gg-quick-switch-to-scratch)
 
 (defun edit-config-file ()
   "Edit the Emacs configuration file."
   (interactive)
-  (find-file "~/.emacs.d/config.org"))
-
-(defvar gg-todo-file (expand-file-name "~/TODO")
-  "Location of my TODO file.")
-
-(defun gg-todo ()
-  "Open my personal TODO file."
-  (interactive)
-  (find-file gg-todo-file))
-(global-set-key (kbd "<f4>") 'gg-todo)
+  (find-file "~/.emacs.d/init.el"))
 
 (defun reload-emacs-config ()
-  "Reload the Emacs configuration"
+  "Reload the Emacs configuration."
   (interactive)
   (load user-init-file))
 
 (defun back-to-indentation-or-beginning ()
-  "Move point to beginning of line, or to first non-space character"
+  "Move point to beginning of line, or to first non-space character."
   (interactive)
   (if (= (point) (progn (back-to-indentation) (point)))
       (beginning-of-line)))
@@ -112,7 +69,7 @@ Uses `other-window' with an argument -1."
 (global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
 
 (defun goto-line-with-feedback ()
-  "Show line numbers temporarily, while prompting for the line number input"
+  "Show line numbers temporarily, while prompting for the line number input."
   (interactive)
   (unwind-protect
       (progn
@@ -130,7 +87,7 @@ Uses `other-window' with an argument -1."
 (defun cleanup-buffer-safe ()
   "Perform a bunch of safe operations on the whitespace content.
 For a more agressive cleanup that also does indentation, use
-cleanup-buffer."
+`cleanup-buffer'."
   (interactive)
   (untabify (point-min) (point-max))
   (set-buffer-file-coding-system 'utf-8))
@@ -370,7 +327,7 @@ When called repeatedly, append copy subsequent lines.  When
 (defun has-special-buffer (window)
   "Return non-nil if WINDOW contains a buffer matching `special-display-regexps'."
   (let ((name (buffer-name(window-buffer window))))
-    (some (lambda (regexp) (string-match-p regexp name)) special-display-regexps)))
+    (seq-some (lambda (regexp) (string-match-p regexp name)) special-display-regexps)))
 
 (defun display-special-buffer (buf list-of-what)
   "put the special buffers in the right spot (top-left)"
@@ -417,19 +374,6 @@ When called repeatedly, append copy subsequent lines.  When
 
 (setq mode-line-compact t)
 
-(defvar gg-scratch-buffer-mode 'org-mode
-  "Major mode to be used in temporary buffers.")
-
-(defun make-new-buffer-or-frame (arg)
-  (interactive "P")
-  (let ((make-frame? (and arg t)))
-    (if make-frame? (make-frame-command)
-      (progn
-        (switch-to-buffer (generate-new-buffer "*New*"))
-        (funcall gg-scratch-buffer-mode)))))
-
-(global-set-key (kbd "s-n") 'make-new-buffer-or-frame)
-
 (defun xah-save-all-unsaved ()
   "Save all unsaved files. no ask.
 Version 2019-11-05"
@@ -437,6 +381,7 @@ Version 2019-11-05"
   (save-some-buffers t ))
 
 ;; when switching out of emacs, all unsaved files will be saved
+;; TODO: replace this with after-focus-change-function
 (add-hook 'focus-out-hook 'xah-save-all-unsaved)
 
 (require 'windower)
