@@ -1,9 +1,9 @@
 (use-package company
   :hook (scala-mode . company-mode)
   (ruby-mode . company-mode)
+  (rustic-mode . company-mode)
 
   :config
-  (global-company-mode)
   (setq company-tooltip-align-annotations t
         company-show-numbers t
         company-idle-delay .1
