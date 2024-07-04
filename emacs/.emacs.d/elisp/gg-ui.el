@@ -69,11 +69,9 @@
 ;; | |__| (_) | | (_) | |  \__ \ (__| | | |  __/ | | | | |  __/
 ;;  \____\___/|_|\___/|_|  |___/\___|_| |_|\___|_| |_| |_|\___|
 
-(use-package parchment-theme)
-
 ;; Load the themes
-(defvar gg--dark-theme 'parchment)
-(defvar gg--light-theme 'parchment)
+(defvar gg--dark-theme 'leuven)
+(defvar gg--light-theme 'wombat)
 
 (defun gg--reset-themes ()
   "Disable all currently enabled themes."
