@@ -34,5 +34,11 @@
 (use-package pyvenv
   :hook (python-mode . pyvenv-mode))
 
+;; Rust
+(use-package rustic
+  :mode ("\\.rs\\'" . rustic-mode)
+  :config
+  (define-key rustic-mode-map (kbd "C-S-t") 'rustic-cargo-test))
+
 (provide 'gg-prog)
 ;;; gg-prog.el ends here

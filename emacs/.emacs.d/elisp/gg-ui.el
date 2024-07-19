@@ -73,6 +73,7 @@
 (defvar gg--dark-theme 'leuven)
 (defvar gg--light-theme 'wombat)
 
+
 (defun gg--reset-themes ()
   "Disable all currently enabled themes."
   (dolist (theme custom-enabled-themes)
@@ -146,14 +147,14 @@ This includes `variable-pitch-mode' and a bar cursor."
 
 (defvar gg--font-list
   '(
-    ("CodeNewRoman Nerd Font Propo" . 16)
-    ("Fira Code" . 13)
-    ("Fantasque Sans Mono" . 19)
-    ("Go Mono" . 17)
-    ("PT Mono" . 17)
-    ("Cascadia Code" . 15)
-    ("Monaco" . 15)
-    ("Inconsolata" . 19))
+    ("Cascadia Code" . 12)
+    ("Fira Code" . 11)
+    ("JetBrains Mono" . 11)
+    ("Fantasque Sans Mono" . 11)
+    ("Inconsolata" . 13)
+    ("Go Mono" . 12)
+    ("PT Mono" . 11)
+    ("Monaco" . 11))
   "List (Font_Family . Font_Size) pairs to use, in order of preference.")
 
 ;; TODO: receive the FRAME as a parameter here
@@ -180,6 +181,11 @@ call `set-default-font' on the first one that's available."
 
 ;; TODO: figure out why the hook doesn't get invoked on initialization
 (gg--load-fonts-for-frame nil)
+
+(defun gg-load-fonts ()
+    "Reload the fonts configuration."
+    (interactive)
+  (gg--load-fonts-for-frame nil))
 
 (add-to-list 'after-make-frame-functions 'gg--load-fonts-for-frame t)
 

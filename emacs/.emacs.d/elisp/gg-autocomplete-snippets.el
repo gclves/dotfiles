@@ -1,7 +1,5 @@
 (use-package company
-  :hook (scala-mode . company-mode)
-  (ruby-mode . company-mode)
-  (rustic-mode . company-mode)
+  :hook (prog-mode . company-mode)
 
   :config
   (setq company-tooltip-align-annotations t

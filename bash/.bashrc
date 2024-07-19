@@ -105,9 +105,9 @@ fi
 unset use_color sh
 
 # kitty (terminal) completions
-# if [ "" = "$(which kitty 2> /dev/null)" ] ; then
-#     source <(kitty + complete setup bash)
-# fi
+if [ "" = "$(which kitty 2> /dev/null)" ] ; then
+    source <(kitty + complete setup bash)
+fi
 
 export MAIL=/var/mail/gsg
 export EDITOR="nvim"
@@ -132,3 +132,4 @@ function backlight() { echo $1 | sudo tee /sys/class/backlight/intel_backlight/b
 
 BASHRC_D=$HOME/.bash.d
 source $BASHRC_D/bootstrap
+. "$HOME/.cargo/env"
