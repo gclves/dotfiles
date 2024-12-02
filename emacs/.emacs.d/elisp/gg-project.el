@@ -8,6 +8,6 @@
 (global-set-key (kbd "<f4>") 'gg-todo)
 
 (with-eval-after-load 'project
-  (global-set-key (kbd "s-p") 'project-find-file))
+  (global-set-key (kbd "s-t") 'project-find-file))
 
 (provide 'gg-project)

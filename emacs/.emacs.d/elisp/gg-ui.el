@@ -70,8 +70,8 @@
 ;;  \____\___/|_|\___/|_|  |___/\___|_| |_|\___|_| |_| |_|\___|
 
 ;; Load the themes
-(defvar gg--dark-theme 'leuven)
-(defvar gg--light-theme 'wombat)
+(defvar gg--dark-theme 'modus-vivendi)
+(defvar gg--light-theme 'modus-operandi)
 
 
 (defun gg--reset-themes ()
@@ -147,7 +147,7 @@ This includes `variable-pitch-mode' and a bar cursor."
 
 (defvar gg--font-list
   '(
-    ("Cascadia Code" . 12)
+    ("Cascadia Code" . 14)
     ("Fira Code" . 11)
     ("JetBrains Mono" . 11)
     ("Fantasque Sans Mono" . 11)

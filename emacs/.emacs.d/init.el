@@ -13,6 +13,7 @@
 (require 'gg-notes)
 (require 'gg-help)
 (require 'gg-project)
+(require 'gg-mail)
 
 (when (string-equal system-type "darwin")
   (require 'gg-osx-config))
