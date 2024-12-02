@@ -47,7 +47,7 @@ exec swayidle -w \
 # resumed. It will also lock your screen before your computer goes to sleep.
 
 input * {
-    xkb_layout "gb,us"
+    xkb_layout "gb,gb"
     xkb_variant ",intl"
     xkb_options "ctrl:swapcaps,grp:shifts_toggle"
 }
@@ -257,15 +257,11 @@ bar {
     }
 }
 
-# font pango:Roboto Sans 11
-font pango:Fira Sans 11
-# font pango:Hack 11
+font pango:Hack 11
 titlebar_padding 5 1
 
 include /etc/sway/config.d/*
 
 exec dbus-update-activation-environment DISPLAY XAUTHORITY WAYLAND_DISPLAY
 exec gnome-keyring-daemon --start --components=secrets
-
 exec nm-applet --indicator
-exec flatpak run com.synology.SynologyDrive
