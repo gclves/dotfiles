@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
 . $BASHRC_D/boilerplate
+. $BASHRC_D/kitty
 . $BASHRC_D/prompt
 . $BASHRC_D/fortune
 . $BASHRC_D/alias
-# . $BASHRC_D/rbenv
 . $BASHRC_D/nix
 . $BASHRC_D/notes
 . $BASHRC_D/doing
+. $BASHRC_D/ruby
 . $BASHRC_D/scala
 . $BASHRC_D/golang
+. $BASHRC_D/rust

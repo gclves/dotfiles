@@ -18,17 +18,15 @@ shopt -s checkwinsize
 # and waiting a long time for bash to expand all of $PATH.
 shopt -s no_empty_cmd_completion
 
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
 # Enable history appending instead of overwriting when exiting.  #139609
 shopt -s histappend
-
-# Save each command to the history file as it's executed.  #517342
-# This does mean sessions get interleaved when reading later on, but this
-# way the history is always up to date.  History is not synced across live
-# sessions though; that is what `history -n` does.
-# Disabled by default due to concerns related to system recovery when $HOME
-# is under duress, or lives somewhere flaky (like NFS).  Constantly syncing
-# the history will halt the shell prompt until it's finished.
-PROMPT_COMMAND='history -a'
 
 # Change the window title of X terminals
 case ${TERM} in
@@ -94,9 +92,18 @@ if ${use_color} ; then
     alias grep='grep --colour=auto'
     alias egrep='egrep --colour=auto'
     alias fgrep='fgrep --colour=auto'
+
+    export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 fi
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # Try to keep environment pollution down, EPA loves us.
 unset use_color sh
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 export PATH=$HOME/bin:$HOME/.local/bin:$PATH

@@ -1,0 +1,9 @@
+# Shell completion
+if [ "" = "$(which kitty 2> /dev/null)" ] ; then
+    source <(kitty + complete setup bash)
+fi
+
+function icat() {
+    kitty +kitten icat $@
+}
+
