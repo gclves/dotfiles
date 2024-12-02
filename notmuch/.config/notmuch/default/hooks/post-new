@@ -1,0 +1,9 @@
+#!/bin/sh
+
+notmuch tag -new +newsletters -- to:goncalvesguias+news@gmail.com
+
+notmuch tag -new +sent -- tag:new and from:_@gclv.es
+notmuch tag -new +sent -- tag:new and from:goncalvesguias@gmail.com
+
+# Everything else goes into the inbox
+notmuch tag -new +inbox -- tag:new
