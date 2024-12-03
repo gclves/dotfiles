@@ -1,1 +1,15 @@
-.emacs.d/eln-cache
+.config/emacs/.*
+.config/emacs/bookmarks
+.config/emacs/custom.el
+.config/emacs/request
+.config/emacs/tramp
+.config/emacs/transient
+.config/emacs/url
+eln-cache
+elpa
+history
+ido.last
+lastdir
+network-security.data
+recentf
+session.*
