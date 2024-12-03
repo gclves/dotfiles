@@ -15,6 +15,8 @@ This includes `variable-pitch-mode' and a bar cursor."
 
   (add-hook 'text-mode-hook 'gg--set-up-text-mode))
 
+(add-hook 'git-commit-mode-hook (lambda () (interactive) (variable-pitch-mode -1)))
+
 (defun gg--set-up-org-typography ()
   "Set up typography for Org-mode."
   ;; Set up the typography
