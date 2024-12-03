@@ -14,9 +14,6 @@
 (use-package yasnippet
   :hook (prog-mode . yas-minor-mode))
 
-(use-package flycheck
-  :hook (prog-mode . flycheck-mode))
-
 (setq-default abbrev-mode t)
 (setq save-abbrevs 'silently)
 
