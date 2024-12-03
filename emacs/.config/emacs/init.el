@@ -6,6 +6,13 @@
 
 (require 'gg-packages)
 
+;; GC Magic Hack is supposed to improve perf by dynamically
+;; adjusting the GC thresholds depending on activity level
+(use-package gcmh
+  :config
+  (gcmh-mode 1))
+
+
 (require 'gg-ui)
 (require 'gg-typography)
 (require 'gg-git)
@@ -19,7 +26,8 @@
 (when (string-equal system-type "darwin")
   (require 'gg-osx-config))
 
-(setq custom-file "~/.emacs.d/custom.el")
+(setq custom-file
+      (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file :noerror)
 
 ;; TODO: move all of these into the "modules" above

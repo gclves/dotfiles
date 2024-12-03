@@ -46,10 +46,10 @@ Uses `other-window' with an argument -1."
         undo-tree-history-directory-alist `(("." . ,(concat user-emacs-directory "undo-tree"))))
   (global-undo-tree-mode))
 
-(defun edit-config-file ()
+(defun gg-edit-emacs-config ()
   "Edit the Emacs configuration file."
   (interactive)
-  (find-file "~/.emacs.d/init.el"))
+  (find-file user-init-file))
 
 (defun reload-emacs-config ()
   "Reload the Emacs configuration."
