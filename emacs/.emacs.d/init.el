@@ -7,6 +7,7 @@
 (require 'gg-packages)
 
 (require 'gg-ui)
+(require 'gg-typography)
 (require 'gg-git)
 (require 'gg-prog)
 (require 'gg-eshell)
