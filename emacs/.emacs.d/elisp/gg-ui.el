@@ -37,7 +37,7 @@
 (display-battery-mode)
 (use-package minions :config (minions-mode 1))
 
-(defvar gg--modeline-font "Roboto-15"
+(defvar gg--modeline-font "Roboto-13"
   "The font face used for the modeline.")
 
 (set-face-attribute 'mode-line-inactive nil :font gg--modeline-font)

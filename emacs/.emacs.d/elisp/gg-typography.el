@@ -60,7 +60,7 @@ call `set-default-font' on the first one that's available."
                               (concat font-name "-" (number-to-string font-size))))))
     (seq-some (lambda (font)
                 (when (member (car font) supported-fonts)
-                  (set-frame-font (funcall format-font-name font))
+                  (set-frame-font (funcall format-font-name font) nil t)
                   t))
               font-list)))
 

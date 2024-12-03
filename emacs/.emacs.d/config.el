@@ -26,7 +26,6 @@ Uses `other-window' with an argument -1."
 (windmove-default-keybindings 'super)
 (setq windmove-wrap-around t)
 
-; no more janky scrolling
 (setq next-line-add-newlines nil
       scroll-margin 10
       scroll-step 1
@@ -46,7 +45,6 @@ Uses `other-window' with an argument -1."
         undo-tree-visualizer-diff t
         undo-tree-history-directory-alist `(("." . ,(concat user-emacs-directory "undo-tree"))))
   (global-undo-tree-mode))
-
 
 (defun edit-config-file ()
   "Edit the Emacs configuration file."
@@ -204,9 +202,6 @@ When called repeatedly, append copy subsequent lines.  When
 (global-set-key [f7] 'call-last-kbd-macro)
 
 (global-set-key (kbd "C--") 'bury-buffer)
-(global-set-key (kbd "C-;") 'comment-line)
-(electric-pair-mode)
-(add-hook 'prog-mode-hook 'subword-mode)
 
 (use-package expand-region
   :config (pending-delete-mode t)
@@ -270,13 +265,12 @@ When called repeatedly, append copy subsequent lines.  When
   (interactive)
   (insert "( ͡° ͜ʖ ͡°)"))
 
-; mapping <escape> to 'keyboard-escape-quit doesn't seem to work for some reason, so we just translate
-; (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
 (global-set-key (kbd "s-u") 'revert-buffer)
 
 (use-package visual-regexp
   :bind
-  (("C-M-%" . vr/replace)))
+  (("C-M-%" . vr/replace)
+   ("M-%" . vr/query-replace)))
 
 (defvar --backup-directory (concat user-emacs-directory "backups"))
 (if (not (file-exists-p --backup-directory))

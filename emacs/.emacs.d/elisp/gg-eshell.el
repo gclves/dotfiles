@@ -10,14 +10,14 @@
 (global-set-key (kbd "<f12>") 'aweshell-dedicated-toggle)
 (global-set-key (kbd "<f1>") 'gg-next-aweshell)
 
-(with-eval-after-load 'aweshell
-  (setq aweshell-auto-suggestion-p nil)
+(defun gg-next-aweshell (arg)
+  "Switch to next aweshell.  If called with `ARG', create a new one."
+  (interactive "P")
+  (let ((open-new? (and arg t)))
+    (if open-new? (aweshell-new) (aweshell-next))))
 
-  (defun gg-next-aweshell (arg)
-    "Switch to next aweshell.  If called with `ARG', create a new one."
-    (interactive "P")
-    (let ((open-new? (and arg t)))
-      (if open-new? (aweshell-new) (aweshell-next)))))
+(with-eval-after-load 'aweshell
+  (setq aweshell-auto-suggestion-p nil))
 
 
 (with-eval-after-load 'eshell
@@ -30,9 +30,8 @@
 
   (defun eshell/x ()
     (delete-window)
-    (eshell/exit)))
+    (eshell/exit))
 
-(with-eval-after-load 'eshell
   (defun eshell-there (host)
     (interactive "sHost: ")
     (let ((default-directory (format "/%s:" host)))
@@ -57,7 +56,6 @@
       (eshell-send-input)))
 
   (global-set-key (kbd "C-!") 'eshell-here)
-
 
   (add-hook 'eshell-mode-hook (lambda ()
                                 (add-to-list 'eshell-visual-commands "ssh")

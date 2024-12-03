@@ -18,7 +18,6 @@
 
 (use-package paredit
   :hook ((emacs-lisp-mode
-          eval-expression-minibuffer-setup
           ielm-mode
           lisp-mode
           lisp-interaction-mode
@@ -29,6 +28,9 @@
   (define-key lisp-interaction-mode-map (kbd "C-j") 'eval-print-last-sexp))
 
 (setq-default tab-width 4)
+(global-set-key (kbd "C-;") 'comment-line)
+(electric-pair-mode)
+(add-hook 'prog-mode-hook 'subword-mode)
 
 ;; Python
 (use-package pyvenv
