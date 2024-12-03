@@ -21,6 +21,8 @@
 
 
 (with-eval-after-load 'eshell
+  (setq eshell-banner-message "")
+
   (defun eshell/d (&rest args)
     (dired (pop args) "."))
 

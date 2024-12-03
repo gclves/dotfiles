@@ -115,6 +115,7 @@
 
 (setq-default fill-column 80)
 (setq async-shell-command-display-buffer nil)
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 (provide 'gg-ui)
 ;;; gg-ui.el ends here

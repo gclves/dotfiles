@@ -26,7 +26,7 @@ Used by `gg-quick-switch-to-scratch'.")
 (global-set-key (kbd "M-_") 'gg-mark-buffer-as-scratch)
 (global-set-key (kbd "M--") 'gg-quick-switch-to-scratch)
 
-(defvar gg-scratch-buffer-mode 'org-mode
+(defvar gg-scratch-buffer-mode 'lisp-interaction-mode
   "Major mode to be used in temporary buffers.")
 
 (defun make-new-buffer-or-frame (arg)
