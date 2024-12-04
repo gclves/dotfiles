@@ -3,44 +3,17 @@
 (require 'gg-web-dev)
 (require 'gg-ruby)
 (require 'gg-scala)
+(require 'gg-rust)
+(require 'gg-python)
+(require 'gg-go)
+(require 'gg-lisp)
 
-;; Golang
-(use-package go-mode
-  :mode "\\.go\\'"
-  :hook ((before-save . gofmt-before-save))
-  :bind (:map go-mode-map
-              ("C-\\" . go-test-current-project))
-  :ensure-system-package (goimports . "go install golang.org/x/tools/cmd/goimports@latest")
-  :init (add-to-list 'exec-path "~/go/bin")
-  :config
-  (setq gofmt-command "goimports"))
-
-
-(use-package paredit
-  :hook ((emacs-lisp-mode
-          ielm-mode
-          lisp-mode
-          lisp-interaction-mode
-          scheme-mode) . enable-paredit-mode)
-  :config
-  (define-key paredit-mode-map (kbd "C-j") nil)
-  (define-key paredit-mode-map (kbd "RET") 'paredit-newline)
-  (define-key lisp-interaction-mode-map (kbd "C-j") 'eval-print-last-sexp))
 
 (setq-default tab-width 4)
 (global-set-key (kbd "C-;") 'comment-line)
 (electric-pair-mode)
 (add-hook 'prog-mode-hook 'subword-mode)
 
-;; Python
-(use-package pyvenv
-  :hook (python-mode . pyvenv-mode))
-
-;; Rust
-(use-package rustic
-  :mode ("\\.rs\\'" . rustic-mode)
-  :config
-  (define-key rustic-mode-map (kbd "C-S-t") 'rustic-cargo-test))
 
 (provide 'gg-prog)
 ;;; gg-prog.el ends here
