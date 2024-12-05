@@ -2,7 +2,6 @@
 
 (use-package evil
   :config
-  (add-hook 'text-mode-hook 'turn-on-evil-mode)
   (add-hook 'prog-mode-hook 'turn-on-evil-mode)
 
   (evil-define-key 'motion 'global (kbd "DEL") "%")
@@ -10,12 +9,15 @@
   (evil-set-leader 'normal (kbd "SPC"))
 
   (evil-global-set-key 'normal (kbd "<leader>s") 'save-buffer)
+  (evil-global-set-key 'normal (kbd "<leader>gb") 'magit-blame-addition)
 
-  (evil-global-set-key 'normal (kbd "<leader>gb") 'magit-blame-addition))
+  (add-hook 'lisp-interaction-mode-hook (lambda () (interactive) (evil-mode -1)))
+  (add-hook 'lisp-mode-hook (lambda () (interactive) (evil-mode -1))))
 
 (require 'key-chord)
-(key-chord-mode 1)
-(key-chord-define-global "jk" 'evil-normal-state)
+(with-eval-after-load 'key-chord
+  (key-chord-mode 1)
+  (key-chord-define-global "jk" 'evil-normal-state))
 
 (use-package evil-matchit
   :config
