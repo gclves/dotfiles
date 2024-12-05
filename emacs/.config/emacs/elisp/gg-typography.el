@@ -1,6 +1,45 @@
+(defvar gg--font-list
+  '(
+    ("JetBrains Mono" . 110)
+    ("Cascadia Code" . 140)
+    ("Fira Code" . 110)
+    ("Fantasque Sans Mono" . 110)
+    ("Inconsolata" . 130)
+    ("Go Mono" . 120)
+    ("PT Mono" . 110)
+    ("Monaco" . 110)
+    ("Monospace" . 120))
+  "List (Font_Family . Font_Size) pairs to use, in order of preference.")
+
+(defvar gg--variable-pitch-font-list
+  '(
+    ("Roboto" . 1.2)
+    ("Go" . 1.0))
+  "List of variable-pitch fonts to use, in order of preference.")
+
+(defun gg--first-available-font (font-list)
+  "Get the default font to the first available from FONT-LIST.
+Given a list of cons cells containing font name and font size."
+  (let ((supported-fonts (font-family-list)))
+    (seq-find (lambda (font) (member (car font) supported-fonts))
+              font-list)))
+
+(let* ((monospaced (gg--first-available-font gg--font-list))
+       (monospaced-family (car monospaced))
+       (monospaced-height (cdr monospaced))
+       (proportional (gg--first-available-font gg--variable-pitch-font-list))
+       (proportional-family (car proportional))
+       (proportional-height (cdr proportional)))
+  (set-face-attribute 'default nil :family monospaced-family :height monospaced-height)
+  (set-face-attribute 'fixed-pitch nil :family monospaced-family :height monospaced-height)
+  (set-face-attribute 'variable-pitch nil :family proportional-family :height proportional-height))
+
+(when (member "Symbola" (font-family-list))
+  (set-fontset-font t 'unicode "Symbola" nil 'prepend))
+
 (global-prettify-symbols-mode 1)
 
-;; Look & Feel for long-form writing
+;; Look & Feel for prose writing
 (use-package olivetti
   :ensure t
   :hook text-mode)
@@ -16,74 +55,6 @@ This includes `variable-pitch-mode' and a bar cursor."
   (add-hook 'text-mode-hook 'gg--set-up-text-mode))
 
 (add-hook 'git-commit-mode-hook (lambda () (interactive) (variable-pitch-mode -1)))
-
-(defun gg--set-up-org-typography ()
-  "Set up typography for Org-mode."
-  ;; Set up the typography
-  (defvar gg--prose-monospace-font "Go Mono-18"
-    "The font used for Monospace text within prose.")
-  (defvar gg--prose-font "Go-18"
-    "The font used for body text within prose.")
-
-  (dolist (face '(org-code org-block org-table org-checkbox))
-    (set-face-attribute face nil :font gg--prose-monospace-font))
-
-  ;; set the `fixed-pitch' to be the same family as the default
-  (set-face-attribute 'fixed-pitch nil :family (face-attribute 'default :family))
-  (set-face-attribute 'variable-pitch nil :font gg--prose-font)
-  (set-face-attribute 'org-quote nil :font gg--prose-font :slant 'italic))
-
-;; XXX: Do we really need to run all that as a hook?!
-(with-eval-after-load 'org
-  (setq org-startup-indented t)         ; Enable `org-indent-mode' by default
-  (add-hook 'org-mode-hook 'gg--set-up-org-typography))
-
-(defvar gg--font-list
-  '(
-    ("Cascadia Code" . 14)
-    ("Fira Code" . 11)
-    ("JetBrains Mono" . 11)
-    ("Fantasque Sans Mono" . 11)
-    ("Inconsolata" . 13)
-    ("Go Mono" . 12)
-    ("PT Mono" . 11)
-    ("Monaco" . 11))
-  "List (Font_Family . Font_Size) pairs to use, in order of preference.")
-
-;; TODO: receive the FRAME as a parameter here
-(defun load-font-from-options (font-list)
-  "Set the default font to the first available from FONT-LIST.
-Given a list of cons cells containing font name and font size,
-call `set-default-font' on the first one that's available."
-  (let ((supported-fonts (font-family-list))
-        (format-font-name (lambda (font)
-                            (let ((font-name (car font))
-                                  (font-size (cdr font)))
-                              (concat font-name "-" (number-to-string font-size))))))
-    (seq-some (lambda (font)
-                (when (member (car font) supported-fonts)
-                  (set-frame-font (funcall format-font-name font) nil t)
-                  t))
-              font-list)))
-
-(defun gg--load-fonts-for-frame (frame)
-  "Set the preferred fonts for a newly-created frame.  Actually disregards FRAME."
-  (set-face-attribute 'mode-line-inactive frame :font gg--modeline-font)
-  (set-face-attribute 'mode-line frame :font gg--modeline-font)
-  (load-font-from-options gg--font-list))
-
-;; TODO: figure out why the hook doesn't get invoked on initialization
-(gg--load-fonts-for-frame nil)
-
-(defun gg-load-fonts ()
-  "Reload the fonts configuration."
-  (interactive)
-  (gg--load-fonts-for-frame nil))
-
-(add-to-list 'after-make-frame-functions 'gg--load-fonts-for-frame t)
-
-(when (member "Symbola" (font-family-list))
-  (set-fontset-font t 'unicode "Symbola" nil 'prepend))
 
 (defun font-size-reset ()
   "Reset the text-scale to zero."
@@ -109,16 +80,16 @@ call `set-default-font' on the first one that's available."
 
 (setq-default indent-tabs-mode nil)
 
-;;; Whitespace
-;; Render all whitespace: useful, but busy
-;; (setq whitespace-style '(face trailing tabs newline tab-mark space-mark))
-(setq whitespace-style '(face trailing tabs newline)
-      whitespace-display-mappings
-      '((tab-mark 9 [8594 9])
-        (space-mark 32 [183] [46])
-        (space-mark 160 [164])
-        (newline-mark 10 [8617 10])))
-(add-hook 'prog-mode-hook 'whitespace-mode)
+(with-eval-after-load 'whitespace
+  ;; Render all whitespace: useful, but busy
+  ;; (setq whitespace-style '(face trailing tabs newline tab-mark space-mark))
+  (setq whitespace-style '(face trailing tabs newline)
+        whitespace-display-mappings
+        '((tab-mark 9 [8594 9])
+          (space-mark 32 [183] [46])
+          (space-mark 160 [164])
+          (newline-mark 10 [8617 10])))
+  (add-hook 'prog-mode-hook 'whitespace-mode))
 
 
 (provide 'gg-typography)
