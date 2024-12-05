@@ -1,7 +1,6 @@
 (setq use-short-answers t
       sentence-end-double-space nil)
 
-(fido-vertical-mode)
 (global-set-key (kbd "C-x C-f") 'find-file)
 (global-set-key (kbd "s-o") 'find-file)
 (global-set-key (kbd "s-b") 'ido-switch-buffer)
@@ -73,8 +72,6 @@ Uses `other-window' with an argument -1."
 
 (global-auto-revert-mode)               ; revert a file’s buffer automatically when it’s been changed on disk
 
-(use-package all-the-icons-dired
-  :hook (dired-mode . all-the-icons-dired-mode))
 
 (with-eval-after-load 'dired
   (add-hook 'dired-mode-hook 'dired-hide-details-mode)

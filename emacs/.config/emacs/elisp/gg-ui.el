@@ -92,9 +92,46 @@
   (gg--reset-themes)
   (load-theme gg--light-theme t))
 
- ;; Switch between light and dark themes
+;; Switch between light and dark themes
 (run-at-time "07:00" (* 60 60 24) (lambda () (gg--load-light-theme)))
 (run-at-time "18:00" (* 60 60 24) (lambda () (gg--load-dark-theme)))
+
+;; ___
+;;|_ _|___ ___  _ __  ___
+;; | |/ __/ _ \| '_ \/ __|
+;; | | (_| (_) | | | \__ \
+;;|___\___\___/|_| |_|___/
+
+(use-package nerd-icons)
+
+(use-package nerd-icons-completion
+  :after marginalia
+  :config
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
+(use-package nerd-icons-corfu
+  :after corfu
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+(use-package nerd-icons-dired
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
+
+;; __  __ _       _ _            __  __
+;;|  \/  (_)_ __ (_) |__  _   _ / _|/ _| ___ _ __
+;;| |\/| | | '_ \| | '_ \| | | | |_| |_ / _ \ '__|
+;;| |  | | | | | | | |_) | |_| |  _|  _|  __/ |
+;;|_|  |_|_|_| |_|_|_.__/ \__,_|_| |_|  \___|_|
+
+(use-package vertico
+  :hook (after-init . vertico-mode))
+
+(use-package marginalia
+  :hook (after-init . marginalia-mode))
+
+(with-eval-after-load 'savehist
+  (add-hook 'after-init-hook 'savehist-mode))
 
 ;;   ___  _   _                     _          __  __
 ;;  / _ \| |_| |__   ___ _ __   ___| |_ _   _ / _|/ _|

@@ -1,15 +1,19 @@
-(use-package company
-  :hook (prog-mode . company-mode)
-
+(use-package corfu
+  :hook (prog-mode . corfu-mode)
+  :bind (:map corfu-map ("<tab>" . corfu-complete))
   :config
-  (setq company-tooltip-align-annotations t
-        company-show-numbers t
-        company-idle-delay .1
-        company-tooltip-idle-delay .1)
-  (add-to-list 'completion-styles 'initials t))
+  (setq tab-always-indent 'complete
+        corfu-preview-current nil
+        corfu-min-width 20
 
-(use-package company-quickhelp
-  :hook (company-mode . company-quickhelp-mode))
+        corfu-popupinfo-delay '(1.25 . 0.5))
+
+  (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
+
+  ;; Sort by input history (no need to modify `corfu-sort-function').
+  (with-eval-after-load 'savehist
+    (corfu-history-mode 1)
+    (add-to-list 'savehist-additional-variables 'corfu-history)))
 
 (use-package yasnippet
   :hook (prog-mode . yas-minor-mode))

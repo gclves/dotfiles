@@ -1,38 +1,18 @@
-(defvar gg--font-list
-  '(
-    ("JetBrains Mono" . 110)
-    ("Cascadia Code" . 140)
-    ("Fira Code" . 110)
-    ("Fantasque Sans Mono" . 110)
-    ("Inconsolata" . 130)
-    ("Go Mono" . 120)
-    ("PT Mono" . 110)
-    ("Monaco" . 110)
-    ("Monospace" . 120))
-  "List (Font_Family . Font_Size) pairs to use, in order of preference.")
+(defvar gg-monospaced-font-family "Fira Code"
+  "Default monospaced font family.")
+(defvar gg-monospaced-font-height 130
+  "Default monospaced font height.")
+(defvar gg-variable-font-family "Roboto"
+  "Default variable-pitch font family.")
 
-(defvar gg--variable-pitch-font-list
-  '(
-    ("Roboto" . 1.2)
-    ("Go" . 1.0))
-  "List of variable-pitch fonts to use, in order of preference.")
+(if (member gg-monospaced-font-family (font-family-list))
+    (progn
+      (set-face-attribute 'default nil :family gg-monospaced-font-family :height gg-monospaced-font-height)
+      (set-face-attribute 'fixed-pitch nil :family gg-monospaced-font-family :height 1.0))
+  (message (format "Font `%s' is not installed. Please pick a different font." gg-monospaced-font-family)))
 
-(defun gg--first-available-font (font-list)
-  "Get the default font to the first available from FONT-LIST.
-Given a list of cons cells containing font name and font size."
-  (let ((supported-fonts (font-family-list)))
-    (seq-find (lambda (font) (member (car font) supported-fonts))
-              font-list)))
-
-(let* ((monospaced (gg--first-available-font gg--font-list))
-       (monospaced-family (car monospaced))
-       (monospaced-height (cdr monospaced))
-       (proportional (gg--first-available-font gg--variable-pitch-font-list))
-       (proportional-family (car proportional))
-       (proportional-height (cdr proportional)))
-  (set-face-attribute 'default nil :family monospaced-family :height monospaced-height)
-  (set-face-attribute 'fixed-pitch nil :family monospaced-family :height monospaced-height)
-  (set-face-attribute 'variable-pitch nil :family proportional-family :height proportional-height))
+(when (member gg-variable-font-family (font-family-list))
+  (set-face-attribute 'variable-pitch nil :family gg-variable-font-family :height 1.2))
 
 (when (member "Symbola" (font-family-list))
   (set-fontset-font t 'unicode "Symbola" nil 'prepend))
