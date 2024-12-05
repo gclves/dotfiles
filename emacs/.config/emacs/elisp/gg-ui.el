@@ -69,10 +69,11 @@
 ;; | |__| (_) | | (_) | |  \__ \ (__| | | |  __/ | | | | |  __/
 ;;  \____\___/|_|\___/|_|  |___/\___|_| |_|\___|_| |_| |_|\___|
 
-;; Load the themes
-(defvar gg--dark-theme 'modus-vivendi)
-(defvar gg--light-theme 'modus-operandi)
+(use-package ef-themes)
 
+;; ef-maris-{light,dark} is also a nice pair
+(defvar gg--light-theme 'ef-melissa-light)
+(defvar gg--dark-theme 'ef-melissa-dark)
 
 (defun gg--reset-themes ()
   "Disable all currently enabled themes."
