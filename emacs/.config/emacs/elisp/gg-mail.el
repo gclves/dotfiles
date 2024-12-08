@@ -3,8 +3,8 @@
    notmuch-hello-sections
    '(notmuch-hello-insert-saved-searches notmuch-hello-insert-search notmuch-hello-insert-alltags notmuch-hello-insert-footer)
    notmuch-saved-searches
-   '((:name "inbox" :query "tag:inbox and not tag:archived" :key "i")
-     (:name "newsletters" :query "tag:newsletters and not tag:archived")
+   '((:name "inbox" :query "tag:inbox and not tag:archived" :key "i" :search-type tree)
+     (:name "newsletters" :query "tag:newsletters and not tag:archived" :sort-order newest-first)
      (:name "unread" :query "tag:unread and not tag:archived" :key
             [117])
      (:name "flagged" :query "tag:flagged" :key

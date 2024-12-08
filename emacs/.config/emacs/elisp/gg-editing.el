@@ -230,8 +230,7 @@ Version 2019-11-05"
 ;; TODO: replace this with after-focus-change-function
 (add-hook 'focus-out-hook 'xah-save-all-unsaved)
 
-(with-eval-after-load 'delsel
-  (require 'delsel)
-  (add-hook 'after-init-hook 'delete-selection-mode))
+(use-package delsel
+  :hook (after-init . delete-selection-mode))
 
 (provide 'gg-editing)

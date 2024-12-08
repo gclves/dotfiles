@@ -71,9 +71,9 @@
 
 (use-package ef-themes)
 
-;; ef-maris-{light,dark} is also a nice pair
-(defvar gg--light-theme 'ef-melissa-light)
-(defvar gg--dark-theme 'ef-melissa-dark)
+;; ef-melissa-{light,dark} is also a nice pair
+(defvar gg--light-theme 'ef-maris-light)
+(defvar gg--dark-theme 'ef-maris-dark)
 
 (defun gg--reset-themes ()
   "Disable all currently enabled themes."
