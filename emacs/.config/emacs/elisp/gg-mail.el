@@ -1,39 +1,61 @@
-(with-eval-after-load 'notmuch
-  (setq
-   notmuch-hello-sections
-   '(notmuch-hello-insert-saved-searches notmuch-hello-insert-search notmuch-hello-insert-alltags notmuch-hello-insert-footer)
-   notmuch-saved-searches
-   '((:name "inbox" :query "tag:inbox and not tag:archived" :key "i" :search-type tree)
-     (:name "newsletters" :query "tag:newsletters and not tag:archived" :sort-order newest-first)
-     (:name "unread" :query "tag:unread and not tag:archived" :key
-            [117])
-     (:name "flagged" :query "tag:flagged" :key
-            [102])
-     (:name "sent" :query "tag:sent" :key
-            [116])
-     (:name "drafts" :query "tag:draft" :key
-            [100])
-     (:name "all mail" :query "*" :key
-            [97]))
-   notmuch-archive-tags '("-inbox" "+archived")
-   notmuch-tree-outline-mode t)
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa-src/mu4e-1.12.6")
+(require 'mu4e)
 
-  (defalias 'gg-goto-mailbox 'notmuch-jump-search)
+(with-eval-after-load 'mu4e
+  (setq mu4e-get-mail-command "true"
+        mu4e-drafts-folder "/Drafts"
+        mu4e-sent-folder "/Sent"
+        mu4e-trash-folder "/Trash"
+        mu4e-refile-folder "/Archive"
+        mu4e-use-fancy-chars t
+        mu4e-change-filenames-when-moving t
+        mu4e-update-interval 300
+        mu4e-headers-fields '((:human-date . 12)
+                              (:flags . 6)
+                              (:mailing-list . 10)
+                              (:from-or-to . 22)
+                              (:thread-subject)))
 
-  (defun gg--notmuch-delete-message ()
-    "Mark a message to be deleted"
-    (interactive)
-    (notmuch-search-tag '("+deleted" "-inbox"))
-    (notmuch-search-next-thread))
+  (add-to-list 'mu4e-bookmarks
+               '( :name "Newsletters"
+                  :key ?n
+                  :query "maildir:/Newsletters"))
 
-  (defun gg--notmuch-delete-from-message ()
-    "Mark a message to be deleted, then jump to the next"
-    (interactive)
-    (notmuch-show-tag '("+deleted" "-inbox"))
-    (notmuch-show-next-thread-show))
+  (add-to-list 'mu4e-bookmarks
+               '( :name "Inbox"
+                  :key ?i
+                  :query "maildir:/Inbox"))
 
-  (define-key notmuch-search-mode-map (kbd "d") 'gg--notmuch-delete-message)
-  (define-key notmuch-show-mode-map (kbd "d") 'gg--notmuch-delete-from-message))
+  (setq mu4e-maildir-shortcuts
+        '(( :maildir "/Inbox"
+            :key ?i
+            :name: "Inbox")
+          ( :maildir "/Archive"
+            :key ?a
+            :name "Archive")
+          ( :maildir "/GMail_All"
+            :key ?,
+            :name "Old Mail"))))
+
+
+(with-eval-after-load 'sendmail
+  (setq mail-host-address "gclv.es"
+        user-full-name "Gui Goncalves"
+        user-mail-address "_@gclv.es")
+
+  (setq send-mail-function 'sendmail-send-it
+        message-send-mail-function 'sendmail-send-it
+        sendmail-program "/usr/bin/msmtp"
+        mail-specify-envelope-from t
+        message-sendmail-envelope-from 'header
+        mail-envelope-from 'header)
+
+  (defun gg-message-mode-setup ()
+    (setq fill-column 72)
+    (turn-on-auto-fill))
+
+  (add-hook 'message-mode-hook 'gg-message-mode-setup))
 
 
 (provide 'gg-mail)
+;;; gg-mail.el ends here

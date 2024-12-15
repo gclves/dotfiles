@@ -12,6 +12,10 @@
   :config
   (gcmh-mode 1))
 
+(use-package exec-path-from-shell
+  :init
+  (when (or (daemonp) (memq window-system '(mac ns x)))
+    (exec-path-from-shell-initialize)))
 
 (require 'gg-ui)
 (require 'gg-typography)
