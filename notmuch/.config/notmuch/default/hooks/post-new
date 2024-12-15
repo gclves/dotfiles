@@ -1,6 +1,0 @@
-#!/bin/sh
-
-notmuch tag --batch --input=/home/gg/.notmuch-tags
-
-# Everything not matched goes into the inbox
-notmuch tag -new +inbox -- tag:new
