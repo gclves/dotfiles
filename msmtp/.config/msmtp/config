@@ -1,0 +1,24 @@
+# Set default values for all following accounts.
+defaults
+auth           on
+tls            on
+logfile        ~/.local/state/msmtp/log
+port           465
+tls_starttls   off
+
+# Gmail
+account        gmail
+host           smtp.gmail.com
+from           goncalvesguias@gmail.com
+user           goncalvesguias@gmail.com
+password       foobar
+
+# gclv
+account        gclv
+from           _@gclv.es
+user           _@gclv.es
+host           blizzard.mxrouting.net
+password       hunter2
+
+# Set a default account
+account default: gclv
