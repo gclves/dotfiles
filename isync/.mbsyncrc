@@ -1,28 +1,26 @@
-IMAPAccount Migadu
-Host imap.migadu.com
-User admin@gclv.es
-PassCmd "security find-generic-password -s migadu -a admin@gclv.es -w"
+IMAPAccount mxroute
+Host blizzard.mxrouting.net
+User foo
 Port 993
+Pass bar
+# PassCmd "security find-generic-password -s migadu -a admin@gclv.es -w"
 SSLType IMAPS
 SSLVersions TLSv1.2
 AuthMechs PLAIN
 SystemCertificates yes
-# CertificateFile ~/.mail/certificates/root-certificates.pem
 
-IMAPStore migadu-remote
-Account Migadu
+IMAPStore mxroute-remote
+Account mxroute
 
-MaildirStore migadu-local
+MaildirStore mxroute-local
 SubFolders Verbatim
-Path ~/.mail/p/
-Inbox ~/.mail/p/INBOX
+Path ~/.mail/
+Inbox ~/.mail/Inbox
 
-Channel migadu
-Far :migadu-remote:
-Near :migadu-local:
+Channel mxroute
+Far :mxroute-remote:
+Near :mxroute-local:
 Patterns *
-Create Near
-Sync All
+Create Both
 Expunge Both
 SyncState *
-
