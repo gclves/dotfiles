@@ -6,6 +6,7 @@ projectile.cache
 .config/emacs/tramp
 .config/emacs/transient
 .config/emacs/url
+.config/emacs/tree-sitter
 eln-cache
 elpa
 history

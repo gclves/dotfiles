@@ -14,6 +14,10 @@
 (electric-pair-mode)
 (add-hook 'prog-mode-hook 'subword-mode)
 
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode)
+  (setq treesit-auto-install t))
 
 (provide 'gg-prog)
 ;;; gg-prog.el ends here

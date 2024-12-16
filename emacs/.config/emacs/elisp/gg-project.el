@@ -11,17 +11,14 @@
 
 (use-package projectile
   :ensure t
-  :init
-  (projectile-mode +1)
+  :init (projectile-mode +1)
   :config
   (setq projectile-project-search-path '("~/src"))
   :bind ((:map projectile-mode-map
-               ("s-p" . projectile-command-map)
-               ("C-x p" . projectile-command-map))
-         (:map global-map
-               ("s-t" . projectile-find-file))))
+               ("C-x p" . projectile-command-map)
+               ("s-p" . projectile-find-file))))
 
-(with-eval-after-load 'project
-  (global-set-key (kbd "s-t") 'project-find-file))
+(use-package envrc
+  :bind (("C-c e" . envrc-command-map)))
 
 (provide 'gg-project)
