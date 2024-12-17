@@ -37,7 +37,7 @@
 (display-battery-mode)
 (use-package minions :config (minions-mode 1))
 
-(defvar gg--modeline-font "Roboto-13"
+(defvar gg--modeline-font "Roboto Condensed-16"
   "The font face used for the modeline.")
 
 (set-face-attribute 'mode-line-inactive nil :font gg--modeline-font)
@@ -69,11 +69,8 @@
 ;; | |__| (_) | | (_) | |  \__ \ (__| | | |  __/ | | | | |  __/
 ;;  \____\___/|_|\___/|_|  |___/\___|_| |_|\___|_| |_| |_|\___|
 
-(use-package ef-themes)
-
-;; ef-melissa-{light,dark} is also a nice pair
-(defvar gg--light-theme 'ef-maris-light)
-(defvar gg--dark-theme 'ef-maris-dark)
+(defvar gg--light-theme 'modus-operandi-tinted)
+(defvar gg--dark-theme 'modus-vivendi-tinted)
 
 (defun gg--reset-themes ()
   "Disable all currently enabled themes."
