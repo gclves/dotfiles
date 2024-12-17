@@ -118,21 +118,6 @@
   :hook
   (dired-mode . nerd-icons-dired-mode))
 
-;; __  __ _       _ _            __  __
-;;|  \/  (_)_ __ (_) |__  _   _ / _|/ _| ___ _ __
-;;| |\/| | | '_ \| | '_ \| | | | |_| |_ / _ \ '__|
-;;| |  | | | | | | | |_) | |_| |  _|  _|  __/ |
-;;|_|  |_|_|_| |_|_|_.__/ \__,_|_| |_|  \___|_|
-
-(use-package vertico
-  :hook (after-init . vertico-mode))
-
-(use-package marginalia
-  :hook (after-init . marginalia-mode))
-
-(with-eval-after-load 'savehist
-  (add-hook 'after-init-hook 'savehist-mode))
-
 ;;   ___  _   _                     _          __  __
 ;;  / _ \| |_| |__   ___ _ __   ___| |_ _   _ / _|/ _|
 ;; | | | | __| '_ \ / _ \ '__| / __| __| | | | |_| |_

@@ -1,6 +1,3 @@
-(setq use-short-answers t
-      sentence-end-double-space nil)
-
 (global-set-key (kbd "C-x C-f") 'find-file)
 (global-set-key (kbd "s-o") 'find-file)
 (global-set-key (kbd "s-b") 'ido-switch-buffer)

@@ -20,6 +20,7 @@
 (require 'gg-ui)
 (require 'gg-typography)
 (require 'gg-editing)
+(require 'gg-minibuffer)
 (require 'gg-git)
 (require 'gg-prog)
 (require 'gg-eshell)
