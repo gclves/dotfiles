@@ -90,49 +90,7 @@ Uses `other-window' with an argument -1."
 (setq compilation-scroll-output t
       next-error-message-highlight t)
 
-(defun has-special-buffer (window)
-  "Return non-nil if WINDOW contains a buffer matching `special-display-regexps'."
-  (let ((name (buffer-name(window-buffer window))))
-    (seq-some (lambda (regexp) (string-match-p regexp name)) special-display-regexps)))
 
-(defun display-special-buffer (buf list-of-what)
-  "put the special buffers in the right spot (top-left)"
-  (let ((target-window (window-at 0 0))
-        (pop-up-windows t))
-    (if (has-special-buffer target-window)
-        (let ((second-window (window-at 0 (- (frame-height) 10))))
-          (message (buffer-name (window-buffer second-window)))
-          (set-window-buffer second-window (window-buffer target-window))))
-    (set-window-buffer target-window buf)
-    target-window))
-
-(setq special-display-regexps
-      '("^\\*Async Shell Command\\*\\(<[0-9]+>\\)?$"
-        "^\\*webpack\\*$"
-        "^\\*server\\*$"
-        "^\\*Completions\\*$"
-        "^\\*Help\\*$"
-        "^\\*grep\\*$"
-        "^\\*Apropos\\*$"
-        "^\\*elisp macroexpansion\\*$"
-        "^\\*local variables\\*$"
-        "^\\*Compile-Log\\*$"
-        "^\\*Quail Completions\\*$"
-        "^\\*Occur\\*$"
-        "^\\*frequencies\\*$"
-        "^\\*compilation\\*$"
-        "^\\*Locate\\*$"
-        "^\\*Colors\\*$"
-        "^\\*tumme-display-image\\*$"
-        "^\\*SLIME Description\\*$"
-        "^\\*.* output\\*$"             ; tex compilation buffer
-        "^\\*TeX Help\\*$"
-        "^\\*Shell Command Output\\*$"
-        "^\\*Backtrace\\*$"
-        "^\\*helpful .*\\*$"
-        "^\\*tide-.*\\*$"
-        "^TODO$"))
-(setq special-display-function 'display-special-buffer)
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 

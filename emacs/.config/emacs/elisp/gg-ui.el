@@ -25,6 +25,51 @@
 (let ((hl-line-hooks '(text-mode-hook prog-mode-hook)))
   (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
 
+;; Open some special buffers in popup windows
+(with-eval-after-load 'window
+  ;; Only a single side window on each side
+  (setq window-sides-slots '(1 1 1 1))
+
+  (defvar gg--special-display-regexps
+    '("^\\*Async Shell Command\\*\\(<[0-9]+>\\)?$"
+      "^\\*webpack\\*$"
+      "^\\*server\\*$"
+      "^\\*Completions\\*$"
+      "^\\*Help\\*$"
+      "^\\*grep\\*$"
+      "^\\*Apropos\\*$"
+      "^\\*elisp macroexpansion\\*$"
+      "^\\*local variables\\*$"
+      "^\\*Compile-Log\\*$"
+      "^\\*Quail Completions\\*$"
+      "^\\*Occur\\*$"
+      "^\\*frequencies\\*$"
+      "^\\*compilation\\*$"
+      "^\\*Locate\\*$"
+      "^\\*Colors\\*$"
+      "^\\*tumme-display-image\\*$"
+      "^\\*SLIME Description\\*$"
+      "^\\*.* output\\*$"               ; tex compilation buffer
+      "^\\*TeX Help\\*$"
+      "^\\*Shell Command Output\\*$"
+      "^\\*Backtrace\\*$"
+      "^\\*helpful .*\\*$"
+      "^\\*tide-.*\\*$"
+      "^TODO$")
+    "List of regular expressions for buffer names. Such buffers will be opened in a special pop-up window.")
+
+  (defun gg--is-special-buffer (buffer-name _action)
+    "Return t if BUFFER-NAME matches any of our popup buffer patterns."
+    (cl-some (lambda (regex)
+               (string-match-p regex buffer-name)) gg--special-display-regexps))
+
+  (add-to-list 'display-buffer-alist
+               '(gg--is-special-buffer
+                 (display-buffer-reuse-window display-buffer-pop-up-window)
+                 (side . right)
+                 (slot . -1)
+                 (window-min-width . 50))))
+
 ;;  __  __           _      _ _
 ;; |  \/  | ___   __| | ___| |_)_ __   ___
 ;; | |\/| |/ _ \ / _` |/ _ \ | | '_ \ / _ \
@@ -119,6 +164,7 @@
 (setq-default fill-column 80)
 (setq async-shell-command-display-buffer nil)
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+(setq sentence-end-double-space nil)
 
 (provide 'gg-ui)
 ;;; gg-ui.el ends here
