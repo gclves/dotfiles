@@ -46,23 +46,6 @@
 (use-package hide-mode-line
   :hook ((completion-list-mode shell-mode eshell-mode) . hide-mode-line-mode))
 
-;;  __  __ _       _ _            __  __
-;; |  \/  (_)_ __ (_) |__  _   _ / _|/ _| ___ _ __
-;; | |\/| | | '_ \| | '_ \| | | | |_| |_ / _ \ '__|
-;; | |  | | | | | | | |_) | |_| |  _|  _|  __/ |
-;; |_|  |_|_|_| |_|_|_.__/ \__,_|_| |_|  \___|_|
-(setq completion-cycle-threshold 1
-      completions-detailed 1
-      tab-always-indent 'complete
-      completion-styles '(basic initials substring)
-
-      completion-auto-help 'always
-      completions-format 'one-column
-      completions-group t
-      completion-auto-select 'second-tab)
-(keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete)
-
-
 ;;   ____      _                     _
 ;;  / ___|___ | | ___  _ __ ___  ___| |__   ___ _ __ ___   ___
 ;; | |   / _ \| |/ _ \| '__/ __|/ __| '_ \ / _ \ '_ ` _ \ / _ \

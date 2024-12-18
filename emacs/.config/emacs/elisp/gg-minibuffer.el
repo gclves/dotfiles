@@ -1,8 +1,21 @@
-(setq use-short-answers t
-      sentence-end-double-space nil)
+(with-eval-after-load 'minibuffer
+  (setq completion-cycle-threshold 1
+        completions-detailed 1
+        tab-always-indent 'complete
+
+        completion-auto-help 'always
+        completions-format 'one-column
+        completions-group t
+        completion-auto-select 'second-tab)
+
+  (keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete))
+
+(setq use-short-answers t)
 
 (use-package vertico
-  :hook (after-init . vertico-mode))
+  :hook (after-init . vertico-mode)
+  :config
+  (setq vertico-cycle t))
 
 (use-package marginalia
   :hook (after-init . marginalia-mode))
