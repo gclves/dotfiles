@@ -1,0 +1,2 @@
+MSMTPQ_Q="$HOME/.local/state/msmtp/queue"
+MSMTPQ_LOG="HOME/.local/state/msmtp/queue.log"
