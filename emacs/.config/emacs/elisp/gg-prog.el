@@ -7,6 +7,7 @@
 (require 'gg-python)
 (require 'gg-go)
 (require 'gg-lisp)
+(require 'gg-elixir)
 
 
 (setq-default tab-width 4)
