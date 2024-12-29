@@ -1,9 +1,8 @@
 IMAPAccount mxroute
 Host blizzard.mxrouting.net
-User foo
+User _@gclv.es
 Port 993
-Pass bar
-# PassCmd "security find-generic-password -s migadu -a admin@gclv.es -w"
+PassCmd "kwallet-query -r imap kdewallet -f script_credentials"
 SSLType IMAPS
 SSLVersions TLSv1.2
 AuthMechs PLAIN
@@ -14,8 +13,8 @@ Account mxroute
 
 MaildirStore mxroute-local
 SubFolders Verbatim
-Path ~/.mail/
-Inbox ~/.mail/Inbox
+Path ~/mail/
+Inbox ~/mail/Inbox
 
 Channel mxroute
 Far :mxroute-remote:
