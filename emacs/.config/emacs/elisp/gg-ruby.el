@@ -4,7 +4,7 @@
   "Path to the rbenv installation.")
 
 (use-package rspec-mode
-  :hook (ruby-mode . rspec-mode)
+  :hook ruby-mode
   :config
   (global-set-key (kbd "<f6>") 'rspec-rerun)
   (define-key rspec-verifiable-mode-map (kbd "s-t") 'rspec-verify)

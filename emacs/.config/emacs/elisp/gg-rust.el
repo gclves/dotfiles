@@ -1,6 +1,8 @@
-(use-package rustic
-  :mode ("\\.rs\\'" . rustic-mode)
-  :config
-  (define-key rustic-mode-map (kbd "C-S-t") 'rustic-cargo-test))
+(with-eval-after-load 'rust-mode
+  (add-to-list 'auto-mode-alist
+               '("\\.rs\\'" . rust-ts-mode))
+
+  (add-hook 'rust-ts-mode-hook 'eglot-ensure))
+
 
 (provide 'gg-rust)
