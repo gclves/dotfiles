@@ -1,3 +1,6 @@
 [submodule "tmux/.tmux/themes/nord"]
 	path = tmux/.tmux/themes/nord
 	url = git@github.com:nordtheme/tmux.git
+[submodule "alacritty/.config/alacritty/alacritty-themes"]
+	path = alacritty/.config/alacritty/alacritty-themes
+	url = https://github.com/alacritty/alacritty-theme

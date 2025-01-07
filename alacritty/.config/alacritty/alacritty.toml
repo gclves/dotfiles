@@ -1,0 +1,11 @@
+[general]
+import = [
+    "~/.config/alacritty/alacritty-themes/themes/rose_pine_moon.toml"
+]
+
+[font]
+normal = { family = "Jetbrains Mono" }
+size = 14
+
+[window]
+opacity = 0.95
