@@ -1,6 +1,6 @@
 (defvar gg-monospaced-font-family "Iosevka Comfy"
   "Default monospaced font family.")
-(defvar gg-monospaced-font-height 170
+(defvar gg-monospaced-font-height 180
   "Default monospaced font height.")
 (defvar gg-variable-font-family "Roboto"
   "Default variable-pitch font family.")

@@ -26,6 +26,11 @@
         completion-category-defaults nil
         completion-category-overrides nil))
 
+(use-package consult
+  :bind (
+         ("C-S-f" . consult-grep)
+         ("s-b" . consult-buffer)))
+
 (with-eval-after-load 'savehist
   (add-hook 'after-init-hook 'savehist-mode))
 

@@ -27,7 +27,7 @@
 (require 'gg-notes)
 (require 'gg-help)
 (require 'gg-project)
-(require 'gg-mail)
+;; (require 'gg-mail)
 (require 'gg-llm)
 
 (when (string-equal system-type "darwin")

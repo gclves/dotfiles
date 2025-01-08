@@ -1,7 +1,7 @@
 (require 'eglot)
 
 (defvar gg--lsp-enabled-hooks
-  '(python-mode-hook ruby-mode-hook go-mode-hook)
+  '(python-mode-hook ruby-mode-hook go-mode-hook rust-mode-hook)
   "List of hooks associated with eglot/LSP.")
 
 (with-eval-after-load 'eglot

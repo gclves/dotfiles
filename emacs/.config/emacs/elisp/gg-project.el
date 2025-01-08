@@ -17,7 +17,8 @@
   (setq projectile-project-search-path '("~/src"))
   :bind ((:map projectile-mode-map
                ("C-x p" . projectile-command-map)
-               ("s-p" . projectile-find-file))))
+               ("s-p" . projectile-find-file)
+               ("s-t" . projectile-test-project))))
 
 (use-package envrc
   :bind (("C-c e" . envrc-command-map)))

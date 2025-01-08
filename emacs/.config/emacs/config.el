@@ -121,3 +121,6 @@ Uses `other-window' with an argument -1."
 (use-package esup
   :commands (esup)
   :pin melpa)
+
+;; I really need to learn how to work with GPG
+(setenv "GPG_AGENT_INFO" nil)

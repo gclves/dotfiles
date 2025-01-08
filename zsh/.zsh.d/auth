@@ -1,9 +1,11 @@
 #!/bin/zsh
 
 if [ -z "$SSH_AGENT_PID" ]; then
-    eval $(ssh-agent)
+    eval $(ssh-agent) > /dev/null
 fi
-ssh-add -q --apple-load-keychain
+if [ "$(uname)" = "Darwin" ]; then
+    ssh-add -q --apple-load-keychain
+fi
 
 AUTH_FILE=$HOME/.zsh_auth
 if [ -e "$AUTH_FILE" ]; then

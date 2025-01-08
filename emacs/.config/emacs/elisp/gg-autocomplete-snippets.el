@@ -21,6 +21,11 @@
 (setq-default abbrev-mode t)
 (setq save-abbrevs 'silently)
 
-(add-hook 'prog-mode-hook 'flymake-mode)
+(with-eval-after-load 'flymake
+  (define-key flymake-mode-map (kbd "M-n") 'flymake-goto-next-error)
+  (define-key flymake-mode-map (kbd "M-p") 'flymake-goto-prev-error)
+  (add-hook 'prog-mode-hook 'flymake-mode))
+
+
 
 (provide 'gg-autocomplete-snippets)
