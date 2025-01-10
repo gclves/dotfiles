@@ -1,13 +1,15 @@
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa-src/mu4e-1.12.6")
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
+
 (require 'mu4e)
 
 (with-eval-after-load 'mu4e
-  (setq mu4e-get-mail-command "true"
+  (setq mu4e-get-mail-command "mbsync -Va"
         mu4e-drafts-folder "/Drafts"
         mu4e-sent-folder "/Sent"
         mu4e-trash-folder "/Trash"
         mu4e-refile-folder "/Archive"
-        mu4e-use-fancy-chars t
+        mu4e-use-fancy-chars nil
         mu4e-change-filenames-when-moving t
         mu4e-update-interval 300
         mu4e-headers-fields '((:human-date . 12)

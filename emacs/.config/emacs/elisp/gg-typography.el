@@ -1,4 +1,4 @@
-(defvar gg-monospaced-font-family "Iosevka Comfy"
+(defvar gg-monospaced-font-family "JetBrains Mono"
   "Default monospaced font family.")
 (defvar gg-monospaced-font-height 180
   "Default monospaced font height.")

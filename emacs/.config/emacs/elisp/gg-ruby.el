@@ -20,14 +20,14 @@
 (use-package ruby-test-mode
   :hook ruby-mode)
 
-(use-package rbenv
-  :init
-  (setq rbenv-installation-dir gg--rbenv-path)
-  :config
-  (setq rbenv-executable "/opt/homebrew/bin/rbenv"
-        rbenv-binary-paths (list (cons 'shims-path (concat rbenv-installation-dir "/shims"))
-                                 (cons 'bin-path "/usr/local/bin")))
-  (global-rbenv-mode))
+;; (use-package rbenv
+;;   :init
+;;   (setq rbenv-installation-dir gg--rbenv-path)
+;;   :config
+;;   (setq rbenv-executable "/opt/homebrew/bin/rbenv"
+;;         rbenv-binary-paths (list (cons 'shims-path (concat rbenv-installation-dir "/shims"))
+;;                                  (cons 'bin-path "/usr/local/bin")))
+;;   (global-rbenv-mode))
 
 ;; TODO sort out rubocop integration
 
