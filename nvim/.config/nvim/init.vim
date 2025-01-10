@@ -34,7 +34,6 @@ set laststatus=2
 set lazyredraw
 filetype plugin indent on " Load filetype-specific plugins and indenting
 syntax on               " Enable syntax highlighting
-colorscheme desert      " Set your preferred colorscheme
 let mapleader=","
 
 " === Navigation & Editing ===
@@ -75,8 +74,16 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 
 " === Plugins ===
-" Add your plugin management system (e.g., vim-plug, Vundle) and plugins here
-" ...
+call plug#begin()
+
+" List your plugins here
+Plug 'tpope/vim-sensible'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-surround'
+Plug 'elixir-editors/vim-elixir'
+
+call plug#end()
 
 " === Custom Mappings and Functions ===
 " Dictionary to map file types to run commands
@@ -97,6 +104,9 @@ noremap : ;
 " edit vimrc with ,ev
 nnoremap <Leader>ev :tabe $MYVIMRC<cr>
 
+" fzf
+nnoremap <Leader>f :Files<cr>
+
 " <C-s> to save
 inoremap <C-s> <Esc>:w<cr>a
 nnoremap <C-s> :w<cr>
@@ -104,3 +114,6 @@ nnoremap <C-s> :w<cr>
 imap <C-t> <esc>:tabnew<cr>
 
 autocmd Filetype help nmap <buffer> q :q<CR>
+
+set background=light
+colorscheme quiet
