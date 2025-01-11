@@ -1,3 +1,11 @@
+" TODO:
+" - run unit tests
+" - more LSP?
+"   - autocomplete
+"   - diagnostics?
+"   - ...i don't even know!!
+" - TreeSitter?
+
 " === General Settings ===
 set nocompatible      " Use Vim defaults, not Vi compatibility
 set encoding=utf-8    " Set default encoding to UTF-8
@@ -85,6 +93,10 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'elixir-editors/vim-elixir'
 
+" XXX: Experimental
+Plug 'neovim/nvim-lspconfig'
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
 call plug#end()
 
 " === Run commands ==
@@ -197,5 +209,61 @@ inoremap <C-t> <esc>:tabnew<cr>
 
 autocmd Filetype help nmap <buffer> q :q<CR>
 
-set background=light
+set background=dark
 colorscheme quiet
+
+" === EXPERIMENTAL ===
+
+" Install vim-plug if not found
+if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+endif
+
+" Basic LSP setup
+lua << EOF
+require('mason').setup()
+require('mason-lspconfig').setup({
+  ensure_installed = {
+    'lua_ls',    -- Lua
+    'gopls',     -- Go
+    'rust_analyzer', -- Rust
+    'elixirls'
+  }
+})
+
+-- Basic LSP server configurations
+local lspconfig = require('lspconfig')
+lspconfig.lua_ls.setup{}
+lspconfig.gopls.setup{}
+lspconfig.rust_analyzer.setup{}
+lspconfig.elixirls.setup{}
+EOF
+
+command! Format lua vim.lsp.buf.format()
+
+" LSP Keybindings
+nnoremap <Leader>rn :lua vim.lsp.buf.rename()<CR>
+
+" LSP keybindings that fall back to Vim's native functionality
+function! GoToDefinition()
+    if has('nvim') && luaeval('#vim.lsp.get_active_clients() > 0')
+        lua vim.lsp.buf.definition()
+    else
+        normal! gd
+    endif
+endfunction
+
+function! ShowDocs()
+    if has('nvim') && luaeval('#vim.lsp.get_active_clients() > 0')
+        lua vim.lsp.buf.hover()
+    else
+        normal! K
+    endif
+endfunction
+
+nnoremap gd :call GoToDefinition()<CR>
+nnoremap K :call ShowDocs()<CR>
+
+" Format on save (optional)
+autocmd BufWritePre * Format
