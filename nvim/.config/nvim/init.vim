@@ -32,9 +32,10 @@ set ruler
 set showmatch
 set laststatus=2
 set lazyredraw
+set clipboard+=unnamedplus  " use the system clipboard
 filetype plugin indent on " Load filetype-specific plugins and indenting
 syntax on               " Enable syntax highlighting
-let mapleader=","
+let mapleader="\<Space>"
 
 " === Navigation & Editing ===
 set backspace=indent,eol,start " Backspace over everything in insert mode
@@ -51,8 +52,8 @@ nmap k gk
 map j gj
 
 " Navigate errors
-map <C-n> :cn<cr>
-map <C-p> :cp<cr>
+noremap <C-n> :cn<cr>
+noremap <C-p> :cp<cr>
 
 " === Search & Replace ===
 " Use 'very magic' mode for search by default
@@ -81,21 +82,99 @@ Plug 'tpope/vim-sensible'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-fugitive'
 Plug 'elixir-editors/vim-elixir'
 
 call plug#end()
 
-" === Custom Mappings and Functions ===
-" Dictionary to map file types to run commands
-let g:run_commands = {
-    \ 'vim': 'source %',
-    \ 'go': '!go run %',
-    \ 'py': '!python %', 
-    \ 'rb': '!ruby %',
-    \ 'js': '!node %'
-    \ }
+" === Run commands ==
+" Extended version with project-specific settings
+function! SetProjectRunCommand(filetype, command)
+    " Get the project root directory (this is a simple version)
+    let l:project_root = getcwd()
 
-nnoremap <Leader>r :w<cr>:execute get(g:run_commands, expand('%:e'), 'echoerr "No command defined for this file type"')<CR>
+    " Initialize the project commands dictionary if it doesn't exist
+    if !exists('g:project_run_commands')
+        let g:project_run_commands = {}
+    endif
+
+    " Initialize the nested dictionary if needed
+    if !has_key(g:project_run_commands, l:project_root)
+        let g:project_run_commands[l:project_root] = {}
+    endif
+
+    " Set the command for this filetype in this project
+    let g:project_run_commands[l:project_root][a:filetype] = a:command
+endfunction
+
+function! RunFile()
+    if !filereadable(expand('%'))
+        echo "Error: File not saved"
+        return
+    endif
+
+    " Default commands
+    let l:default_commands = {
+        \ 'python': 'python3 %',
+        \ 'ruby': 'ruby %',
+        \ 'go': 'go run %',
+        \ 'javascript': 'node %',
+        \ 'typescript': 'ts-node %',
+        \ 'sh': 'sh %',
+        \ 'c': 'gcc % -o %:r && ./%:r',
+        \ 'rust': 'rustc % -o %:r && ./%:r'
+        \ }
+
+    " Get project root
+    let l:project_root = getcwd()
+
+    " Check for project-specific override first
+    let l:cmd = ''
+    if exists('g:project_run_commands') &&
+        \ has_key(g:project_run_commands, l:project_root) &&
+        \ has_key(g:project_run_commands[l:project_root], &filetype)
+        let l:cmd = g:project_run_commands[l:project_root][&filetype]
+    else
+        " Fall back to global override, then default
+        let l:cmd = get(l:default_commands, &filetype, '')
+    endif
+
+    if l:cmd == ''
+        echo "No run configuration for filetype: " . &filetype
+        return
+    endif
+
+    " Save the file first
+    write
+    " Store the current directory
+    let l:cur_dir = getcwd()
+
+    try
+        lcd %:p:h
+        silent !clear
+        execute '!' . l:cmd
+    finally
+        " Always change back to the original directory, even if there's been
+        " an error
+        execute 'lcd ' . l:cur_dir
+    endtry
+endfunction
+
+" Add commands for both global and project-specific settings
+command! -nargs=+ SetProjectRunCommand call SetProjectRunCommand(<f-args>)
+nnoremap <Leader>r :call RunFile()<cr>
+
+" === Whitespace cleanup ===
+function! CleanWhitespace()
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
+endfunction
+
+autocmd BufWritePre * call CleanWhitespace()
+
+" === Custom Mappings and Functions ===
+noremap <Escape> :nohlsearch<cr>
 
 " swapping : and ; save a lot of unneeded shifting:
 noremap ; :
@@ -106,12 +185,15 @@ nnoremap <Leader>ev :tabe $MYVIMRC<cr>
 
 " fzf
 nnoremap <Leader>f :Files<cr>
+noremap <Leader>b :Buffers<cr>
+
+" tests
 
 " <C-s> to save
 inoremap <C-s> <Esc>:w<cr>a
-nnoremap <C-s> :w<cr>
+noremap <C-s> :w<cr>
 
-imap <C-t> <esc>:tabnew<cr>
+inoremap <C-t> <esc>:tabnew<cr>
 
 autocmd Filetype help nmap <buffer> q :q<CR>
 
