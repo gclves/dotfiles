@@ -82,12 +82,6 @@
 (display-battery-mode)
 (use-package minions :config (minions-mode 1))
 
-(defvar gg--modeline-font "Roboto Condensed-16"
-  "The font face used for the modeline.")
-
-(set-face-attribute 'mode-line-inactive nil :font gg--modeline-font)
-(set-face-attribute 'mode-line nil :font gg--modeline-font)
-
 (use-package hide-mode-line
   :hook ((completion-list-mode shell-mode eshell-mode) . hide-mode-line-mode))
 
