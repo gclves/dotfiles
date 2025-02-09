@@ -2,4 +2,4 @@
 # name: fn
 # key: fn
 # --
-fn ${1:x} -> ${2:body} end$0
+fn ${1:x} -> ${2:x} end$0
