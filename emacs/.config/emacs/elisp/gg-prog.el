@@ -20,7 +20,5 @@
   (global-treesit-auto-mode)
   (setq treesit-auto-install t))
 
-(add-to-list 'auto-mode-alist '("\\.exs?\\'" . elixir-ts-mode))
-
 (provide 'gg-prog)
 ;;; gg-prog.el ends here
