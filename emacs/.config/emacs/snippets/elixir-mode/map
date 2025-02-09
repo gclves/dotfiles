@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: map
+# key: mp
+# --
+
+%{ "$0" => "$1" }
