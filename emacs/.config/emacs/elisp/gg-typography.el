@@ -1,18 +1,13 @@
-(defvar gg-monospaced-font-family "JetBrains Mono"
+(defvar gg-monospaced-font-family "Aporetic Serif Mono"
   "Default monospaced font family.")
-(defvar gg-monospaced-font-height 170
+(defvar gg-monospaced-font-height 180
   "Default monospaced font height.")
-(defvar gg-variable-font-family "Roboto"
-  "Default variable-pitch font family.")
 
 (if (member gg-monospaced-font-family (font-family-list))
     (progn
       (set-face-attribute 'default nil :family gg-monospaced-font-family :height gg-monospaced-font-height)
       (set-face-attribute 'fixed-pitch nil :family gg-monospaced-font-family :height 1.0))
   (message (format "Font `%s' is not installed. Please pick a different font." gg-monospaced-font-family)))
-
-(when (member gg-variable-font-family (font-family-list))
-  (set-face-attribute 'variable-pitch nil :family gg-variable-font-family :height 1.2))
 
 (when (member "Symbola" (font-family-list))
   (set-fontset-font t 'unicode "Symbola" nil 'prepend))
@@ -23,18 +18,6 @@
 (use-package olivetti
   :ensure t
   :hook text-mode)
-
-(with-eval-after-load 'text-mode
-  (defun gg--set-up-text-mode ()
-    "Set up aesthetic adaptations for dealing with text.
-This includes `variable-pitch-mode' and a bar cursor."
-    (interactive)
-    (variable-pitch-mode +1)
-    (setq cursor-type 'bar))
-
-  (add-hook 'text-mode-hook 'gg--set-up-text-mode))
-
-(add-hook 'git-commit-mode-hook (lambda () (interactive) (variable-pitch-mode -1)))
 
 (defun font-size-reset ()
   "Reset the text-scale to zero."
