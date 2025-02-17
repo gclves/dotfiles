@@ -195,6 +195,8 @@ When called repeatedly, append copy subsequent lines.  When
 (global-set-key (kbd "C-x C-u") 'upcase-initials-region)
 (global-set-key (kbd "C-x C-l") nil)
 
+(global-set-key (kbd "M-s s") 'imenu)
+
 (defun arrayify (start end quote)
   "Turn strings on newlines into a QUOTEd, comma-separated one-liner."
   (interactive "r\nMQuote: ")

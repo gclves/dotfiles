@@ -4,8 +4,8 @@
       epg-pinentry-mode 'loopback)
 
 (use-package chatgpt-shell
-  :bind (("C-x l" . chatgpt-shell)
-         ("C-x e" . chatgpt-shell-prompt-compose))
+  :bind (("C-x l s" . chatgpt-shell)
+         ("C-x l e" . chatgpt-shell-prompt-compose))
   :custom
   ((chatgpt-shell-anthropic-key
     (lambda ()

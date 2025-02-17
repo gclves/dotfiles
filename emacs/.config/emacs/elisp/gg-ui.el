@@ -91,29 +91,43 @@
 ;; | |__| (_) | | (_) | |  \__ \ (__| | | |  __/ | | | | |  __/
 ;;  \____\___/|_|\___/|_|  |___/\___|_| |_|\___|_| |_| |_|\___|
 
-(defvar gg--light-theme 'modus-operandi-tinted)
-(defvar gg--dark-theme 'modus-vivendi-tinted)
+(defvar gg--light-theme 'modus-operandi)
+(defvar gg--dark-theme 'modus-vivendi)
 
-(defun gg--reset-themes ()
-  "Disable all currently enabled themes."
-  (dolist (theme custom-enabled-themes)
-    (disable-theme theme)))
+;; TODO: polyfill the 'ns-system-appearance-change function with a timer
+;; if not on MacOS
+(unless-on-macOS
+ (defun gg--reset-themes ()
+   "Disable all currently enabled themes."
+   (dolist (theme custom-enabled-themes)
+     (disable-theme theme)))
 
-(defun gg--load-dark-theme ()
-  "Load the configured dark theme."
-  (interactive)
-  (gg--reset-themes)
-  (load-theme gg--dark-theme t))
+ (defun gg--load-dark-theme ()
+   "Load the configured dark theme."
+   (interactive)
+   (gg--reset-themes)
+   (load-theme gg--dark-theme t))
 
-(defun gg--load-light-theme ()
-  "Load the configured light theme."
-  (interactive)
-  (gg--reset-themes)
-  (load-theme gg--light-theme t))
+ (defun gg--load-light-theme ()
+   "Load the configured light theme."
+   (interactive)
+   (gg--reset-themes)
+   (load-theme gg--light-theme t))
 
-;; Switch between light and dark themes
-(run-at-time "07:00" (* 60 60 24) (lambda () (gg--load-light-theme)))
-(run-at-time "18:00" (* 60 60 24) (lambda () (gg--load-dark-theme)))
+ ;; Switch between light and dark themes
+ (run-at-time "07:00" (* 60 60 24) (lambda () (gg--load-light-theme)))
+ (run-at-time "18:00" (* 60 60 24) (lambda () (gg--load-dark-theme))))
+
+(on-macOS
+ (defun gg--sync-theme (appearance)
+   "Load theme, taking current system APPEARANCE into consideration."
+   (mapc #'disable-theme custom-enabled-themes)
+   (pcase appearance
+     ('light (load-theme gg--light-theme t))
+     ('dark (load-theme gg--dark-theme t))))
+
+ (add-hook 'ns-system-appearance-change-functions #'gg--sync-theme))
+
 
 ;; ___
 ;;|_ _|___ ___  _ __  ___
