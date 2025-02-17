@@ -21,7 +21,9 @@ Used by `gg-quick-switch-to-scratch'.")
 (defun gg-mark-buffer-as-scratch ()
   "Mark the currently visited buffer as the scratch one."
   (interactive)
-  (setq gg--scratch-buffer (buffer-name (current-buffer))))
+  (let ((buf-name (buffer-name (current-buffer))))
+    (setq gg--scratch-buffer buf-name)
+    (message "%s is now the scratch buffer" buf-name)))
 
 (global-set-key (kbd "M-_") 'gg-mark-buffer-as-scratch)
 (global-set-key (kbd "M--") 'gg-quick-switch-to-scratch)
