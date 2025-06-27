@@ -2,10 +2,11 @@
 
 export GPG_TTY="$(tty)"
 export PROJECT_ROOT="$HOME/src"
-export EDITOR=hx
-export VISUAL="$(which subl) -w"
+export EDITOR=nvim
+export VISUAL=$EDITOR
+# export VISUAL="$(which subl) -w"
 
-set -o vi
+set -o emacs
 bindkey -M viins 'jk' vi-cmd-mode
 
 autoload -Uz compinit

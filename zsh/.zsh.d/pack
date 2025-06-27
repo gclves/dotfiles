@@ -1,20 +1,27 @@
 #!/bin/zsh
 
-eval "$(direnv hook zsh)"
 
-if [ `command -v brew` ]; then
-    eval "$(brew shellenv)"
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
     export HOMEBREW_NO_ANALYTICS=1
 
     # This is used by ruby-build
     export RUBY_CONFIGURE_OPTS="--with-zlib-dir=$(brew --prefix zlib) --with-openssl-dir=$(brew --prefix openssl@3)"
 fi
 
+if (command -v direnv > /dev/null); then
+    eval "$(direnv hook zsh)"
+fi
+
+if (command -v mise > /dev/null); then
+    eval "$(mise activate zsh)"
+fi
+
 export NVM_DIR="$HOME/.nvm"
 export NODE_VERSIONS=$NVM_DIR/versions/node
 export NODE_VERSION_PREFIX=v
 
-export PATH="/usr/local/opt/openjdk/bin:$PATH"
+export PATH="/usr/local/opt/openjdk/bin:$HOME/bin:$PATH"
 
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"

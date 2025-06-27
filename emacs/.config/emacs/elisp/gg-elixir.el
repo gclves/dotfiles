@@ -3,7 +3,7 @@
   (with-eval-after-load 'eglot
     ;; FIXME: this shouldn't be hardcoded
     (add-to-list 'eglot-server-programs
-                 `(elixir-ts-mode "~/src/elixir-ls/release/language_server.sh")))
+                 `(elixir-ts-mode "nextls")))
   :hook (elixir-ts-mode . eglot-ensure))
 
 (use-package exunit

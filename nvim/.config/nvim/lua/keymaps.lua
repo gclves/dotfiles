@@ -49,6 +49,8 @@ map('n', '<Leader>r', '<cmd>lua RunFile()<CR>', opts)
 -- Close the buffer without closing the split
 map('n', '<Leader>d', ':b#<bar>bd#<CR>', opts)
 
+map('n', '<Leader>q', ':q<CR>', opts)
+
 -- LSP keybindings
 map('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
 map('n', 'gd', '<cmd>lua GoToDefinition()<CR>', opts)

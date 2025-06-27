@@ -1,3 +1,18 @@
 [[language]]
 name = "elixir"
+language-id = "elixir"
+scope = "source.elixir"
+file-types = ["ex", "exs"]
+roots = ["mix.exs"]
+auto-format = true
+formatter = { command = "mix", args = ["format", "-"]}
+diagnostic-severity = "hint"
+comment-token = "#"
+indent = {tab-width = 2, unit = " "}
+language-servers = ["elixir-ls"]
+
+[[language]]
+name = "heex"
+language-id = "phoenix-heex"
+language-servers = ["elixir-ls", "tailwindcss-ls"]
 auto-format = true
