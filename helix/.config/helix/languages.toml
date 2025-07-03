@@ -1,18 +1,30 @@
 [[language]]
-name = "elixir"
-language-id = "elixir"
-scope = "source.elixir"
-file-types = ["ex", "exs"]
-roots = ["mix.exs"]
 auto-format = true
-formatter = { command = "mix", args = ["format", "-"]}
-diagnostic-severity = "hint"
 comment-token = "#"
+diagnostic-severity = "hint"
+file-types = ["ex", "exs"]
+formatter = { command = "mix", args = ["format", "-"]}
 indent = {tab-width = 2, unit = " "}
+language-id = "elixir"
 language-servers = ["elixir-ls"]
+name = "elixir"
+roots = ["mix.exs"]
+scope = "source.elixir"
 
 [[language]]
 name = "heex"
 language-id = "phoenix-heex"
 language-servers = ["elixir-ls", "tailwindcss-ls"]
 auto-format = true
+
+[[language]]
+name = "c"
+auto-format = true
+
+[[language]]
+name = "python"
+shebangs = ["python", "python3"]
+roots = ["pyproject.toml", "setup.py", "poetry.toml"]
+language-servers = ["ruff"]
+auto-format = true
+formatter = { command = "ruff", args = ["format", "--stdin-filename", "-"] }
