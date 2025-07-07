@@ -56,3 +56,28 @@ map('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
 map('n', 'gd', '<cmd>lua GoToDefinition()<CR>', opts)
 map('n', 'gr', '<cmd>lua GoToReferences()<CR>', opts)
 --map('n', 'K', '<cmd>lua ShowDocs()<CR>', opts)
+
+map('n', '<space>y', function() vim.fn.setreg('+', vim.fn.expand('%:p')) end)
+map('n', '<space>c', function()
+  vim.ui.input({ prompt = 'Command: ' }, function(cmd)
+    if cmd and cmd ~= "" then
+      -- 1. Define a width threshold (in columns) for vertical splitting.
+      local vertical_split_threshold = 100
+
+      -- 2. Get the width of the current window.
+      local current_width = vim.fn.winwidth(0)
+
+      -- 3. Decide whether to split vertically or horizontally.
+      if current_width > vertical_split_threshold then
+        vim.cmd('noswapfile vnew') -- It's wide, use a vertical split.
+      else
+        vim.cmd('noswapfile new')  -- It's narrow, use a horizontal split.
+      end
+
+      -- These commands run in the new window, regardless of split direction.
+      vim.bo.buftype = 'nofile'
+      vim.bo.bufhidden = "wipe"
+      vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.fn.systemlist(cmd))
+    end
+  end)
+end)
