@@ -3,9 +3,8 @@
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
--- Exit insert mode with 'jk' or 'kj'
+-- Exit insert mode with 'jk'
 map('i', 'jk', '<Esc>', opts)
-map('i', 'kj', '<Esc>', opts)
 
 -- Better line navigation for wrapped lines
 map('n', 'k', 'gk', opts)
@@ -28,20 +27,12 @@ map('n', '<Escape>', ':nohlsearch<CR>', opts)
 map('n', ';', ':', { noremap = true })
 map('n', ':', ';', { noremap = true })
 
--- Edit init.lua (equivalent to .vimrc)
+-- Edit init.lua
 map('n', '<Leader>ev', ':tabe $MYVIMRC<CR>', opts)
-
--- FZF mappings
-map('n', '<Leader>f', ':Files<CR>', opts)
-map('n', '<Leader>b', ':Buffers<CR>', opts)
-map('n', '<Leader>/', '<cmd>Rg<CR>', opts)
 
 -- Save with Ctrl+s
 map('i', '<C-s>', '<Esc>:w<CR>a', opts)
 map('n', '<C-s>', ':w<CR>', opts)
-
--- New tab with Ctrl+t
-map('i', '<C-t>', '<Esc>:tabnew<CR>', opts)
 
 -- Run file
 map('n', '<Leader>r', '<cmd>lua RunFile()<CR>', opts)
@@ -51,13 +42,9 @@ map('n', '<Leader>d', ':b#<bar>bd#<CR>', opts)
 
 map('n', '<Leader>q', ':q<CR>', opts)
 
--- LSP keybindings
-map('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-map('n', 'gd', '<cmd>lua GoToDefinition()<CR>', opts)
-map('n', 'gr', '<cmd>lua GoToReferences()<CR>', opts)
---map('n', 'K', '<cmd>lua ShowDocs()<CR>', opts)
-
 map('n', '<space>y', function() vim.fn.setreg('+', vim.fn.expand('%:p')) end)
+
+-- Run a command and open its output in a split window
 map('n', '<space>c', function()
   vim.ui.input({ prompt = 'Command: ' }, function(cmd)
     if cmd and cmd ~= "" then

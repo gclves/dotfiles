@@ -4,9 +4,9 @@
 vim.opt.compatible = false
 vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'
--- vim.opt.termencoding = 'utf-8'
 vim.opt.hidden = true
 vim.opt.history = 10000
+vim.undodir = os.getenv("HOME") .. "/.vim.undodir"
 vim.opt.undofile = true
 vim.opt.backup = false
 vim.opt.swapfile = false
@@ -32,13 +32,15 @@ vim.opt.smartindent = true
 vim.opt.cindent = true
 vim.opt.ruler = true
 vim.opt.showmatch = true
-vim.opt.laststatus = 0
+vim.opt.laststatus = 2
 vim.opt.lazyredraw = true
 vim.opt.clipboard = 'unnamedplus'
 vim.opt.backspace = 'indent,eol,start'
 vim.opt.whichwrap:append('<,>,[,]')
-vim.opt.background = 'light'
+vim.opt.background = 'dark'
 vim.cmd('colorscheme default')
+
+vim.opt.colorcolumn = "80"
 
 -- Folding (using Treesitter)
 vim.opt.foldmethod = 'expr'
@@ -53,5 +55,5 @@ vim.cmd('syntax on')
 vim.cmd('filetype plugin indent on')
 
 vim.diagnostic.config({
-    virtual_text = { current_line = true }
+  virtual_text = { current_line = true }
 })

@@ -1,13 +1,3 @@
--- LSP setup
-require('mason').setup()
-require('mason-lspconfig').setup({
-  ensure_installed = {
-    'lua_ls',        -- Lua
-    'gopls',         -- Go
-    'rust_analyzer', -- Rust
-    'elixirls'       -- Elixir
-  }
-})
 
 -- Basic LSP server configurations
 local lspconfig = require('lspconfig')
