@@ -54,12 +54,10 @@ input {
         // middle-emulation
     }
 
-    // Uncomment this to make the mouse warp to the center of newly focused windows.
     warp-mouse-to-focus
 
     // Focus windows and outputs automatically when moving the mouse into them.
-    // Setting max-scroll-amount="0%" makes it work only on windows already fully on screen.
-    focus-follows-mouse max-scroll-amount="0%"
+    focus-follows-mouse max-scroll-amount="49%"
 }
 
 // You can configure outputs by their name, which you can find
@@ -142,40 +140,26 @@ layout {
     // Top and bottom struts will simply add outer gaps in addition to the area occupied by
     // layer-shell panels and regular gaps.
     struts {
-        // left 64
-        // right 64
+        left 18
+        right 18
         // top 64
         // bottom 64
     }
 }
 
-// This line starts waybar, a commonly used bar for Wayland compositors.
 spawn-at-startup "waybar"
-spawn-at-startup "swayidle -w
-         timeout 300 'swaylock -f -c 000000'
-         timeout 600 'swaymsg \"output * power off\"' resume 'swaymsg \"output * power on\"'
-         before-sleep 'swaylock -f -c 000000'"
+spawn-at-startup "swayidle" "-w" "timeout" "600" "niri msg action power-off-monitors" "timeout" "300" "swaylock -f -c 000000" "before-sleep" "swaylock -f -c 000000"
 
-// Uncomment this line to ask the clients to omit their client-side decorations if possible.
-// If the client will specifically ask for CSD, the request will be honored.
-// Additionally, clients will be informed that they are tiled, removing some client-side rounded corners.
-// This option will also fix border/focus ring drawing behind some semitransparent windows.
-// After enabling or disabling this, you need to restart the apps for this to take effect.
 prefer-no-csd
 
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
-
 
 animations {
     // off
     slowdown 0.3
 }
 
-// Open the Firefox picture-in-picture player as floating by default.
 window-rule {
-    // This app-id regular expression will work for both:
-    // - host Firefox (app-id is "firefox")
-    // - Flatpak Firefox (app-id is "org.mozilla.firefox")
     match app-id=r#"firefox$"# title="^Picture-in-Picture$"
     match app-id=r#"librewolf$"# title="^Picture-in-Picture$"
     open-floating true
@@ -203,6 +187,9 @@ binds {
     XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
     XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
 
+    XF86MonBrightnessDown allow-when-locked=true { spawn "light" "-U" "2" ; }
+    XF86MonBrightnessUp allow-when-locked=true { spawn "light" "-A" "2" ; }
+
     // Open/close the Overview: a zoomed-out view of workspaces and windows.
     // You can also move the mouse into the top-left hot corner,
     // or do a four-finger swipe up on a touchpad.
@@ -211,8 +198,8 @@ binds {
     Mod+Q { close-window; }
 
     Mod+Left  { focus-column-left; }
-    Mod+Down  { focus-window-down; }
-    Mod+Up    { focus-window-up; }
+    Mod+Down  { focus-window-or-workspace-down; }
+    Mod+Up    { focus-window-or-workspace-up; }
     Mod+Right { focus-column-right; }
     Mod+H     { focus-column-left; }
     Mod+J     { focus-window-or-workspace-down; }
@@ -220,8 +207,8 @@ binds {
     Mod+L     { focus-column-right; }
 
     Mod+Shift+Left  { move-column-left; }
-    Mod+Shift+Down  { move-window-down; }
-    Mod+Shift+Up    { move-window-up; }
+    Mod+Shift+Down  { move-window-down-or-to-workspace-down; }
+    Mod+Shift+Up    { move-window-up-or-to-workspace-up; }
     Mod+Shift+Right { move-column-right; }
     Mod+Shift+H     { move-column-left; }
     Mod+Shift+J     { move-window-down-or-to-workspace-down; }
@@ -294,14 +281,6 @@ binds {
     Mod+TouchpadScrollDown { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.02+"; }
     Mod+TouchpadScrollUp   { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.02-"; }
 
-    // You can refer to workspaces by index. However, keep in mind that
-    // niri is a dynamic workspace system, so these commands are kind of
-    // "best effort". Trying to refer to a workspace index bigger than
-    // the current workspace count will instead refer to the bottommost
-    // (empty) workspace.
-    //
-    // For example, with 2 workspaces + 1 empty, indices 3, 4, 5 and so on
-    // will all refer to the 3rd workspace.
     Mod+1 { focus-workspace 1; }
     Mod+2 { focus-workspace 2; }
     Mod+3 { focus-workspace 3; }
@@ -372,14 +351,6 @@ binds {
     // Windows in this column will appear as vertical tabs,
     // rather than stacked on top of each other.
     Mod+W { toggle-column-tabbed-display; }
-
-    // Actions to switch layouts.
-    // Note: if you uncomment these, make sure you do NOT have
-    // a matching layout switch hotkey configured in xkb options above.
-    // Having both at once on the same hotkey will break the switching,
-    // since it will switch twice upon pressing the hotkey (once by xkb, once by niri).
-    // Mod+Space       { switch-layout "next"; }
-    // Mod+Shift+Space { switch-layout "prev"; }
 
     Print { screenshot; }
     Ctrl+Print { screenshot-screen; }
