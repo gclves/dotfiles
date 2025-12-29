@@ -31,11 +31,6 @@ map('n', ':', ';', { noremap = true })
 -- Edit init.lua (equivalent to .vimrc)
 map('n', '<Leader>ev', ':tabe $MYVIMRC<CR>', opts)
 
--- FZF mappings
-map('n', '<Leader>f', ':Files<CR>', opts)
-map('n', '<Leader>b', ':Buffers<CR>', opts)
-map('n', '<Leader>/', '<cmd>Rg<CR>', opts)
-
 -- Save with Ctrl+s
 map('i', '<C-s>', '<Esc>:w<CR>a', opts)
 map('n', '<C-s>', ':w<CR>', opts)
@@ -43,16 +38,7 @@ map('n', '<C-s>', ':w<CR>', opts)
 -- New tab with Ctrl+t
 map('i', '<C-t>', '<Esc>:tabnew<CR>', opts)
 
--- Run file
-map('n', '<Leader>r', '<cmd>lua RunFile()<CR>', opts)
-
 -- Close the buffer without closing the split
 map('n', '<Leader>d', ':b#<bar>bd#<CR>', opts)
 
 map('n', '<Leader>q', ':q<CR>', opts)
-
--- LSP keybindings
-map('n', '<Leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-map('n', 'gd', '<cmd>lua GoToDefinition()<CR>', opts)
-map('n', 'gr', '<cmd>lua GoToReferences()<CR>', opts)
---map('n', 'K', '<cmd>lua ShowDocs()<CR>', opts)

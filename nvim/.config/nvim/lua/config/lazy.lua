@@ -11,30 +11,10 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-local plugins = {
-    'tpope/vim-sensible',
-    'tpope/vim-surround',
-    'tpope/vim-rhubarb',
-    'nvim-lua/plenary.nvim',
-    { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate' },
-    { 'nvim-telescope/telescope.nvim',   tag = '0.1.6',       requires = { { 'nvim-lua/plenary.nvim' } } },
-    { 'ThePrimeagen/harpoon',            branch = 'harpoon2', dependencies = { 'nvim-lua/plenary.nvim' } },
-    'mbbill/undotree',
-    'tpope/vim-fugitive',
-
-    -- Snippets
-    { "L3MON4D3/LuaSnip", version = "v2.*", build = "make install_jsregexp", dependencies = { 'saadparwaiz1/cmp_luasnip', 'rafamadriz/friendly-snippets' } },
-
-    -- LSP plugins
-    'neovim/nvim-lspconfig',
-    'hrsh7th/cmp-nvim-lsp',
-    'hrsh7th/nvim-cmp',
-    'williamboman/mason.nvim',
-    'williamboman/mason-lspconfig.nvim',
-    -- 'junegunn/fzf', { 'do': { -> fzf#install() } }
-    -- 'junegunn/fzf.vim',
-    -- 'pechorin/any-jump.vim',
-
-}
-
-require('lazy').setup(plugins, {})
+require("lazy").setup({
+  spec = {
+    -- This line tells Lazy to import any file in lua/plugins/*.lua automatically
+    { import = "plugins" }, 
+  },
+  checker = { enabled = true }, -- Automatically check for updates
+})
