@@ -38,6 +38,15 @@
 (use-package ws-butler
   :config (ws-butler-global-mode))
 
+(use-package editorconfig
+  :config
+  (editorconfig-mode 1))
+
+(use-package dtrt-indent
+  :hook (prog-mode . dtrt-indent-mode)
+  :config
+  (setq dtrt-indent-verbosity 0))
+
 (defun cleanup-buffer-safe ()
   "Perform a bunch of safe operations on the whitespace content.
 For a more agressive cleanup that also does indentation, use

@@ -17,8 +17,8 @@
 
 (use-package treesit-auto
   :config
-  (global-treesit-auto-mode)
-  (setq treesit-auto-install t))
+  (setq treesit-auto-install 'prompt)
+  (treesit-auto-add-to-auto-mode-alist 'all))
 
 (provide 'gg-prog)
 ;;; gg-prog.el ends here
