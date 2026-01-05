@@ -1,4 +1,40 @@
 #!/bin/zsh
 
+# Variable to store the last exit status
+last_exit_status=0
+
+# Function to print a horizontal line separator with timestamp and last command status
+print_separator() {
+    local cols=${COLUMNS:-$(tput cols)}
+    local timestamp=$(date '+%H:%M:%S')
+    local separator_char="─"
+    
+    # Create separator with timestamp on the left and exit status on the right (only if nonzero)
+    local left_part="[$timestamp] "
+    local right_part=""
+    if [ $last_exit_status -ne 0 ]; then
+        right_part=" ($last_exit_status)"
+    fi
+    local middle_length=$((cols - ${#left_part} - ${#right_part}))
+    
+    if [ $middle_length -gt 0 ]; then
+        local middle=$(printf "%*s" $middle_length | tr ' ' "$separator_char")
+        # Dim only the line characters, keep timestamp/status normal
+        echo "${left_part}\033[2m${middle}\033[0m${right_part}"
+    else
+        # If terminal is too narrow, just show timestamp and exit status
+        if [ $last_exit_status -ne 0 ]; then
+            echo "${left_part}($last_exit_status)"
+        else
+            echo "$left_part"
+        fi
+    fi
+}
+
+precmd() {
+    echo ""
+    last_exit_status=$?
+    print_separator
+}
+
 export PS1='%~ %% '
-export RPROMPT='(%?)'

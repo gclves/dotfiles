@@ -16,3 +16,8 @@ name = "heex"
 language-id = "phoenix-heex"
 language-servers = ["elixir-ls", "tailwindcss-ls"]
 auto-format = true
+
+[[language]]
+name = "typescript"
+auto-format = true
+formatter = { command = "npx", args = ["prettier", "--parser", "typescript"] }

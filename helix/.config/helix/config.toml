@@ -1,42 +1,127 @@
-theme = "rose_pine_moon"
+# [editor]
+
+
+# [editor.indent-guides]
+# render = true
+# character = "┆"
+# skip-levels = 2
+
+
+# [keys.normal]
+# esc = ["collapse_selection", "keep_primary_selection"]
+
+# ~/.config/helix/config.toml
+
+theme = "flatwhite"
 
 [editor]
 line-number = "relative"
-mouse = false
+mouse = true
 cursorline = true
+cursorcolumn = false
 color-modes = true
-true-color = true
-rulers = [80, 120]
-
-# XXX: not sure what this does, really
+bufferline = "multiple"
+auto-pairs = true
+auto-completion = true
 auto-format = true
+completion-replace = true
+true-color = true
+rulers = [80, 100]
+idle-timeout = 400
+scrolloff = 5
 
+# Sync clipboard with system
+default-yank-register = "+"
 end-of-line-diagnostics = "hint"
 
 [editor.inline-diagnostics]
 cursor-line = "error"
 
-[editor.lsp]
-display-inlay-hints = true
+[editor.statusline]
+left = ["mode", "spacer", "file-name", "file-modification-indicator"]
+center = ["diagnostics"]
+right = ["position", "file-type", "file-encoding"]
+separator = "│"
+mode.normal = "N"
+mode.insert = "I"
+mode.select = "S"
 
 [editor.cursor-shape]
 insert = "bar"
 normal = "block"
 select = "underline"
 
-[editor.indent-guides]
-render = true
-character = "┆"
-skip-levels = 2
+[editor.search]
+smart-case = true
 
+[editor.whitespace.render]
+space = "none"
+tab = "none"
+newline = "none"
+
+[editor.soft-wrap]
+enable = true
+max-wrap = 40
+max-indent-retain = 40
+wrap-indicator = "↩"
+
+[editor.lsp]
+display-inlay-hints = true
+
+# ====== KEYMAPS ======
 
 [keys.normal]
-C-s = ":w"
-"C-." = "code_action"
-esc = ["collapse_selection", "keep_primary_selection"]
-"C-;" = "toggle_comments"
+"C-x" = { "C-s" = ":w", "C-c" = ":q", "C-f" = "file_picker", "C-b" = "buffer_picker" }
+"C-s" = ":w"
+"/" = "search"
+"?" = "search_prev"
+"n" = "search_next"
+"N" = "search_prev"
+"U" = "redo"
+"Q" = "record_macro"
+"@" = "replay_macro"
+"C-g" = "normal_mode"
+
+# use ';' as command prefix instead of ':'
 ";" = "command_mode"
-":" = "collapse_selection"
 
 [keys.insert]
-j = { k = "normal_mode" } # Maps `jk` to exit insert mode
+"C-s" = [":w", "normal_mode"]
+"C-g" = "normal_mode"
+"C-e" = "goto_line_end"
+"C-a" = "goto_first_nonwhitespace"  # we'll talk about your desired behavior below
+"C-k" = "kill_to_line_end"
+
+# jk in insert mode → normal mode
+"j" = { "k" = "normal_mode" }
+
+[keys.select]
+"C-g" = "normal_mode"
+"g" = { "c" = "toggle_comments" }
+
+[keys.normal."space"]
+"space" = "command_palette"
+"b" = "buffer_picker"
+"f" = "file_picker"
+"g" = "goto_file"
+"/" = "global_search"
+"r" = "rename_symbol"
+"s" = "symbol_picker"
+"d" = "diagnostics_picker"
+"q" = ":q"
+"w" = ":w"
+"x" = ":wq"
+
+[keys.normal."g"]
+"c" = "toggle_comments"
+"d" = "goto_definition"
+"D" = "goto_declaration"
+"r" = "goto_reference"
+"t" = "goto_type_definition"
+"i" = "goto_implementation"
+
+[keys.normal."["]
+"d" = "goto_next_diag"
+
+[keys.normal."]"]
+"d" = "goto_prev_diag"

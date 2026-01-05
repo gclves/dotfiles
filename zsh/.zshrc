@@ -24,3 +24,7 @@ export CPPFLAGS="-I/usr/local/opt/qt@5/include"
 
 ZSH_D=$HOME/.zsh.d
 . $ZSH_D/bootstrap
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/guilherme.goncalves/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
