@@ -13,7 +13,7 @@ Uses `other-window' with an argument -1."
 (global-set-key (kbd "s-w") (lambda () (interactive) (kill-buffer nil)))
 (global-set-key (kbd "s-]") 'other-window)
 (global-set-key (kbd "s-[")  'another-window)
-(global-set-key (kbd "M-.") 'xref-find-definitions-other-window)
+
 
 (global-set-key (kbd "M-4") 'split-window-below)
 (global-set-key (kbd "M-$") 'split-window-right)

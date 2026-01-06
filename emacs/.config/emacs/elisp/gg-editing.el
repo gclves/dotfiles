@@ -237,6 +237,11 @@ Version 2019-11-05"
   (interactive)
   (save-some-buffers t ))
 
+(use-package gg-xref
+  :load-path "elisp"
+  :commands (gg/xref-find-definitions-smart)
+  :bind (("M-." . gg/xref-find-definitions-smart)))
+
 ;; when switching out of emacs, all unsaved files will be saved
 ;; TODO: replace this with after-focus-change-function
 (add-hook 'focus-out-hook 'xah-save-all-unsaved)
