@@ -28,6 +28,19 @@
   `(unless (eq system-type 'darwin)
      ,@body))
 
+(defun gg/byte-compile-elisp ()
+  "Byte-compile ~/.emacs.d/elisp, excluding elisp/vendor/."
+  (interactive)
+  (let* ((root (expand-file-name "elisp" user-emacs-directory))
+         (vendor (file-name-as-directory (expand-file-name "vendor" root)))
+         (byte-compile-warnings '(not obsolete))
+         (n 0))
+    (dolist (f (directory-files-recursively root "\\.el\\'"))
+      (unless (string-prefix-p vendor f)
+        (byte-compile-file f)
+        (setq n (1+ n))))
+    (message "Byte-compiled %d files (excluding %s)" n vendor)))
+
 (require 'gg-ui)
 (require 'gg-typography)
 (require 'gg-editing)
@@ -40,7 +53,6 @@
 (require 'gg-project)
 ;; (require 'gg-mail)
 (require 'gg-llm)
-
 
 (on-macOS
   (require 'gg-osx-config))
