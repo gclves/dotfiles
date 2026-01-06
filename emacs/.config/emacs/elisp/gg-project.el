@@ -1,4 +1,4 @@
-(defvar gg-todo-file (expand-file-name "~/TODO")
+(defvar gg-todo-file (expand-file-name "~/TODO.org")
   "Location of my TODO file.")
 
 (defun gg-todo ()

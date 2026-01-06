@@ -28,7 +28,7 @@
 
 (use-package consult
   :bind (
-         ("C-S-f" . consult-grep)
+         ("C-S-f" . consult-ripgrep)
          ("s-b" . consult-buffer)))
 
 (with-eval-after-load 'savehist
