@@ -17,7 +17,9 @@
 ;; Look & Feel for prose writing
 (use-package olivetti
   :ensure t
-  :hook text-mode)
+  :hook text-mode
+  :config
+  (setq olivetti-style t))
 
 (defun font-size-reset ()
   "Reset the text-scale to zero."

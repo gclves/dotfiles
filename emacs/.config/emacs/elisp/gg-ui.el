@@ -91,8 +91,8 @@
 ;; | |__| (_) | | (_) | |  \__ \ (__| | | |  __/ | | | | |  __/
 ;;  \____\___/|_|\___/|_|  |___/\___|_| |_|\___|_| |_| |_|\___|
 
-(defvar gg--light-theme 'modus-operandi)
-(defvar gg--dark-theme 'modus-vivendi)
+(defvar gg--light-theme 'modus-operandi-tinted)
+(defvar gg--dark-theme 'modus-vivendi-tinted)
 
 ;; TODO: polyfill the 'ns-system-appearance-change function with a timer
 ;; if not on MacOS
