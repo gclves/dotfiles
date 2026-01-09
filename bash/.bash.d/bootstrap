@@ -12,3 +12,4 @@
 . $BASHRC_D/scala
 . $BASHRC_D/golang
 . $BASHRC_D/rust
+. $BASHRC_D/bun

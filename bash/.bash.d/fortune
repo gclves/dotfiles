@@ -2,6 +2,6 @@
 
 if [ -n "$(which verse 2> /dev/null)" ]; then
     verse
-else
-    dig +short txt istheinternetonfire.com
+elif [ -n "$(which fortune 2> /dev/null)" ]; then
+    fortune
 fi
