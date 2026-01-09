@@ -1,8 +1,8 @@
-(with-eval-after-load 'rust-mode
-  (add-to-list 'auto-mode-alist
-               '("\\.rs\\'" . rust-ts-mode))
+(use-package rust-mode
+  :init
+  (setq rust-mode-treesitter-derive t
+        rust-format-on-save t)
 
-  (add-hook 'rust-ts-mode-hook 'eglot-ensure))
-
+  (add-hook 'rust-mode-hook 'eglot-ensure))
 
 (provide 'gg-rust)
