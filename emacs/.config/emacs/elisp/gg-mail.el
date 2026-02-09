@@ -1,7 +1,8 @@
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/elpa-src/mu4e-1.12.6")
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
 
-(require 'mu4e)
+;; TODO: Lazy-load this
+;;(require 'mu4e)
 
 (with-eval-after-load 'mu4e
   (setq mu4e-get-mail-command "mbsync -Va"

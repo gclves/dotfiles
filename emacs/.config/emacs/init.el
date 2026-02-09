@@ -6,27 +6,12 @@
 
 (require 'gg-packages)
 
-;; GC Magic Hack is supposed to improve perf by dynamically
-;; adjusting the GC thresholds depending on activity level
-(use-package gcmh
-  :config
-  (gcmh-mode 1))
-
 (use-package exec-path-from-shell
   :init
   (when (or (daemonp) (memq window-system '(mac ns x)))
     (exec-path-from-shell-initialize)))
 
-;; TODO: Move this somewhere else
-(defmacro on-macOS (&rest body)
-  "Evaluate BODY if running on macOS."
-  `(when (eq system-type 'darwin)
-     ,@body))
-
-(defmacro unless-on-macOS (&rest body)
-  "Evaluate BODY if not running on macOS."
-  `(unless (eq system-type 'darwin)
-     ,@body))
+(require 'gg-macos)
 
 (defun gg/byte-compile-elisp ()
   "Byte-compile ~/.emacs.d/elisp, excluding elisp/vendor/."
@@ -53,9 +38,7 @@
 (require 'gg-project)
 ;; (require 'gg-mail)
 (require 'gg-llm)
-
-(on-macOS
-  (require 'gg-osx-config))
+(require 'gg-rss)
 
 (setq custom-file
       (expand-file-name "custom.el" user-emacs-directory))

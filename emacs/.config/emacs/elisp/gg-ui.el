@@ -1,3 +1,5 @@
+(require 'gg-macos)
+
 ;; Window setup
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -5,7 +7,10 @@
 (column-number-mode)
 (blink-cursor-mode +1)
 (tooltip-mode -1)
-(menu-bar-mode -1)
+
+(unless-on-macOS
+ (menu-bar-mode -1))
+
 (setq inhibit-startup-message t
       initial-scratch-message ""
       mode-line-default-help-echo nil
@@ -81,9 +86,6 @@
 (display-time-mode)
 (display-battery-mode)
 (use-package minions :config (minions-mode 1))
-
-(use-package hide-mode-line
-  :hook ((completion-list-mode shell-mode eshell-mode) . hide-mode-line-mode))
 
 ;;   ____      _                     _
 ;;  / ___|___ | | ___  _ __ ___  ___| |__   ___ _ __ ___   ___

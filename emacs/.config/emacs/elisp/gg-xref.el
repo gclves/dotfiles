@@ -4,7 +4,7 @@
 
 ;;;###autoload
 (defun gg/xref-find-definitions-smart (&optional identifier)
-  "Jump in same window if defs stay in current buffer/file; otherwise use other window."
+  "Jump to the definition of IDENTIFIER.  Stay in same window if defs stay in current buffer/file; otherwise use other window."
   (interactive)
 
   (require 'xref)

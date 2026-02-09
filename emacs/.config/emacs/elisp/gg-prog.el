@@ -20,5 +20,7 @@
   (setq treesit-auto-install 'prompt)
   (treesit-auto-add-to-auto-mode-alist 'all))
 
+(require 'prisma-ts-mode)
+
 (provide 'gg-prog)
 ;;; gg-prog.el ends here
