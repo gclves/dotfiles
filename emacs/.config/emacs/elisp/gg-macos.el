@@ -8,5 +8,9 @@
   `(unless (eq system-type 'darwin)
      ,@body))
 
+(on-macOS
+ (setq ns-use-proxy-icon  nil
+       frame-title-format nil
+       locate-command "mdfind"))
 
 (provide 'gg-macos)
