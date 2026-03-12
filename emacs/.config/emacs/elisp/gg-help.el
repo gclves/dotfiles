@@ -3,7 +3,8 @@
 
 (global-goto-address-mode)
 
-(use-package which-key :ensure t
+(use-package which-key
+  :ensure nil
   :config (which-key-mode))
 
 (use-package helpful

@@ -7,9 +7,6 @@
   (find-file gg-todo-file))
 (global-set-key (kbd "<f4>") 'gg-todo)
 
-(use-package rg
-  :ensure-system-package rg)
-
 (use-package projectile
   :ensure t
   :init (projectile-mode +1)

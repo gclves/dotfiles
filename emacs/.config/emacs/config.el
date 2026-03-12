@@ -1,7 +1,6 @@
 (global-set-key (kbd "C-x C-f") 'find-file)
 (global-set-key (kbd "s-o") 'find-file)
-(global-set-key (kbd "s-b") 'ido-switch-buffer)
-(setq ido-use-filename-at-point 'guess)
+(global-set-key (kbd "s-b") 'consult-buffer)
 
 (defun another-window ()
   "Select the previous window in the current frame.

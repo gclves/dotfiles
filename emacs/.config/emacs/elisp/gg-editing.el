@@ -39,6 +39,7 @@
   :config (ws-butler-global-mode))
 
 (use-package editorconfig
+  :ensure nil
   :config
   (editorconfig-mode 1))
 
@@ -122,7 +123,7 @@ When called repeatedly, append copy subsequent lines.  When
         (buffer (current-buffer))
         (name (buffer-name)))
     (if (not (and filename (file-exists-p filename)))
-        (ido-kill-buffer)
+        (kill-current-buffer)
       (when (yes-or-no-p "Are you sure you want to remove this file? ")
         (delete-file filename)
         (kill-buffer buffer)

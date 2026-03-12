@@ -46,10 +46,9 @@
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map (kbd "C-c C-e") 'flymake-show-buffer-diagnostics)
   (define-key flymake-mode-map (kbd "C-c C-E") 'flymake-show-project-diagnostics)
-  (add-hook 'prog-mode-hook 'flymake-mode))
+  (add-hook 'prog-mode-hook 'flymake-mode)
 
-(global-set-key (kbd "M-n") 'next-error)
-(global-set-key (kbd "M-p") 'previous-error)
-
+  (with-eval-after-load 'consult
+    (define-key flymake-mode-map (kbd "C-x `") 'consult-flymake)))
 
 (provide 'gg-autocomplete-snippets)
