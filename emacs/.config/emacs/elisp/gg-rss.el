@@ -1,8 +1,7 @@
 (use-package elfeed
   :config
   (setq elfeed-feeds
-        '(("https://lobste.rs/rss" firehose tech)
-          ("https://ciechanow.ski/atom.xml" long-form tech)
+        '(("https://ciechanow.ski/atom.xml" long-form tech)
           ("https://samwho.dev/rss.xml" long-form tech)
           ("https://pudding.cool/feed/index.xml" long-form tech)
           ("https://pagedout.institute/atom.xml" long-form tech)
@@ -33,9 +32,6 @@
 ;; emms to listen to podcasts
 (use-package emms
   :config
-  (define-emms-simple-player afplay '(file)
-                             (regexp-opt '(".mp3" ".m4a" ".aac"))
-                             "afplay")
   (setq emms-player-list '(emms-player-mpv)))
 
 (provide 'gg-rss)

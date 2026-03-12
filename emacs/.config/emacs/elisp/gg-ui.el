@@ -24,7 +24,12 @@
       x-underline-at-descent-line t
       switch-to-buffer-obey-display-actions t)
 
-(pixel-scroll-precision-mode +1)
+(setq pixel-scroll-precision-interpolate-mice nil
+      mouse-wheel-scroll-amount '(3
+                                  ((shift) . hscroll)
+                                  ((meta))
+                                  ((control meta) . global-text-scale)
+                                  ((control) . text-scale)))
 
 ;; Highlight current line, but only in text or prog modes
 (let ((hl-line-hooks '(text-mode-hook prog-mode-hook)))
@@ -81,11 +86,67 @@
 ;; | |  | | (_) | (_| |  __/ | | | | |  __/
 ;; |_|  |_|\___/ \__,_|\___|_|_|_| |_|\___|
 
-(setq display-time-default-load-average 0 ; 1-minute load average
-      display-time-24hr-format t)
-(display-time-mode)
-(display-battery-mode)
-(use-package minions :config (minions-mode 1))
+(defmacro gg--add-nano-modeline-hook (hook mode-fn)
+  "Enable MODE-FN from HOOK while hiding the standard mode line."
+  `(add-hook ,hook
+             (lambda ()
+               (,mode-fn)
+               (setq-local mode-line-format nil))))
+
+(defun gg--sync-nano-modeline-faces ()
+  "Refresh `nano-modeline' faces to match the current theme."
+  (when (featurep 'nano-modeline)
+    (let ((default-fg (face-foreground 'default nil t))
+          (default-bg (face-background 'default nil t))
+          (header-bg (face-background 'header-line nil t))
+          (shadow-fg (face-foreground 'shadow nil t)))
+      (set-face-attribute 'nano-modeline-active nil
+                          :foreground default-fg
+                          :background header-bg
+                          :box `(:line-width 1 :color ,default-bg))
+      (set-face-attribute 'nano-modeline-inactive nil
+                          :inherit '(shadow nano-modeline-active))
+      (set-face-attribute 'nano-modeline-status nil
+                          :foreground default-bg
+                          :background shadow-fg
+                          :inherit 'bold)
+      (set-face-attribute 'nano-modeline-button-active-face nil
+                          :foreground default-fg
+                          :background default-bg
+                          :family "Roboto Mono"
+                          :weight 'regular
+                          :box `(:line-width 2 :color ,default-fg :style flat-button))
+      (set-face-attribute 'nano-modeline-button-inactive-face nil
+                          :foreground shadow-fg
+                          :background header-bg
+                          :family "Roboto Mono"
+                          :weight 'regular
+                          :box `(:line-width 2 :color ,default-fg :style flat-button))
+      (set-face-attribute 'nano-modeline-button-highlight-face nil
+                          :foreground default-bg
+                          :background default-fg
+                          :family "Roboto Mono"
+                          :weight 'bold)
+      (set-face-attribute 'nano-modeline--empty-face nil
+                          :foreground default-fg))))
+
+(use-package nano-modeline
+  :config
+  (setq nano-modeline-position #'nano-modeline-header)
+  (gg--sync-nano-modeline-faces)
+  (gg--add-nano-modeline-hook 'prog-mode-hook nano-modeline-prog-mode)
+  (gg--add-nano-modeline-hook 'text-mode-hook nano-modeline-text-mode)
+  (gg--add-nano-modeline-hook 'org-mode-hook nano-modeline-org-mode)
+  (gg--add-nano-modeline-hook 'pdf-view-mode-hook nano-modeline-pdf-mode)
+  (gg--add-nano-modeline-hook 'mu4e-headers-mode-hook nano-modeline-mu4e-headers-mode)
+  (gg--add-nano-modeline-hook 'mu4e-view-mode-hook nano-modeline-mu4e-message-mode)
+  (gg--add-nano-modeline-hook 'elfeed-show-mode-hook nano-modeline-elfeed-entry-mode)
+  (gg--add-nano-modeline-hook 'elfeed-search-mode-hook nano-modeline-elfeed-search-mode)
+  (gg--add-nano-modeline-hook 'term-mode-hook nano-modeline-term-mode)
+  (gg--add-nano-modeline-hook 'xwidget-webkit-mode-hook nano-modeline-xwidget-mode)
+  (gg--add-nano-modeline-hook 'messages-buffer-mode-hook nano-modeline-message-mode)
+  (gg--add-nano-modeline-hook 'org-capture-mode-hook nano-modeline-org-capture-mode)
+  (gg--add-nano-modeline-hook 'org-agenda-mode-hook nano-modeline-org-agenda-mode))
 
 ;;   ____      _                     _
 ;;  / ___|___ | | ___  _ __ ___  ___| |__   ___ _ __ ___   ___
@@ -108,13 +169,15 @@
    "Load the configured dark theme."
    (interactive)
    (gg--reset-themes)
-   (load-theme gg--dark-theme t))
+   (load-theme gg--dark-theme t)
+   (gg--sync-nano-modeline-faces))
 
  (defun gg--load-light-theme ()
    "Load the configured light theme."
    (interactive)
    (gg--reset-themes)
-   (load-theme gg--light-theme t))
+   (load-theme gg--light-theme t)
+   (gg--sync-nano-modeline-faces))
 
  ;; Switch between light and dark themes
  (run-at-time "07:00" (* 60 60 24) (lambda () (gg--load-light-theme)))
@@ -126,7 +189,8 @@
    (mapc #'disable-theme custom-enabled-themes)
    (pcase appearance
      ('light (load-theme gg--light-theme t))
-     ('dark (load-theme gg--dark-theme t))))
+     ('dark (load-theme gg--dark-theme t)))
+   (gg--sync-nano-modeline-faces))
 
  (add-hook 'ns-system-appearance-change-functions #'gg--sync-theme))
 
