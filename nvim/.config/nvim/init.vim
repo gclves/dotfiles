@@ -326,6 +326,40 @@ function! SetTestCommand(command)
     let g:project_test_commands[getcwd()] = a:command
 endfunction
 
+function! DefaultTestCommand()
+    let l:defaults = {
+        \ 'go': 'go test ./...',
+        \ 'elixir': 'mix test',
+        \ 'ruby': 'bundle exec rspec',
+        \ 'javascript': 'npm test',
+        \ 'typescript': 'npm test',
+        \ }
+
+    return get(l:defaults, &filetype, '')
+endfunction
+
+function! GetTestCommand()
+    if !exists('g:project_test_commands')
+        let g:project_test_commands = {}
+    endif
+
+    let l:project_root = getcwd()
+    if has_key(g:project_test_commands, l:project_root)
+        return g:project_test_commands[l:project_root]
+    endif
+
+    let l:default = $NVIM_TEST_COMMAND !=# ''
+        \ ? $NVIM_TEST_COMMAND
+        \ : DefaultTestCommand()
+    let l:cmd = input('Test command: ', l:default)
+
+    if l:cmd !=# ''
+        let g:project_test_commands[l:project_root] = l:cmd
+    endif
+
+    return l:cmd
+endfunction
+
 function! QuickfixHasFileEntries()
     for l:item in getqflist()
         if get(l:item, 'bufnr', 0) > 0 && get(l:item, 'lnum', 0) > 0
@@ -337,18 +371,19 @@ function! QuickfixHasFileEntries()
 endfunction
 
 function! RunTests()
-    if !exists('g:project_test_commands') ||
-                \ !has_key(g:project_test_commands, getcwd())
-        echo 'No test command set. Use :SetTestCommand ...'
+    let l:cmd = GetTestCommand()
+    if l:cmd ==# ''
+        echo 'No test command set'
         return
     endif
 
     write
     let l:old_makeprg = &makeprg
-    let &makeprg = g:project_test_commands[getcwd()]
+    let &makeprg = l:cmd
 
     try
-        silent make!
+        make!
+
         if QuickfixHasFileEntries()
             botright copen
             wincmd p
