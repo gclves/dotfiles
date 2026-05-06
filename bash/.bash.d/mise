@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+eval "$(mise activate bash)"
+
+export GEM_HOME=$HOME/.local/gems
+export PATH=$GEM_HOME/bin:$PATH
