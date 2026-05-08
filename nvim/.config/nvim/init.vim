@@ -38,7 +38,10 @@ set lazyredraw
 set clipboard+=unnamedplus  " use the system clipboard
 filetype plugin indent on " Load filetype-specific plugins and indenting
 syntax on               " Enable syntax highlighting
+set termguicolors
 let mapleader="\<Space>"
+
+set grepprg=rg\ --vimgrep
 
 " === Navigation & Editing ===
 set backspace=indent,eol,start " Backspace over everything in insert mode
@@ -87,6 +90,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'elixir-editors/vim-elixir'
+Plug 'sderev/alabaster.vim'
 
 " XXX: Experimental
 Plug 'neovim/nvim-lspconfig'
@@ -186,8 +190,6 @@ nnoremap <Leader>ev :tabe $MYVIMRC<cr>
 nnoremap <Leader>f :Files<cr>
 noremap <Leader>b :Buffers<cr>
 
-" tests
-
 " <C-s> to save
 inoremap <C-s> <Esc>:w<cr>a
 noremap <C-s> :w<cr>
@@ -198,13 +200,14 @@ autocmd Filetype help nnoremap <buffer> q :q<CR>
 autocmd FileType qf nnoremap <buffer> q :close<CR>
 
 set background=dark
-colorscheme default
+" Available variants: alabaster-bg, alabaster-dark, alabaster-mono, alabaster-dark-mono
+colorscheme alabaster-bg
 
 " === EXPERIMENTAL ===
 
 " Install vim-plug if not found
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+  !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 endif
 
@@ -224,10 +227,9 @@ require('mason-lspconfig').setup({
 })
 
 -- Basic LSP server configurations
-local lspconfig = require('lspconfig')
-
 for _, server in ipairs(servers) do
-    lspconfig[server].setup({})
+    vim.lsp.config(server, {})
+    vim.lsp.enable(server)
 end
 EOF
 
@@ -263,15 +265,17 @@ nnoremap K :call ShowDocs()<CR>
 
 " Format on save
 function! CleanWhitespace()
-    let l:save = winsaveview()
-    keeppatterns %s/\s\+$//e
-    call winrestview(l:save)
+    if !HasLsp()
+        let l:save = winsaveview()
+        keeppatterns %s/\s\+$//e
+        call winrestview(l:save)
+    endif
 endfunction
 
 function! FormatBeforeSave()
     " I'm slowly moving out of LSP for formatting. This stuff is complex and
     " frustrating. go doesn't need this madness
-    if &filetype !=# "go"
+    if &filetype !=# "go" && &filetype !=# "typescript"
         Format
     endif
 endfunction
@@ -283,11 +287,18 @@ function! GoImports()
     call winrestview(l:save)
 endfunction
 
+function! PrettierFormat()
+    let l:save = winsaveview()
+    silent! execute '%!prettier --parser typescript'
+    call winrestview(l:save)
+endfunction
+
 augroup formatting
     autocmd!
     autocmd BufWritePre * call CleanWhitespace()
     autocmd BufWritePre * call FormatBeforeSave()
     autocmd BufWritePre *.go call GoImports()
+    autocmd BufWritePre *.ts{x,} call PrettierFormat()
 augroup END
 
 " Diagnostics
@@ -398,3 +409,27 @@ endfunction
 
 command! -nargs=+ SetTestCommand call SetTestCommand(<q-args>)
 nnoremap <Leader>t :call RunTests()<CR>
+
+" Quick scratch
+let g:quick_scratch_path = get(g:, 'quick_scratch_path', '~/SCRATCH.md')
+
+function! QuickScratch() abort
+  let l:scratch = resolve(fnamemodify(expand(g:quick_scratch_path), ':p'))
+  let l:current = resolve(fnamemodify(expand('%:p'), ':p'))
+
+  if l:current ==# l:scratch
+    if exists('w:quick_scratch_last_bufnr') && bufexists(w:quick_scratch_last_bufnr)
+      execute 'buffer' w:quick_scratch_last_bufnr
+      unlet w:quick_scratch_last_bufnr
+    else
+      bprevious
+    endif
+    return
+  endif
+
+  let w:quick_scratch_last_bufnr = bufnr('%')
+  execute 'edit' fnameescape(l:scratch)
+  setlocal expandtab
+endfunction
+
+nnoremap <silent> <M--> :call QuickScratch()<CR>
