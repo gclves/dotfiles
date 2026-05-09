@@ -201,7 +201,7 @@ autocmd FileType qf nnoremap <buffer> q :close<CR>
 
 set background=dark
 " Available variants: alabaster-bg, alabaster-dark, alabaster-mono, alabaster-dark-mono
-colorscheme alabaster-bg
+colorscheme alabaster-dark
 
 " === EXPERIMENTAL ===
 
@@ -218,13 +218,31 @@ local servers = {
     'gopls',
     'rust_analyzer',
     'elixirls',
-    'ts_ls'
+    'ts_ls',
+    'solargraph'
 }
 
 require('mason').setup()
 require('mason-lspconfig').setup({
   ensure_installed = servers
 })
+
+function _G.lsp_format()
+    local clients = vim.lsp.get_clients({
+        bufnr = 0,
+        method = 'textDocument/formatting',
+    })
+
+    if #clients == 0 then
+        return false
+    end
+
+    vim.lsp.buf.format({
+        async = false,
+        bufnr = 0,
+    })
+    return true
+end
 
 -- Basic LSP server configurations
 for _, server in ipairs(servers) do
@@ -233,7 +251,7 @@ for _, server in ipairs(servers) do
 end
 EOF
 
-command! Format lua vim.lsp.buf.format({ async = false })
+command! Format lua lsp_format()
 
 " LSP Keybindings
 nnoremap <Leader>rn :lua vim.lsp.buf.rename()<CR>
@@ -242,6 +260,10 @@ nnoremap gr :lua vim.lsp.buf.references()<CR>
 " LSP keybindings that fall back to Vim's native functionality
 function! HasLsp()
     return luaeval('#vim.lsp.get_clients({ bufnr = 0 }) > 0')
+endfunction
+
+function! HasLspFormatter()
+    return luaeval('#vim.lsp.get_clients({ bufnr = 0, method = "textDocument/formatting" }) > 0')
 endfunction
 
 function! GoToDefinition()
@@ -275,8 +297,8 @@ endfunction
 function! FormatBeforeSave()
     " I'm slowly moving out of LSP for formatting. This stuff is complex and
     " frustrating. go doesn't need this madness
-    if &filetype !=# "go" && &filetype !=# "typescript"
-        Format
+    if &filetype !=# "go" && &filetype !=# "typescript" && HasLspFormatter()
+        silent Format
     endif
 endfunction
 
@@ -287,6 +309,7 @@ function! GoImports()
     call winrestview(l:save)
 endfunction
 
+" JS/TS: use prettier
 function! PrettierFormat()
     let l:save = winsaveview()
     silent! execute '%!prettier --parser typescript'
