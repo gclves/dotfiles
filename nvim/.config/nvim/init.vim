@@ -1,6 +1,5 @@
 " TODO:
-" - run unit tests
-" - TreeSitter?
+" - TreeSitter? Maybe?
 
 " === General Settings ===
 set nocompatible      " Use Vim defaults, not Vi compatibility
@@ -10,7 +9,19 @@ set hidden             " Allow switching buffers without saving
 set history=10000       " Increase history size for commands and searches
 set undofile           " Enable persistent undo
 set nobackup           " Disable backup files
-set noswapfile         " Disable swap files (use persistent undo instead)
+
+" Create the {swap, undo} folders if they don't exist
+if !isdirectory(expand('~/.local/state/nvim/swap'))
+  call mkdir(expand('~/.local/state/nvim/swap'), 'p')
+endif
+
+if !isdirectory(expand('~/.local/state/nvim/undo'))
+  call mkdir(expand('~/.local/state/nvim/undo'), 'p')
+endif
+set backupdir=~/.local/state/nvim/backup//
+set directory=~/.local/state/nvim/swap//
+set undodir=~/.local/state/nvim/undo//
+
 set showcmd            " Display incomplete commands
 set wildmenu           " Enhanced command line completion
 set ignorecase        " Ignore case when searching
@@ -29,15 +40,16 @@ set shiftwidth=4       " Indentation level for < and > commands
 set expandtab          " Use spaces instead of tabs
 set smarttab
 set autoindent         " Enable auto indentation
-set smartindent        " Smarter auto indentation based on file type
-set cindent            " C-style indentation (if applicable)
 set ruler
 set showmatch
 set laststatus=2
 set lazyredraw
+set switchbuf=useopen,usetab,newtab
+set shortmess+=I       " Disable the intro message
 set clipboard+=unnamedplus  " use the system clipboard
 filetype plugin indent on " Load filetype-specific plugins and indenting
 syntax on               " Enable syntax highlighting
+set inccommand=split
 set termguicolors
 let mapleader="\<Space>"
 
@@ -46,29 +58,31 @@ set grepprg=rg\ --vimgrep
 " === Navigation & Editing ===
 set backspace=indent,eol,start " Backspace over everything in insert mode
 set whichwrap+=<,>,[,] " Allow cursor movement between lines with <, >, [, ]
-" Move to window below with Ctrl+j
-map <C-j> <C-W>j
-" Move to window above with Ctrl+k
-map <C-k> <C-W>k
 " Exit insert mode with 'jk'
 inoremap jk <Esc>
 inoremap kj <Esc>
-
-nmap k gk
-map j gj
 
 " Navigate errors
 noremap <C-n> :cn<cr>
 noremap <C-p> :cp<cr>
 
-" === Search & Replace ===
-" Use 'very magic' mode for search by default
-nnoremap / /\v
-nnoremap ? ?\v
-cnoremap %s/ %smagic/
-cnoremap \>s/ \>smagic/
-nnoremap :g/ :g/\v
-nnoremap :g// :g//
+" Fast buffer movement
+nnoremap <S-l> :bnext<CR>
+nnoremap <S-h> :bprevious<CR>
+nnoremap <leader><Tab> :b#<CR>
+nnoremap <C-S-w> :bdelete<CR>
+
+" Tabs as layouts/workspaces
+nnoremap <leader>tn :tabnew<CR>
+nnoremap <leader>tk :tabclose<CR>
+nnoremap <leader>to :tabonly<CR>
+nnoremap <leader>tl :tabnext<CR>
+nnoremap <leader>th :tabprevious<CR>
+nnoremap <leader>1 1gt
+nnoremap <leader>2 2gt
+nnoremap <leader>3 3gt
+nnoremap <leader>4 4gt
+nnoremap <leader>5 5gt
 
 " === Splits & Tabs ===
 " Move to left split with Ctrl+h
@@ -81,6 +95,14 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 
 " === Plugins ===
+
+" Install vim-plug if not found
+if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 call plug#begin()
 
 " List your plugins here
@@ -177,7 +199,7 @@ command! -nargs=+ SetProjectRunCommand call SetProjectRunCommand(<f-args>)
 nnoremap <Leader>r :call RunFile()<cr>
 
 " === Custom Mappings and Functions ===
-noremap <Escape> :nohlsearch<cr>
+nnoremap <silent> <Esc> :nohlsearch<CR><Esc>
 
 " swapping : and ; save a lot of unneeded shifting:
 noremap ; :
@@ -187,7 +209,8 @@ noremap : ;
 nnoremap <Leader>ev :tabe $MYVIMRC<cr>
 
 " fzf
-nnoremap <Leader>f :Files<cr>
+nnoremap <Leader>f :GFiles<cr>
+nnoremap <Leader>F :Files<cr>
 noremap <Leader>b :Buffers<cr>
 
 " <C-s> to save
@@ -199,17 +222,11 @@ inoremap <C-t> <esc>:tabnew<cr>
 autocmd Filetype help nnoremap <buffer> q :q<CR>
 autocmd FileType qf nnoremap <buffer> q :close<CR>
 
-set background=dark
+set background=light
 " Available variants: alabaster-bg, alabaster-dark, alabaster-mono, alabaster-dark-mono
 colorscheme alabaster-dark
 
 " === EXPERIMENTAL ===
-
-" Install vim-plug if not found
-if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-  !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-endif
 
 " Basic LSP setup
 lua << EOF
@@ -219,7 +236,6 @@ local servers = {
     'rust_analyzer',
     'elixirls',
     'ts_ls',
-    'solargraph'
 }
 
 require('mason').setup()
@@ -249,6 +265,9 @@ for _, server in ipairs(servers) do
     vim.lsp.config(server, {})
     vim.lsp.enable(server)
 end
+
+-- Diagnostic lines
+vim.diagnostic.config({ virtual_lines = true })
 EOF
 
 command! Format lua lsp_format()
@@ -321,7 +340,13 @@ augroup formatting
     autocmd BufWritePre * call CleanWhitespace()
     autocmd BufWritePre * call FormatBeforeSave()
     autocmd BufWritePre *.go call GoImports()
+    autocmd BufWritePre *.js{x,} call PrettierFormat()
     autocmd BufWritePre *.ts{x,} call PrettierFormat()
+augroup END
+
+augroup reload
+    autocmd!
+    autocmd BufWritePost $MYVIMRC source $MYVIMRC
 augroup END
 
 " Diagnostics
@@ -333,7 +358,8 @@ nnoremap <Leader>dq :lua vim.diagnostic.setqflist()<CR>
 
 " Search
 command! -nargs=+ Grep silent grep! <args> | copen
-nnoremap <Leader>/ :Grep<Space>
+"nnoremap <Leader>/ :Grep<Space>
+nnoremap <Leader>/ :Rg<cr>
 nnoremap <Leader>* :Grep <C-r><C-w><CR>
 
 " Autocomplete
@@ -394,6 +420,90 @@ function! GetTestCommand()
     return l:cmd
 endfunction
 
+function! SetFileTestCommand(command)
+    if !exists('g:project_file_test_commands')
+        let g:project_file_test_commands = {}
+    endif
+
+    let g:project_file_test_commands[getcwd()] = a:command
+endfunction
+
+function! CurrentFileLooksLikeTest()
+    let l:file = expand('%:t')
+
+    if &filetype ==# 'python'
+        return l:file =~# '^test_.*\.py$' || l:file =~# '_test\.py$'
+    endif
+
+    if &filetype ==# 'ruby'
+        return l:file =~# '_spec\.rb$'
+            \ || l:file =~# '^test_.*\.rb$'
+            \ || l:file =~# '_test\.rb$'
+    endif
+
+    if &filetype ==# 'javascript'
+        return l:file =~# '\.test\.jsx\?$' || l:file =~# '\.spec\.jsx\?$'
+    endif
+
+    if &filetype ==# 'typescript'
+        return l:file =~# '\.test\.tsx\?$' || l:file =~# '\.spec\.tsx\?$'
+    endif
+
+    return 0
+endfunction
+
+function! BuildTestCommand(template)
+    let l:file = expand('%')
+
+    if l:file ==# ''
+        return ''
+    endif
+
+    let l:relative_file = fnamemodify(l:file, ':.')
+    let l:absolute_file = fnamemodify(l:file, ':p')
+    let l:dir = fnamemodify(l:relative_file, ':h')
+
+    let l:cmd = a:template
+    let l:cmd = substitute(l:cmd, '{file_abs}', shellescape(l:absolute_file), 'g')
+    let l:cmd = substitute(l:cmd, '{file}', shellescape(l:relative_file), 'g')
+    let l:cmd = substitute(l:cmd, '{dir}', shellescape(l:dir), 'g')
+
+    return l:cmd
+endfunction
+
+function! DefaultFileTestCommand()
+    let l:defaults = {
+        \ 'python': 'python -m pytest {file}',
+        \ 'ruby': 'bundle exec rspec {file}',
+        \ 'javascript': 'npm test -- {file}',
+        \ 'typescript': 'npm test -- {file}',
+        \ }
+
+    return get(l:defaults, &filetype, '')
+endfunction
+
+function! GetFileTestCommand()
+    if !exists('g:project_file_test_commands')
+        let g:project_file_test_commands = {}
+    endif
+
+    let l:project_root = getcwd()
+
+    if has_key(g:project_file_test_commands, l:project_root)
+        return BuildTestCommand(g:project_file_test_commands[l:project_root])
+    endif
+
+    let l:default = $NVIM_FILE_TEST_COMMAND !=# ''
+        \ ? $NVIM_FILE_TEST_COMMAND
+        \ : DefaultFileTestCommand()
+
+    if l:default ==# ''
+        return ''
+    endif
+
+    return BuildTestCommand(l:default)
+endfunction
+
 function! QuickfixHasFileEntries()
     for l:item in getqflist()
         if get(l:item, 'bufnr', 0) > 0 && get(l:item, 'lnum', 0) > 0
@@ -405,7 +515,16 @@ function! QuickfixHasFileEntries()
 endfunction
 
 function! RunTests()
-    let l:cmd = GetTestCommand()
+    let l:cmd = ''
+
+    if CurrentFileLooksLikeTest()
+        let l:cmd = GetFileTestCommand()
+    endif
+
+    if l:cmd ==# ''
+        let l:cmd = GetTestCommand()
+    endif
+
     if l:cmd ==# ''
         echo 'No test command set'
         return
@@ -453,6 +572,20 @@ function! QuickScratch() abort
   let w:quick_scratch_last_bufnr = bufnr('%')
   execute 'edit' fnameescape(l:scratch)
   setlocal expandtab
+endfunction
+
+augroup quick_scratch_autosave
+  autocmd!
+  autocmd BufLeave,FocusLost,InsertLeave * call QuickScratchAutoSave()
+augroup END
+
+function! QuickScratchAutoSave() abort
+  let l:scratch = resolve(fnamemodify(expand(g:quick_scratch_path), ':p'))
+  let l:current = resolve(fnamemodify(expand('%:p'), ':p'))
+
+  if l:current ==# l:scratch && &modified && !&readonly
+    silent write
+  endif
 endfunction
 
 nnoremap <silent> <M--> :call QuickScratch()<CR>
