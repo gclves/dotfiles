@@ -589,3 +589,10 @@ function! QuickScratchAutoSave() abort
 endfunction
 
 nnoremap <silent> <M--> :call QuickScratch()<CR>
+
+augroup OpenScratchWhenNoFile
+  autocmd!
+  autocmd VimEnter * if argc() == 0 && index(v:argv, '-') < 0 |
+        \ execute 'call QuickScratch()' |
+        \ endif
+augroup END
