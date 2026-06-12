@@ -3,9 +3,9 @@
 
 (defvar gg--last-visited-buffer nil
   "The last visited buffer before jumping to *scratch*.
-Used by `gg-quick-switch-to-scratch'.")
+Used by `gg/quick-switch-to-scratch'.")
 
-(defun gg-quick-switch-to-scratch ()
+(defun gg/quick-switch-to-scratch ()
   "Quickly jump to the *scratch* buffer and back."
   (interactive)
   (let ((buf (current-buffer)))
@@ -18,17 +18,17 @@ Used by `gg-quick-switch-to-scratch'.")
         (switch-to-buffer gg--scratch-buffer)
         (setq gg--last-visited-buffer buf)))))
 
-(defun gg-mark-buffer-as-scratch ()
+(defun gg/mark-buffer-as-scratch ()
   "Mark the currently visited buffer as the scratch one."
   (interactive)
   (let ((buf-name (buffer-name (current-buffer))))
     (setq gg--scratch-buffer buf-name)
     (message "%s is now the scratch buffer" buf-name)))
 
-(global-set-key (kbd "M-_") 'gg-mark-buffer-as-scratch)
-(global-set-key (kbd "M--") 'gg-quick-switch-to-scratch)
+(global-set-key (kbd "C-M--") 'gg/mark-buffer-as-scratch)
+(global-set-key (kbd "M--") 'gg/quick-switch-to-scratch)
 
-(defvar gg-scratch-buffer-mode 'lisp-interaction-mode
+(defvar gg/scratch-buffer-mode 'lisp-interaction-mode
   "Major mode to be used in temporary buffers.")
 
 (defun make-new-buffer-or-frame (arg)
@@ -39,7 +39,7 @@ If ARG is non-nil, the new buffer is placed in a new frame."
     (if make-frame? (make-frame-command)
       (progn
         (switch-to-buffer (generate-new-buffer "*New*"))
-        (funcall gg-scratch-buffer-mode)))))
+        (funcall gg/scratch-buffer-mode)))))
 
 (global-set-key (kbd "s-n") 'make-new-buffer-or-frame)
 

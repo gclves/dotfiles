@@ -21,7 +21,7 @@
         (apply 'make-comint-in-buffer "iex" nil "iex" nil args)))))
 
 (with-eval-after-load 'comint
-  (defun gg-run-iex ()
+  (defun gg/run-iex ()
     "Runs an IEx sesssion with `comint-mode' on the current project."
     (interactive)
     ;; FIXME: breaks if projectile is not loaded

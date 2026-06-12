@@ -1,11 +1,11 @@
-(defvar gg-todo-file (expand-file-name "~/TODO.org")
+(defvar gg/todo-file (expand-file-name "~/TODO.org")
   "Location of my TODO file.")
 
-(defun gg-todo ()
+(defun gg/todo ()
   "Open my personal TODO file."
   (interactive)
   (find-file gg-todo-file))
-(global-set-key (kbd "<f4>") 'gg-todo)
+(global-set-key (kbd "<f4>") 'gg/todo)
 
 (use-package projectile
   :ensure t

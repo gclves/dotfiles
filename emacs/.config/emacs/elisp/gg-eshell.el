@@ -8,9 +8,9 @@
         eshell-prompt-function 'epe-theme-lambda))
 
 (global-set-key (kbd "<f12>") 'aweshell-dedicated-toggle)
-(global-set-key (kbd "<f1>") 'gg-next-aweshell)
+(global-set-key (kbd "<f1>") 'gg/next-aweshell)
 
-(defun gg-next-aweshell (arg)
+(defun gg/next-aweshell (arg)
   "Switch to next aweshell.  If called with `ARG', create a new one."
   (interactive "P")
   (let ((open-new? (and arg t)))

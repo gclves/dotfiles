@@ -1,13 +1,13 @@
-(defvar gg-monospaced-font-family "Aporetic Serif Mono"
+(defvar gg/monospaced-font-family "Aporetic Serif Mono"
   "Default monospaced font family.")
-(defvar gg-monospaced-font-height 180
+(defvar gg/monospaced-font-height 190
   "Default monospaced font height.")
 
-(if (member gg-monospaced-font-family (font-family-list))
+(if (member gg/monospaced-font-family (font-family-list))
     (progn
-      (set-face-attribute 'default nil :family gg-monospaced-font-family :height gg-monospaced-font-height)
-      (set-face-attribute 'fixed-pitch nil :family gg-monospaced-font-family :height 1.0))
-  (message (format "Font `%s' is not installed. Please pick a different font." gg-monospaced-font-family)))
+      (set-face-attribute 'default nil :family gg/monospaced-font-family :height gg/monospaced-font-height)
+      (set-face-attribute 'fixed-pitch nil :family gg/monospaced-font-family :height 1.0))
+  (message (format "Font `%s' is not installed. Please pick a different font." gg/monospaced-font-family)))
 
 (when (member "Symbola" (font-family-list))
   (set-fontset-font t 'unicode "Symbola" nil 'prepend))
