@@ -8,3 +8,7 @@
 (add-to-list 'default-frame-alist '(undecorated-round . t))
 
 (add-to-list 'default-frame-alist '(font . "Jetbrains Mono-17"))
+
+;; Sane defaults
+(setq ring-bell-function 'ignore
+      use-short-answers t)

@@ -123,3 +123,4 @@ Uses `other-window' with an argument -1."
 
 ;; I really need to learn how to work with GPG
 (setenv "GPG_AGENT_INFO" nil)
+(setenv "HUSKY" "0")

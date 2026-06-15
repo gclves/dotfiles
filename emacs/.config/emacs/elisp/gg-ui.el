@@ -32,53 +32,48 @@
                                   ((control) . text-scale)))
 
 ;; Highlight current line, but only in text or prog modes
-(let ((hl-line-hooks '(text-mode-hook prog-mode-hook)))
-  (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
+(add-hook 'text-mode-hook 'hl-line-mode)
+(add-hook 'prog-mode-hook 'hl-line-mode)
 
-;; Open some special buffers in popup windows
-(with-eval-after-load 'window
-  ;; Only a single side window on each side
-  (setq window-sides-slots '(1 1 1 1))
+(use-package popper
+  :bind (("C-`"   . popper-toggle)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+          "^\\*Completions\\*$"
+          "^\\*Help\\*$"
+          "^\\*grep\\*$"
+          "^\\*Apropos\\*$"
+          "^\\*elisp macroexpansion\\*$"
+          "^\\*local variables\\*$"
+          "^\\*Compile-Log\\*$"
+          "^\\*Occur\\*$"
+          "^\\*frequencies\\*$"
+          "^\\*compilation\\*$"
+          "^\\*Locate\\*$"
+          "^\\*Colors\\*$"
+          "^\\*tumme-display-image\\*$"
+          "^\\*SLIME Description\\*$"
+          "^\\*Backtrace\\*$"
+          "^\\*helpful .*\\*$"
+          "^\\*tide-.*\\*$"
+          "^TODO$"
+          "^\\*rg\\*$" rg-mode
+          help-mode
+          compilation-mode
+          "^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
+          "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
+          "^\\*term.*\\*$"   term-mode   ;term as a popup
+          "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
+          ))
+  (popper-mode +1)
+  (popper-echo-mode +1))
 
-  (defvar gg--special-display-regexps
-    '("^\\*Async Shell Command\\*\\(<[0-9]+>\\)?$"
-      "^\\*webpack\\*$"
-      "^\\*server\\*$"
-      "^\\*Completions\\*$"
-      "^\\*Help\\*$"
-      "^\\*grep\\*$"
-      "^\\*Apropos\\*$"
-      "^\\*elisp macroexpansion\\*$"
-      "^\\*local variables\\*$"
-      "^\\*Compile-Log\\*$"
-      "^\\*Quail Completions\\*$"
-      "^\\*Occur\\*$"
-      "^\\*frequencies\\*$"
-      "^\\*compilation\\*$"
-      "^\\*Locate\\*$"
-      "^\\*Colors\\*$"
-      "^\\*tumme-display-image\\*$"
-      "^\\*SLIME Description\\*$"
-      "^\\*.* output\\*$"               ; tex compilation buffer
-      "^\\*TeX Help\\*$"
-      "^\\*Shell Command Output\\*$"
-      "^\\*Backtrace\\*$"
-      "^\\*helpful .*\\*$"
-      "^\\*tide-.*\\*$"
-      "^TODO$")
-    "List of regular expressions for buffer names. Such buffers will be opened in a special pop-up window.")
 
-  (defun gg--is-special-buffer (buffer-name _action)
-    "Return t if BUFFER-NAME matches any of our popup buffer patterns."
-    (cl-some (lambda (regex)
-               (string-match-p regex buffer-name)) gg--special-display-regexps))
-
-  (add-to-list 'display-buffer-alist
-               '(gg--is-special-buffer
-                 (display-buffer-reuse-window display-buffer-pop-up-window)
-                 (side . right)
-                 (slot . -1)
-                 (window-min-width . 50))))
 
 ;;  __  __           _      _ _
 ;; |  \/  | ___   __| | ___| |_)_ __   ___
@@ -157,8 +152,6 @@
 (defvar gg--light-theme 'modus-operandi-tinted)
 (defvar gg--dark-theme 'modus-vivendi-tinted)
 
-;; TODO: polyfill the 'ns-system-appearance-change function with a timer
-;; if not on MacOS
 (unless-on-macOS
  (defun gg--reset-themes ()
    "Disable all currently enabled themes."

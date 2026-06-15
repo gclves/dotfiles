@@ -330,7 +330,7 @@ If this function affects you, disable this option."
                             (mapcar (function
                                      (lambda (buffer-name)
                                        (if (integerp (string-match "\\*eshell\\*\<\\([0-9]+\\)\>" buffer-name))
-                                           (subseq buffer-name (match-beginning 1) (match-end 1))
+                                           (cl-subseq buffer-name (match-beginning 1) (match-end 1))
                                          nil)))
                                     eshell-buffer-names)))
                (eshell-buffer-index-list (sort (seq-map 'string-to-number eshell-buffer-index-strings) '<)))

@@ -4,7 +4,7 @@
 (defun gg/todo ()
   "Open my personal TODO file."
   (interactive)
-  (find-file gg-todo-file))
+  (find-file gg/todo-file))
 (global-set-key (kbd "<f4>") 'gg/todo)
 
 (use-package projectile

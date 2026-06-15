@@ -1,9 +1,5 @@
 (add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
 
-;; Sane defaults
-(setq ring-bell-function 'ignore
-      use-short-answers t)
-
 (require 'gg-packages)
 
 (use-package exec-path-from-shell

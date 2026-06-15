@@ -12,8 +12,6 @@
 (when (member "Symbola" (font-family-list))
   (set-fontset-font t 'unicode "Symbola" nil 'prepend))
 
-(global-prettify-symbols-mode 1)
-
 ;; Look & Feel for prose writing
 (use-package olivetti
   :ensure t
