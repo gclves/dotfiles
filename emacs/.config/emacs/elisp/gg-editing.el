@@ -258,4 +258,5 @@ Version 2019-11-05"
         (t (self-insert-command (or arg 1)))))
 (global-set-key "%" 'match-paren)
 
+
 (provide 'gg-editing)

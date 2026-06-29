@@ -26,7 +26,4 @@
                '((typescript-ts-mode tsx-ts-mode js-ts-mode js-mode)
                  . ("typescript-language-server" "--stdio"))))
 
-(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-
 (provide 'gg-web-dev)

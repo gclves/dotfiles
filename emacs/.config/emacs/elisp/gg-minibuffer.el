@@ -18,7 +18,10 @@
   (setq vertico-cycle t))
 
 (use-package marginalia
-  :hook (after-init . marginalia-mode))
+  :hook (after-init . marginalia-mode)
+  :config
+  ;; This is just a workaround because of some changes in marginalia
+  (setq marginalia-max-relative-age 0))
 
 (use-package orderless
   :config

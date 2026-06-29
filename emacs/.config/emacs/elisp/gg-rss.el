@@ -26,9 +26,6 @@
             (elfeed-make-tagger :feed-url "youtube\\.com"
                                 :add '(video youtube))))
 
-(with-eval-after-load 'browse-url
-  (setq browse-url-browser-function 'eww))
-
 ;; emms to listen to podcasts
 (use-package emms
   :config
