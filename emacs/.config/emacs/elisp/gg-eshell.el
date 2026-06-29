@@ -2,7 +2,7 @@
 (autoload 'aweshell-next "aweshell")
 (autoload 'aweshell-dedicated-toggle "aweshell")
 
-(with-eval-after-load 'esh-opt
+(with-eval-after-load 'aweshell
   (autoload 'epe-theme-lambda "eshell-prompt-extras")
   (setq eshell-highlight-prompt nil
         eshell-prompt-function 'epe-theme-lambda))
