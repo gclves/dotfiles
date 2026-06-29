@@ -32,4 +32,7 @@
   :config
   (setq browse-at-remote-add-line-number-if-no-region-selected nil))
 
+(on-macOS
+ (shell-command "ssh-add --apple-load-keychain"))
+
 (provide 'gg-git)
