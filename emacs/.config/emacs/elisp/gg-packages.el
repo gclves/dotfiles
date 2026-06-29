@@ -23,8 +23,6 @@
   (require 'use-package))
 
 (require 'use-package-ensure)
-(use-package use-package-ensure-system-package
-  :ensure t)
 (setq use-package-always-ensure t)
 
 (add-to-list 'load-path (concat user-emacs-directory "elisp/vendor"))
