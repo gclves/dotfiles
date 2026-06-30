@@ -71,7 +71,13 @@
           "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
           ))
   (popper-mode +1)
-  (popper-echo-mode +1))
+  (popper-echo-mode +1)
+
+  (add-hook 'popper-mode-hook #'font-size-decrease)
+
+  (setq popper-window-height
+        (lambda ()
+          (floor (frame-height) 4))))
 
 
 
@@ -152,40 +158,43 @@
 (defvar gg--light-theme 'modus-operandi-tinted)
 (defvar gg--dark-theme 'modus-vivendi-tinted)
 
-(unless-on-macOS
- (defun gg--reset-themes ()
-   "Disable all currently enabled themes."
-   (dolist (theme custom-enabled-themes)
-     (disable-theme theme)))
 
- (defun gg--load-dark-theme ()
-   "Load the configured dark theme."
-   (interactive)
-   (gg--reset-themes)
-   (load-theme gg--dark-theme t)
-   (gg--sync-nano-modeline-faces))
 
- (defun gg--load-light-theme ()
-   "Load the configured light theme."
-   (interactive)
-   (gg--reset-themes)
-   (load-theme gg--light-theme t)
-   (gg--sync-nano-modeline-faces))
+(if (boundp 'ns-system-appearance-change-functions)
+  (progn
+    (on-macOS
+     (defun gg--sync-theme (appearance)
+       "Load theme, taking current system APPEARANCE into consideration."
+       (mapc #'disable-theme custom-enabled-themes)
+       (pcase appearance
+         ('light (load-theme gg--light-theme t))
+         ('dark (load-theme gg--dark-theme t)))
+       (gg--sync-nano-modeline-faces))
 
- ;; Switch between light and dark themes
- (run-at-time "07:00" (* 60 60 24) (lambda () (gg--load-light-theme)))
- (run-at-time "18:00" (* 60 60 24) (lambda () (gg--load-dark-theme))))
+     (add-hook 'ns-system-appearance-change-functions #'gg--sync-theme)))
+  (progn
+    (defun gg--reset-themes ()
+      "Disable all currently enabled themes."
+      (dolist (theme custom-enabled-themes)
+        (disable-theme theme)))
 
-(on-macOS
- (defun gg--sync-theme (appearance)
-   "Load theme, taking current system APPEARANCE into consideration."
-   (mapc #'disable-theme custom-enabled-themes)
-   (pcase appearance
-     ('light (load-theme gg--light-theme t))
-     ('dark (load-theme gg--dark-theme t)))
-   (gg--sync-nano-modeline-faces))
+    (defun gg--load-dark-theme ()
+      "Load the configured dark theme."
+      (interactive)
+      (gg--reset-themes)
+      (load-theme gg--dark-theme t)
+      (gg--sync-nano-modeline-faces))
 
- (add-hook 'ns-system-appearance-change-functions #'gg--sync-theme))
+    (defun gg--load-light-theme ()
+      "Load the configured light theme."
+      (interactive)
+      (gg--reset-themes)
+      (load-theme gg--light-theme t)
+      (gg--sync-nano-modeline-faces))
+
+    ;; Switch between light and dark themes
+    (run-at-time "07:00" (* 60 60 24) (lambda () (gg--load-light-theme)))
+    (run-at-time "18:00" (* 60 60 24) (lambda () (gg--load-dark-theme)))))
 
 
 ;; ___
