@@ -330,9 +330,31 @@ endfunction
 
 " JS/TS: use prettier
 function! PrettierFormat()
-    let l:save = winsaveview()
-    silent! execute '%!prettier --parser typescript'
-    call winrestview(l:save)
+    if !executable('prettier')
+        echohl WarningMsg
+        echom 'prettier not found in PATH'
+        echohl None
+        return
+    endif
+
+    let l:view = winsaveview()
+    let l:input = join(getline(1, '$'), "\n") . "\n"
+    let l:output = systemlist(['prettier', '--stdin-filepath', expand('%:p')], l:input)
+    if v:shell_error != 0
+        echohl ErrorMsg
+        echom 'prettier failed; buffer left unchanged'
+        for l:line in l:output[:4]
+            echom l:line
+        endfor
+
+        echohl None
+        call winrestview(l:view)
+        return
+    endif
+
+    silent keepjumps %delete _
+    call setline(1, l:output)
+    call winrestview(l:view)
 endfunction
 
 augroup formatting
@@ -340,8 +362,7 @@ augroup formatting
     autocmd BufWritePre * call CleanWhitespace()
     autocmd BufWritePre * call FormatBeforeSave()
     autocmd BufWritePre *.go call GoImports()
-    autocmd BufWritePre *.js{x,} call PrettierFormat()
-    autocmd BufWritePre *.ts{x,} call PrettierFormat()
+    autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx call PrettierFormat()
 augroup END
 
 augroup reload
@@ -589,10 +610,3 @@ function! QuickScratchAutoSave() abort
 endfunction
 
 nnoremap <silent> <M--> :call QuickScratch()<CR>
-
-augroup OpenScratchWhenNoFile
-  autocmd!
-  autocmd VimEnter * if argc() == 0 && index(v:argv, '-') < 0 |
-        \ execute 'call QuickScratch()' |
-        \ endif
-augroup END
