@@ -2,9 +2,9 @@
 
 export GPG_TTY="$(tty)"
 export PROJECT_ROOT="$HOME/src"
-export EDITOR=nvim
+export EDITOR="emacsclient -c -a ''"
 export VISUAL=$EDITOR
-# export VISUAL="$(which subl) -w"
+export HUSKY=0
 
 set -o emacs
 bindkey -M viins 'jk' vi-cmd-mode
@@ -24,7 +24,3 @@ export CPPFLAGS="-I/usr/local/opt/qt@5/include"
 
 ZSH_D=$HOME/.zsh.d
 . $ZSH_D/bootstrap
-
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/guilherme.goncalves/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
