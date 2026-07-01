@@ -1,4 +1,5 @@
 (use-package undo-tree
+  :diminish
   :bind
   (("C-z" . undo-tree-undo)
    ("C-S-z" . undo-tree-redo)
@@ -36,14 +37,16 @@
 (global-set-key (kbd "M-<down>") 'forward-paragraph)
 
 (use-package ws-butler
+  :diminish
   :config (ws-butler-global-mode))
 
 (use-package editorconfig
-  :ensure nil
+  :diminish
   :config
   (editorconfig-mode 1))
 
 (use-package dtrt-indent
+  :diminish
   :hook (prog-mode . dtrt-indent-mode)
   :config
   (setq dtrt-indent-verbosity 0))

@@ -9,6 +9,7 @@
 
 (use-package projectile
   :ensure t
+  :diminish
   :init (projectile-mode +1)
   :config
   (setq projectile-project-search-path '("~/src"))

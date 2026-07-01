@@ -25,15 +25,19 @@
   (add-to-list 'completion-at-point-functions #'cape-keyword))
 
 (use-package yasnippet
+  :diminish yas-minor-mode
   :hook (prog-mode . yas-minor-mode))
 
 (use-package eldoc
+  :diminish
   :config
   (setq eldoc-echo-area-use-multiline-p t))
 
 (global-set-key (kbd "C-c d") 'eldoc-doc-buffer)
 
-(with-eval-after-load 'flymake
+(use-package flymake
+  :diminish
+  :config
   (define-key flymake-mode-map (kbd "M-]") #'flymake-goto-next-error)
   (define-key flymake-mode-map (kbd "M-[") #'flymake-goto-prev-error)
 

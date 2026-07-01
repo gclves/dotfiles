@@ -13,7 +13,11 @@
 (setq-default tab-width 4)
 (global-set-key (kbd "C-;") 'comment-line)
 (electric-pair-mode)
-(add-hook 'prog-mode-hook 'subword-mode)
+
+(use-package subword
+  :diminish
+  :init
+  (add-hook 'prog-mode-hook 'subword-mode))
 
 (use-package treesit-auto
   :config

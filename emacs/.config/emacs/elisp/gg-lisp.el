@@ -1,4 +1,5 @@
 (use-package paredit
+  :diminish
   :hook ((emacs-lisp-mode
           ielm-mode
           lisp-mode
