@@ -1,13 +1,87 @@
 (defvar gg/monospaced-font-family "Aporetic Serif Mono"
   "Default monospaced font family.")
+
 (defvar gg/monospaced-font-height 190
   "Default monospaced font height.")
 
-(if (member gg/monospaced-font-family (font-family-list))
-    (progn
-      (set-face-attribute 'default nil :family gg/monospaced-font-family :height gg/monospaced-font-height)
-      (set-face-attribute 'fixed-pitch nil :family gg/monospaced-font-family :height 1.0))
-  (message (format "Font `%s' is not installed. Please pick a different font." gg/monospaced-font-family)))
+(defvar gg/ui-font-family "Aporetic Sans Mono"
+  "Default UI font family.")
+
+(defvar gg/ui-font-height 170
+  "Default UI font height.")
+
+(defmacro with-font-available (font-family &rest body)
+  "Execute `BODY' if `FONT-FAMILY' is available. Otherwise display an error."
+  (declare (indent 1))
+  `(if (member ,font-family (font-family-list))
+       (progn
+         ,@body)
+     (message (format "Font `%s' is not installed. Please pick a different font." ,font-family))))
+
+(defun gg/set-face-font (face family height &rest attrs)
+  (when (facep face)
+    (apply #'set-face-attribute
+           face nil
+           :family family
+           :height height
+           attrs)))
+
+(defun gg/apply-editing-fonts ()
+  "Apply the main monospaced editing fonts."
+  (gg/set-face-font 'default
+                    gg/monospaced-font-family
+                    gg/monospaced-font-height)
+  (gg/set-face-font 'fixed-pitch
+                    gg/monospaced-font-family
+                    gg/monospaced-font-height))
+
+(defun gg/apply-ui-fonts ()
+  "Apply UI font faces."
+  (dolist (face '(mode-line mode-line-inactive))
+    (gg/set-face-font face
+                      gg/ui-font-family
+                      gg/ui-font-height
+                      :weight 'regular
+                      :box nil))
+
+  (gg/set-face-font 'minibuffer-prompt
+                    gg/ui-font-family
+                    gg/ui-font-height))
+
+(with-font-available gg/monospaced-font-family
+  (gg/apply-editing-fonts))
+
+(with-font-available gg/ui-font-family
+  (gg/apply-ui-fonts))
+
+(defun gg/use-ui-font-in-minibuffer ()
+  "Use the UI font in the minibuffer."
+  (when (member gg/ui-font-family (font-family-list))
+    (face-remap-add-relative
+     'default
+     `(:family ,gg/ui-font-family
+       :height ,gg/ui-font-height))))
+
+(add-hook 'minibuffer-setup-hook #'gg/use-ui-font-in-minibuffer)
+
+;; Do not set a different font on the selected Vertico candidate.
+(with-eval-after-load 'vertico
+  (set-face-attribute 'vertico-current nil
+                      :inherit 'highlight
+                      :family 'unspecified
+                      :height 'unspecified))
+
+;; Marginalia annotations
+(with-eval-after-load 'marginalia
+  (with-font-available gg/ui-font-family
+    (dolist (face '(marginalia-documentation
+                    marginalia-key
+                    marginalia-symbol
+                    marginalia-type
+                    marginalia-value))
+      (gg/set-face-font face
+                        gg/ui-font-family
+                        gg/ui-font-height))))
 
 (when (member "Symbola" (font-family-list))
   (set-fontset-font t 'unicode "Symbola" nil 'prepend))
