@@ -37,6 +37,7 @@
 
 (use-package popper
   :bind (("C-`"   . popper-toggle)
+         ("<f12>" . popper-toggle)
          ("M-`"   . popper-cycle)
          ("C-M-`" . popper-toggle-type))
   :init
@@ -61,6 +62,7 @@
           "^\\*Backtrace\\*$"
           "^\\*helpful .*\\*$"
           "^\\*tide-.*\\*$"
+          "^\\magit-process:.*$"
           "^TODO$"
           "^\\*rg\\*$" rg-mode
           help-mode
@@ -72,8 +74,6 @@
           ))
   (popper-mode +1)
   (popper-echo-mode +1)
-
-  (add-hook 'popper-mode-hook #'font-size-decrease)
 
   (setq popper-window-height
         (lambda ()

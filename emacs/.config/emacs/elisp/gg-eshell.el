@@ -7,7 +7,6 @@
   (setq eshell-highlight-prompt nil
         eshell-prompt-function 'epe-theme-lambda))
 
-(global-set-key (kbd "<f12>") 'aweshell-dedicated-toggle)
 (global-set-key (kbd "<f1>") 'gg/next-aweshell)
 
 (defun gg/next-aweshell (arg)
