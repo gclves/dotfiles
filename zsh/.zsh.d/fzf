@@ -1,0 +1,5 @@
+#!/bin/zsh
+
+if [ `command -v fzf 2> /dev/null` ]; then
+    source <(fzf --zsh)
+fi

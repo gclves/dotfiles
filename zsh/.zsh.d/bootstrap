@@ -2,6 +2,7 @@
 
 . $ZSH_D/aliases
 . $ZSH_D/auth
+. $ZSH_D/fzf
 . $ZSH_D/completion
 . $ZSH_D/prompt
 . $ZSH_D/pack
