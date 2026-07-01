@@ -95,10 +95,12 @@
 ;; | |__| (_) | | (_) | |  \__ \ (__| | | |  __/ | | | | |  __/
 ;;  \____\___/|_|\___/|_|  |___/\___|_| |_|\___|_| |_| |_|\___|
 
-(defvar gg--light-theme 'modus-operandi-tinted)
-(defvar gg--dark-theme 'modus-vivendi-tinted)
+(use-package alabaster-themes
+  :ensure t
+  :commands (alabaster-themes-select))
 
-
+(defvar gg--light-theme 'alabaster-themes-light-bg)
+(defvar gg--dark-theme 'alabaster-themes-dark)
 
 (if (boundp 'ns-system-appearance-change-functions)
   (progn
