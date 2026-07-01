@@ -1,15 +1,14 @@
 (use-package elixir-ts-mode
+  :mode "\\.exs?\\'"
+  :hook (elixir-ts-mode . eglot-ensure)
   :config
   (with-eval-after-load 'eglot
     ;; FIXME: this shouldn't be hardcoded
     (add-to-list 'eglot-server-programs
-                 `(elixir-ts-mode "nextls")))
-  :hook (elixir-ts-mode . eglot-ensure))
+                 `(elixir-ts-mode "nextls"))))
 
 (use-package exunit
   :hook (elixir-ts-mode . exunit-mode))
-
-(add-to-list 'auto-mode-alist '("\\.exs?\\'" . elixir-ts-mode))
 
 (defun gg--iex-buffer-for-project (project-root args)
   "Return the iex buffer for the project `PROJECT-ROOT', creating one with `ARGS' if it does not exist."
