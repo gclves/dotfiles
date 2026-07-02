@@ -16,7 +16,7 @@
   `(if (member ,font-family (font-family-list))
        (progn
          ,@body)
-     (message (format "Font `%s' is not installed. Please pick a different font." ,font-family))))
+     (message "Font `%s' is not installed. Please pick a different font." ,font-family)))
 
 (defun gg/set-face-font (face family height &rest attrs)
   (when (facep face)
@@ -33,7 +33,7 @@
                     gg/monospaced-font-height)
   (gg/set-face-font 'fixed-pitch
                     gg/monospaced-font-family
-                    gg/monospaced-font-height))
+                    1.0))
 
 (defun gg/apply-ui-fonts ()
   "Apply UI font faces."
