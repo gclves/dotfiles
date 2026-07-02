@@ -16,7 +16,7 @@
       mode-line-default-help-echo nil
       indicate-buffer-boundaries nil
       indicate-empty-lines nil
-      cursor-in-non-selected-windows t
+      cursor-in-non-selected-windows nil
       highlight-nonselected-windows nil
       bidi-display-reordering nil
       blink-matching-paren 'jump
@@ -79,7 +79,8 @@
         (lambda ()
           (floor (frame-height) 4))))
 
-
+(use-package spacious-padding
+  :init (spacious-padding-mode))
 
 ;;  __  __           _      _ _
 ;; |  \/  | ___   __| | ___| |_)_ __   ___
@@ -176,7 +177,8 @@
         ("C-c <down>" . hl-todo-next)
         ("C-c T" . hl-todo-occur)))
 
-(setq-default fill-column 80)
+(setq-default fill-column 80
+              display-fill-column-indicator-column t)
 (setq async-shell-command-display-buffer nil)
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (setq sentence-end-double-space nil)
