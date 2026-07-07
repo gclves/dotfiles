@@ -26,4 +26,18 @@
                '((typescript-ts-mode tsx-ts-mode js-ts-mode js-mode)
                  . ("typescript-language-server" "--stdio"))))
 
+(use-package prettier-js
+  :init
+  (defun maybe-use-prettier ()
+    "Enable `prettier-js-mode' if an rc file is located."
+    (if (locate-dominating-file default-directory ".prettierrc")
+        (prettier-js-mode +1)))
+
+  (add-hook 'js-ts-mode-hook 'maybe-use-prettier)
+  (add-hook 'js-mode-hook 'maybe-use-prettier)
+  (add-hook 'typescript-ts-mode-hook 'maybe-use-prettier)
+
+  :config
+  (setq prettier-js-use-modules-bin t))
+
 (provide 'gg-web-dev)
