@@ -20,3 +20,15 @@ export CPPFLAGS="-I/usr/local/opt/qt@5/include"
 
 ZSH_D=$HOME/.zsh.d
 . $ZSH_D/bootstrap
+
+if [[ "$INSIDE_EMACS" = 'ghostel' ]]; then
+    # Open a file in Emacs from the terminal
+    e()   { ghostel_cmd find-file "$@"; }
+    ee()   { ghostel_cmd find-file-other-window "$@"; }
+
+    # Open dired in another window
+    dow() { ghostel_cmd dired-other-window "$@"; }
+
+    # Open magit for the current directory
+    gst() { ghostel_cmd magit-status-setup-buffer "$(pwd)"; }
+fi
