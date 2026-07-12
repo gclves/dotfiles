@@ -7,14 +7,10 @@ export VISUAL=$EDITOR
 export HUSKY=0
 
 set -o emacs
-bindkey -M viins 'jk' vi-cmd-mode
 
 autoload -Uz compinit
 compinit
 
-export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 rh() {
     . $HOME/.zshrc
 }
