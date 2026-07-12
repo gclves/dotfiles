@@ -12,7 +12,8 @@
   :diminish
   :init (projectile-mode +1)
   :config
-  (setq projectile-project-search-path '("~/src"))
+  (setq projectile-project-search-path '("~/src")
+        projectile-shell-backend 'ghostel)
   :bind ((:map projectile-mode-map
                ("C-x p" . projectile-command-map)
                ("s-p" . projectile-find-file)

@@ -28,6 +28,7 @@
 (require 'gg-minibuffer)
 (require 'gg-git)
 (require 'gg-prog)
+(require 'gg-terminal)
 (require 'gg-eshell)
 (require 'gg-notes)
 (require 'gg-help)
