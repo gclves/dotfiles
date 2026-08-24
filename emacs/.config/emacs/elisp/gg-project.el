@@ -17,7 +17,8 @@
   :bind ((:map projectile-mode-map
                ("C-x p" . projectile-command-map)
                ("s-p" . projectile-find-file)
-               ("s-t" . projectile-test-project))))
+               ("s-t" . projectile-test-project)
+               ("<f2>" . projectile-run-ghostel))))
 
 (use-package envrc
   :bind (("C-c e" . envrc-command-map)))

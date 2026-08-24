@@ -45,7 +45,6 @@
         '("\\*Messages\\*"
           "Output\\*$"
           "\\*Async Shell Command\\*"
-          "^\\*Completions\\*$"
           "^\\*Help\\*$"
           "^\\*grep\\*$"
           "^\\*Apropos\\*$"

@@ -6,7 +6,7 @@
         completion-auto-help 'always
         completions-format 'one-column
         completions-group t
-        completion-auto-select 'second-tab)
+        completion-auto-select nil)
 
   (keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete))
 
