@@ -1,6 +1,8 @@
 projectile.cache
 .config/emacs/.*
 .config/emacs/elisp/*.elc
+.config/emacs/user-lisp/*.elc
+.config/emacs/user-lisp/.user-lisp-autoloads.el
 .config/emacs/bookmarks
 .config/emacs/custom.el
 .config/emacs/request

@@ -82,14 +82,14 @@
 (use-package spacious-padding
   :init (spacious-padding-mode))
 
-;; Modeline
-(use-package diminish)
-
 ;; Tab bar
 (define-key tab-bar-mode-map (kbd "s-{") 'tab-previous)
 (define-key tab-bar-mode-map (kbd "s-}") 'tab-next)
 
 (require 'gg-colorscheme)
+
+;; Modeline
+(setq mode-line-collapse-minor-modes t)
 
 ;; ___
 ;;|_ _|___ ___  _ __  ___

@@ -1,5 +1,4 @@
 (use-package paredit
-  :diminish
   :hook ((emacs-lisp-mode
           clojure-mode
           ielm-mode
@@ -12,6 +11,6 @@
   (define-key lisp-interaction-mode-map (kbd "C-j") 'eval-print-last-sexp))
 
 (use-package clojure-mode)
-(use-package cider)
+;(use-package cider)
 
 (provide 'gg-lisp)

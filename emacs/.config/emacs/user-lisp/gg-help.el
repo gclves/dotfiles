@@ -5,7 +5,6 @@
 
 (use-package which-key
   :ensure nil
-  :diminish
   :config (which-key-mode))
 
 (use-package helpful

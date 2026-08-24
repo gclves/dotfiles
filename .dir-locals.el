@@ -1,2 +1,4 @@
 ((nil . ((eval . (setq-local consult-ripgrep-args
-                             (concat consult-ripgrep-args " --hidden"))))))
+                             (if (boundp 'consult-ripgrep-args)
+                                 (concat consult-ripgrep-args " --hidden")
+                               "rg --null --hidden"))))))

@@ -1,4 +1,5 @@
-(add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
+(when (< emacs-major-version 31)
+  (add-to-list 'load-path (expand-file-name "user-lisp" user-emacs-directory)))
 
 (require 'gg-packages)
 
@@ -12,7 +13,7 @@
 (defun gg/byte-compile-elisp ()
   "Byte-compile ~/.emacs.d/elisp, excluding elisp/vendor/."
   (interactive)
-  (let* ((root (expand-file-name "elisp" user-emacs-directory))
+  (let* ((root (expand-file-name "user-lisp" user-emacs-directory))
          (vendor (file-name-as-directory (expand-file-name "vendor" root)))
          (byte-compile-warnings '(not obsolete))
          (n 0))

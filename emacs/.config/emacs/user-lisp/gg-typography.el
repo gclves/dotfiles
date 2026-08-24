@@ -1,13 +1,13 @@
 (defvar gg/monospaced-font-family "Aporetic Serif Mono"
   "Default monospaced font family.")
 
-(defvar gg/monospaced-font-height 190
+(defvar gg/monospaced-font-height 180
   "Default monospaced font height.")
 
 (defvar gg/ui-font-family "Aporetic Sans Mono"
   "Default UI font family.")
 
-(defvar gg/ui-font-height 170
+(defvar gg/ui-font-height 160
   "Default UI font height.")
 
 (defmacro with-font-available (font-family &rest body)
@@ -37,12 +37,10 @@
 
 (defun gg/apply-ui-fonts ()
   "Apply UI font faces."
-  (dolist (face '(mode-line mode-line-inactive))
+  (dolist (face '(mode-line mode-line-active mode-line-inactive))
     (gg/set-face-font face
                       gg/ui-font-family
-                      gg/ui-font-height
-                      :weight 'regular
-                      :box nil))
+                      gg/ui-font-height))
 
   (gg/set-face-font 'minibuffer-prompt
                     gg/ui-font-family

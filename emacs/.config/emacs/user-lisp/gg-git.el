@@ -1,4 +1,5 @@
 (require 'use-package)
+(require 'gg-macos)
 
 (use-package magit
     :bind

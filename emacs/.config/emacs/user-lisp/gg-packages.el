@@ -25,6 +25,7 @@
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 
-(add-to-list 'load-path (concat user-emacs-directory "elisp/vendor"))
+(when (< emacs-major-version 31)
+ (add-to-list 'load-path (concat user-emacs-directory "user-lisp/vendor")))
 
 (provide 'gg-packages)
