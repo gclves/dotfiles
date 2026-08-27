@@ -35,32 +35,8 @@
                     gg/monospaced-font-family
                     1.0))
 
-(defun gg/apply-ui-fonts ()
-  "Apply UI font faces."
-  (dolist (face '(mode-line mode-line-active mode-line-inactive))
-    (gg/set-face-font face
-                      gg/ui-font-family
-                      gg/ui-font-height))
-
-  (gg/set-face-font 'minibuffer-prompt
-                    gg/ui-font-family
-                    gg/ui-font-height))
-
 (with-font-available gg/monospaced-font-family
   (gg/apply-editing-fonts))
-
-(with-font-available gg/ui-font-family
-  (gg/apply-ui-fonts))
-
-(defun gg/use-ui-font-in-minibuffer ()
-  "Use the UI font in the minibuffer."
-  (when (member gg/ui-font-family (font-family-list))
-    (face-remap-add-relative
-     'default
-     `(:family ,gg/ui-font-family
-       :height ,gg/ui-font-height))))
-
-(add-hook 'minibuffer-setup-hook #'gg/use-ui-font-in-minibuffer)
 
 ;; Do not set a different font on the selected Vertico candidate.
 (with-eval-after-load 'vertico
