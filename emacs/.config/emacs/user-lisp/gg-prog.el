@@ -18,10 +18,14 @@
   :init
   (add-hook 'prog-mode-hook 'subword-mode))
 
-(use-package treesit-auto
-  :config
-  (setq treesit-auto-install 'prompt)
-  (treesit-auto-add-to-auto-mode-alist 'all))
+(if (< emacs-major-version 31)
+    (use-package treesit-auto
+      :config
+      (setq treesit-auto-install 'prompt)
+      (treesit-auto-add-to-auto-mode-alist 'all))
+
+  (setq treesit-enabled-modes t
+        treesit-auto-install-grammar 'ask))
 
 (require 'prisma-ts-mode)
 

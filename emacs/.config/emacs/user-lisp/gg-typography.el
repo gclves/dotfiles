@@ -84,13 +84,6 @@
 (when (member "Symbola" (font-family-list))
   (set-fontset-font t 'unicode "Symbola" nil 'prepend))
 
-;; Look & Feel for prose writing
-(use-package olivetti
-  :ensure t
-  :hook text-mode
-  :config
-  (setq olivetti-style t))
-
 (defun font-size-reset ()
   "Reset the text-scale to zero."
   (interactive)
