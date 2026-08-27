@@ -8,6 +8,7 @@
 (require 'gg-go)
 (require 'gg-lisp)
 (require 'gg-elixir)
+(require 'gg-dotenv)
 
 
 (setq-default tab-width 4)

@@ -38,6 +38,7 @@
 ;; (require 'gg-mail)
 (require 'gg-llm)
 (require 'gg-rss)
+(require 'gg-evil)
 
 (setq custom-file
       (expand-file-name "custom.el" user-emacs-directory))
