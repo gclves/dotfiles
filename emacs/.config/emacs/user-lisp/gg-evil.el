@@ -1,6 +1,6 @@
 (use-package evil
   :config
-  (add-hook 'evil-local-mode-hook 'turn-on-undo-tree-mode)
+  (add-hook 'evil-local-mode-hook 'undo-tree-mode)
   (setq-default evil-undo-system 'undo-redo)
 
   (add-hook 'prog-mode-hook 'turn-on-evil-mode)
