@@ -97,7 +97,8 @@
 ;; | | (_| (_) | | | \__ \
 ;;|___\___\___/|_| |_|___/
 
-(use-package nerd-icons)
+(use-package nerd-icons
+  :diminish t)
 
 (use-package nerd-icons-completion
   :after marginalia

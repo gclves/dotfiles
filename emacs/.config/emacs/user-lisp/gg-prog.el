@@ -9,7 +9,7 @@
 (require 'gg-lisp)
 (require 'gg-elixir)
 (require 'gg-dotenv)
-
+(require 'gg-c)
 
 (setq-default tab-width 4)
 (global-set-key (kbd "C-;") 'comment-line)

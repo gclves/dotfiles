@@ -1,7 +1,8 @@
-(defvar gg/monospaced-font-family "Aporetic Serif Mono"
+(defvar gg/monospaced-font-family "JetBrains Mono"
   "Default monospaced font family.")
 
 (defvar gg/monospaced-font-height 180
+(defvar gg/monospaced-font-height 170
   "Default monospaced font height.")
 
 (defvar gg/ui-font-family "Aporetic Sans Mono"
