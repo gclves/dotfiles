@@ -1,5 +1,12 @@
+ ;;; -*- lexical-binding: t; -*-
+
 (when (< emacs-major-version 31)
   (add-to-list 'load-path (expand-file-name "user-lisp" user-emacs-directory)))
+
+(add-to-list 'trusted-content
+             (file-name-as-directory
+              (abbreviate-file-name
+               (file-truename "~/.config/emacs/user-lisp/"))))
 
 (require 'gg-packages)
 

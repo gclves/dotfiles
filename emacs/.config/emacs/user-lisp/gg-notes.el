@@ -5,10 +5,9 @@
   (setq org-log-done 'time
         org-todo-keywords '((sequence "TODO(t)" "IN_PROGRESS(p)" "|" "DONE(d)"))))
 
-(use-package markdown-mode
-  :commands (markdown-mode gfm-mode)
-  :mode (("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode)))
+(use-package markdown-ts-mode
+  :mode (("\\.md\\'" . markdown-ts-mode)
+         ("\\.markdown\\'" . markdown-ts-mode)))
 
 (provide 'gg-notes)
 ;;; gg-notes.el ends here

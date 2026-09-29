@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (use-package corfu
   :hook (prog-mode . corfu-mode)
   :bind (:map corfu-map
@@ -33,8 +35,14 @@
 
 (global-set-key (kbd "C-c d") 'eldoc-doc-buffer)
 
+(defun gg/elisp-disable-checkdoc ()
+  (remove-hook 'flymake-diagnostic-functions
+               #'elisp-flymake-checkdoc
+               t))
+
 (use-package flymake
   :config
+  (add-hook 'emacs-lisp-mode-hook #'gg/elisp-disable-checkdoc)
   (define-key flymake-mode-map (kbd "M-]") #'flymake-goto-next-error)
   (define-key flymake-mode-map (kbd "M-[") #'flymake-goto-prev-error)
 

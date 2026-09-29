@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (setq load-prefer-newer t)
 
 (add-to-list 'default-frame-alist '(menu-bar-lines . 0))
