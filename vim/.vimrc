@@ -7,17 +7,19 @@ set history=10000       " Increase history size for commands and searches
 set undofile           " Enable persistent undo
 set nobackup           " Disable backup files
 
-" Create the {swap, undo} folders if they don't exist
-if !isdirectory(expand('~/.local/state/nvim/swap'))
-  call mkdir(expand('~/.local/state/nvim/swap'), 'p')
+" Create the {backup,swap, undo} folders if they don't exist
+if !isdirectory(expand('~/.vim/backup'))
+  call mkdir(expand('~/.vim/backup'), 'p')
 endif
-
-if !isdirectory(expand('~/.local/state/nvim/undo'))
-  call mkdir(expand('~/.local/state/nvim/undo'), 'p')
+if !isdirectory(expand('~/.vim/swap'))
+  call mkdir(expand('~/.vim/swap'), 'p')
 endif
-set backupdir=~/.local/state/nvim/backup//
-set directory=~/.local/state/nvim/swap//
-set undodir=~/.local/state/nvim/undo//
+if !isdirectory(expand('~/.vim/undo'))
+  call mkdir(expand('~/.vim/undo'), 'p')
+endif
+set backupdir=~/.vim/backup//
+set directory=~/.vim/swap//
+set undodir=~/.vim/undo//
 
 set showcmd            " Display incomplete commands
 set wildmenu           " Enhanced command line completion
@@ -93,10 +95,10 @@ nnoremap <C-k> <C-w>k
 " === Plugins ===
 
 " Install vim-plug if not found
-if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 call plug#begin()
@@ -225,6 +227,56 @@ set background=dark
 " Available variants: alabaster-bg, alabaster-dark, alabaster-mono, alabaster-dark-mono
 colorscheme alabaster-dark
 
+" === vim-lsp helpers ===
+function! HasLsp() abort
+    return exists('*lsp#get_server_names') && !empty(lsp#get_server_names())
+endfunction
+
+function! HasLspFormatter() abort
+    return HasLsp() && exists('*lsp#document_format')
+endfunction
+
+" Jump to definition with fallback to native Vim 'gd'
+function! GoToDefinition() abort
+    if HasLsp()
+        LspDefinition
+    else
+        normal! gd
+    endif
+endfunction
+
+" Hover documentation with fallback to native Vim 'K'
+function! ShowDocs() abort
+    if HasLsp()
+        LspHover
+    else
+        normal! K
+    endif
+endfunction
+
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+endfunction
+
+augroup lsp_install
+    autocmd!
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+" Navigation & Hover
+nnoremap <silent> gd :call GoToDefinition()<CR>
+nnoremap <silent> K  :call ShowDocs()<CR>
+nnoremap <silent> <Leader>rn :LspRename<CR>
+nnoremap <silent> gr :LspReferences<CR>
+
+" Diagnostics
+nnoremap <silent> <Leader>d  :LspDocumentDiagnostics<CR>
+nnoremap <silent> [d         :LspPreviousDiagnostic<CR>
+nnoremap <silent> ]d         :LspNextDiagnostic<CR>
+
+" Format command
+command! Format if HasLsp() | call lsp#document_format() | endif
+
 " Format on save
 function! CleanWhitespace()
     if !HasLsp()
@@ -292,13 +344,6 @@ augroup reload
     autocmd BufWritePost $MYVIMRC source $MYVIMRC
 augroup END
 
-" Diagnostics
-autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focus = false })
-
-nnoremap <Leader>d :lua vim.diagnostic.open_float()<CR>
-nnoremap <Leader>dl :lua vim.diagnostic.setloclist()<CR>
-nnoremap <Leader>dq :lua vim.diagnostic.setqflist()<CR>
-
 " Search
 command! -nargs=+ Grep silent grep! <args> | copen
 "nnoremap <Leader>/ :Grep<Space>
@@ -311,7 +356,9 @@ function! CompleteOrLsp()
         return "\<C-n>"
     endif
 
-    if has('nvim') && HasLsp()
+    " If an omnifunc is set (by vim-lsp or filetype plugins), use it;
+    " otherwise fall back to standard keyword completion (<C-n>)
+    if !empty(&omnifunc)
         return "\<C-x>\<C-o>"
     endif
 
@@ -331,12 +378,12 @@ endfunction
 
 function! DefaultTestCommand()
     let l:defaults = {
-        \ 'go': 'go test ./...',
-        \ 'elixir': 'mix test',
-        \ 'ruby': 'bundle exec rspec',
-        \ 'javascript': 'npm test',
-        \ 'typescript': 'npm test',
-        \ }
+                \ 'go': 'go test ./...',
+                \ 'elixir': 'mix test',
+                \ 'ruby': 'bundle exec rspec',
+                \ 'javascript': 'npm test',
+                \ 'typescript': 'npm test',
+                \ }
 
     return get(l:defaults, &filetype, '')
 endfunction
@@ -352,8 +399,8 @@ function! GetTestCommand()
     endif
 
     let l:default = $NVIM_TEST_COMMAND !=# ''
-        \ ? $NVIM_TEST_COMMAND
-        \ : DefaultTestCommand()
+                \ ? $NVIM_TEST_COMMAND
+                \ : DefaultTestCommand()
     let l:cmd = input('Test command: ', l:default)
 
     if l:cmd !=# ''
@@ -380,8 +427,8 @@ function! CurrentFileLooksLikeTest()
 
     if &filetype ==# 'ruby'
         return l:file =~# '_spec\.rb$'
-            \ || l:file =~# '^test_.*\.rb$'
-            \ || l:file =~# '_test\.rb$'
+                    \ || l:file =~# '^test_.*\.rb$'
+                    \ || l:file =~# '_test\.rb$'
     endif
 
     if &filetype ==# 'javascript'
@@ -416,11 +463,11 @@ endfunction
 
 function! DefaultFileTestCommand()
     let l:defaults = {
-        \ 'python': 'python -m pytest {file}',
-        \ 'ruby': 'bundle exec rspec {file}',
-        \ 'javascript': 'npm test -- {file}',
-        \ 'typescript': 'npm test -- {file}',
-        \ }
+                \ 'python': 'python -m pytest {file}',
+                \ 'ruby': 'bundle exec rspec {file}',
+                \ 'javascript': 'npm test -- {file}',
+                \ 'typescript': 'npm test -- {file}',
+                \ }
 
     return get(l:defaults, &filetype, '')
 endfunction
@@ -437,8 +484,8 @@ function! GetFileTestCommand()
     endif
 
     let l:default = $NVIM_FILE_TEST_COMMAND !=# ''
-        \ ? $NVIM_FILE_TEST_COMMAND
-        \ : DefaultFileTestCommand()
+                \ ? $NVIM_FILE_TEST_COMMAND
+                \ : DefaultFileTestCommand()
 
     if l:default ==# ''
         return ''
@@ -499,36 +546,36 @@ nnoremap <Leader>t :call RunTests()<CR>
 let g:quick_scratch_path = get(g:, 'quick_scratch_path', '~/SCRATCH.md')
 
 function! QuickScratch() abort
-  let l:scratch = resolve(fnamemodify(expand(g:quick_scratch_path), ':p'))
-  let l:current = resolve(fnamemodify(expand('%:p'), ':p'))
+    let l:scratch = resolve(fnamemodify(expand(g:quick_scratch_path), ':p'))
+    let l:current = resolve(fnamemodify(expand('%:p'), ':p'))
 
-  if l:current ==# l:scratch
-    if exists('w:quick_scratch_last_bufnr') && bufexists(w:quick_scratch_last_bufnr)
-      execute 'buffer' w:quick_scratch_last_bufnr
-      unlet w:quick_scratch_last_bufnr
-    else
-      bprevious
+    if l:current ==# l:scratch
+        if exists('w:quick_scratch_last_bufnr') && bufexists(w:quick_scratch_last_bufnr)
+            execute 'buffer' w:quick_scratch_last_bufnr
+            unlet w:quick_scratch_last_bufnr
+        else
+            bprevious
+        endif
+        return
     endif
-    return
-  endif
 
-  let w:quick_scratch_last_bufnr = bufnr('%')
-  execute 'edit' fnameescape(l:scratch)
-  setlocal expandtab
+    let w:quick_scratch_last_bufnr = bufnr('%')
+    execute 'edit' fnameescape(l:scratch)
+    setlocal expandtab
 endfunction
 
 augroup quick_scratch_autosave
-  autocmd!
-  autocmd BufLeave,FocusLost,InsertLeave * call QuickScratchAutoSave()
+    autocmd!
+    autocmd BufLeave,FocusLost,InsertLeave * call QuickScratchAutoSave()
 augroup END
 
 function! QuickScratchAutoSave() abort
-  let l:scratch = resolve(fnamemodify(expand(g:quick_scratch_path), ':p'))
-  let l:current = resolve(fnamemodify(expand('%:p'), ':p'))
+    let l:scratch = resolve(fnamemodify(expand(g:quick_scratch_path), ':p'))
+    let l:current = resolve(fnamemodify(expand('%:p'), ':p'))
 
-  if l:current ==# l:scratch && &modified && !&readonly
-    silent write
-  endif
+    if l:current ==# l:scratch && &modified && !&readonly
+        silent write
+    endif
 endfunction
 
 nnoremap <silent> <M--> :call QuickScratch()<CR>
