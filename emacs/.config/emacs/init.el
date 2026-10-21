@@ -42,10 +42,12 @@
 (require 'gg-notes)
 (require 'gg-help)
 (require 'gg-project)
+
+;;; The following are "optional features" that I keep switching off and on
 ;; (require 'gg-mail)
-(require 'gg-llm)
-(require 'gg-rss)
-(require 'gg-evil)
+;; (require 'gg-llm)
+;; (require 'gg-rss)
+;; (require 'gg-evil)
 
 (setq custom-file
       (expand-file-name "custom.el" user-emacs-directory))

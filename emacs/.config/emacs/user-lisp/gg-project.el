@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (defvar gg/todo-file (expand-file-name "~/TODO.org")
   "Location of my TODO file.")
 
@@ -13,9 +15,8 @@
   :config
   (setq projectile-project-search-path '("~/src")
         projectile-shell-backend 'ghostel
-        projectile-switch-project-action #'projectile-dired
+        projectile-switch-project-action #'magit-status
         projectile-find-dir-includes-top-level t
-        projectile-max-file-buffer-count 10
         projectile-search-backend 'ripgrep
         projectile-indexing-method 'hybrid
         projectile-enable-caching t)
